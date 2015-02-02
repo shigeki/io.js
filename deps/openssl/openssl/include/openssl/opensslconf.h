@@ -1,1 +1,1 @@
-../../crypto/opensslconf.h
+../../../config/opensslconf.h
