@@ -928,42 +928,18 @@
       'OPENSSL_IA32_SSE2',
       'BSAES_ASM',
     ],
-    'openssl_rules_x86_win': [
-      {
-        'rule_name': 'Assemble',
-        'extension': 'asm',
-        'inputs': [],
-        'outputs': [
-          '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
-        ],
-        'action': [
-          'ml.exe',
-          '/Zi',
-          '/safeseh',
-          '/Fo', '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
-          '/c', '<(RULE_INPUT_PATH)',
-        ],
-        'process_outputs_as_sources': 0,
-      'message': 'Assembling <(RULE_INPUT_PATH) to <(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj.',
-      }
+    'openssl_rules_action_x86_win': [
+      'ml.exe',
+      '/Zi',
+      '/safeseh',
+      '/Fo', '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
+      '/c', '<(RULE_INPUT_PATH)',
     ],
-    'openssl_rules_x64_win': [
-      {
-        'rule_name': 'Assemble',
-        'extension': 'asm',
-        'inputs': [],
-        'outputs': [
-          '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
-        ],
-        'action': [
-        'ml64.exe',
-          '/Zi',
-          '/Fo', '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
-          '/c', '<(RULE_INPUT_PATH)',
-        ],
-        'process_outputs_as_sources': 0,
-        'message': 'Assembling <(RULE_INPUT_PATH) to <(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj.',
-      }
+    'openssl_rules_action_x64_win': [
+      'ml64.exe',
+      '/Zi',
+      '/Fo', '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
+      '/c', '<(RULE_INPUT_PATH)',
     ],
     'openssl_include_dirs': [
       '.',
