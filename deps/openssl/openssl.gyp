@@ -38,7 +38,7 @@
                    'sources': ['<@(openssl_sources_x86_macosx_gas)'],
                  }, 'OS=="win"', {
                     'sources': ['<@(openssl_sources_x86_win32_masm)'],
-                    'rules': ['<@(openssl_rules_x86_win32)'],
+                    'rules': ['<@(openssl_rules_x86_win)'],
                  }, { # Linux or others
                    'sources': ['<@(openssl_sources_x86_elf_gas)'],
                  }], # end of conditions of OS
