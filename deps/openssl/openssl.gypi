@@ -907,6 +907,15 @@
       'WHIRLPOOL_ASM',
       'WP_ASM',
     ],
+    'openssl_defines_x86_elf': [
+      '<@(openssl_defines_non_arm)',
+    ],
+    'openssl_defines_x86_mac': [
+      '<@(openssl_defines_non_arm)',
+    ],
+    'openssl_defines_x86_win': [
+      '<@(openssl_defines_non_arm)',
+    ],
     'openssl_defines_x64_elf': [
       '<@(openssl_defines_non_arm)',
       'OPENSSL_BN_ASM_MONT5',

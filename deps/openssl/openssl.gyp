@@ -35,8 +35,10 @@
             }, 'target_arch=="ia32"', {
                'conditions': [
                  ['OS=="mac"', {
+                   'defines': ['<@(openssl_defines_x86_mac)'],
                    'sources': ['<@(openssl_sources_x86_macosx_gas)'],
                  }, 'OS=="win"', {
+                   'defines': ['<@(openssl_defines_x86_win)'],
                    'sources': ['<@(openssl_sources_x86_win32_masm)'],
                    'rules': [{
                      'rule_name': 'Assemble',
@@ -48,6 +50,7 @@
                      'message': 'Assembling <(RULE_INPUT_PATH) to <(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj.',
                    }],
                  }, { # Linux or others
+                   'defines': ['<@(openssl_defines_x86_elf)'],
                    'sources': ['<@(openssl_sources_x86_elf_gas)'],
                  }], # end of conditions of OS
                ],
