@@ -58,7 +58,7 @@
                        'process_outputs_as_sources': 0,
                        'message': 'Assembling <(RULE_INPUT_PATH) to <(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj.',
                      }
-                   ]
+                   ],
                  }, { # Linux or others
                    'defines': ['<@(openssl_defines_x86_elf)'],
                    'sources': ['<@(openssl_sources_x86_elf_gas)'],
@@ -72,15 +72,24 @@
                 }, 'OS=="win"', {
                   'defines': ['<@(openssl_defines_x64_win)'],
                   'sources': ['<@(openssl_sources_x64_win32_masm)'],
-                  'rules': [ {
-                    'rule_name': 'Assemble',
-                    'extension': 'asm',
-                    'inputs': [],
-                    'outputs': ['<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj'],
-                    'action': ['<@(openssl_rules_action_x64_win)'],
-                    'process_outputs_as_sources': 0,
-                    'message': 'Assembling <(RULE_INPUT_PATH) to <(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj.',
-                  }],
+                  'rules': [
+                    {
+                      'rule_name': 'Assemble',
+                      'extension': 'asm',
+                      'inputs': [],
+                      'outputs': [
+                        '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
+                      ],
+                      'action': [
+                        'ml64.exe',
+                        '/Zi',
+                        '/Fo', '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
+                        '/c', '<(RULE_INPUT_PATH)',
+                      ],
+                      'process_outputs_as_sources': 0,
+                      'message': 'Assembling <(RULE_INPUT_PATH) to <(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj.',
+                    }
+                  ],
                 }, { # Linux or others
                   'defines': ['<@(openssl_defines_x64_elf)'],
                   'sources': ['<@(openssl_sources_x64_elf_gas)'],

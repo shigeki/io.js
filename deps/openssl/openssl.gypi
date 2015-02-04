@@ -937,19 +937,6 @@
       'OPENSSL_IA32_SSE2',
       'BSAES_ASM',
     ],
-    'openssl_rules_action_x86_win': [
-      'ml.exe',
-      '/Zi',
-      '/safeseh',
-      '/Fo', '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
-      '/c', '<(RULE_INPUT_PATH)',
-    ],
-    'openssl_rules_action_x64_win': [
-      'ml64.exe',
-      '/Zi',
-      '/Fo', '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
-      '/c', '<(RULE_INPUT_PATH)',
-    ],
     'openssl_include_dirs': [
       '.',
       'openssl',
