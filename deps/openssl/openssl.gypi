@@ -928,7 +928,7 @@
       'OPENSSL_IA32_SSE2',
       'BSAES_ASM',
     ],
-    'openssl_rules_ia32_win': [
+    'openssl_rules_x86_win': [
       {
         'rule_name': 'Assemble',
         'extension': 'asm',
