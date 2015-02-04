@@ -104,22 +104,6 @@
           ],
         }], # end of conditions of openssl_no_asm
       ],
-      ['OS=="win"', {
-        'link_settings': {
-          'libraries': [
-            '-lgdi32.lib',
-            '-luser32.lib',
-          ]
-        },
-        'defines': [
-          'DSO_WIN32',
-        ],
-      }, {
-        'defines': [
-          'DSO_DLFCN',
-          'HAVE_DLFCN_H'
-        ],
-      }],
       'include_dirs': ['<@(openssl_include_dirs)'],
       'direct_dependent_settings': {
         'include_dirs': [

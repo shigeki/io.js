@@ -995,18 +995,18 @@
       'MK1MF_BUILD',
       'WIN32_LEAN_AND_MEAN',
       'OPENSSL_SYSNAME_WIN32',
-###      'DSO_WIN32',
+      'DSO_WIN32',
     ],
     'openssl_default_libraries_win': [
-###      '-lgdi32.lib',
-###      '-luser32.lib',
+      '-lgdi32.lib',
+      '-luser32.lib',
     ],
     'openssl_default_defines_not_win': [
       # ENGINESDIR must be defined if OPENSSLDIR is.
       'ENGINESDIR="/dev/null"',
       'TERMIOS',
-###      'DSO_DLFCN',
-###      'HAVE_DLFCN_H',
+      'DSO_DLFCN',
+      'HAVE_DLFCN_H',
     ],
     'openssl_default_defines_mac': [
       # Set to ubuntu default path for convenience. If necessary,
