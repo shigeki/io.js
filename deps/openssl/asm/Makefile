@@ -24,22 +24,29 @@ OUTPUTS	= \
 	x86-elf-gas/modes/ghash-x86.s \
 	x86-elf-gas/x86cpuid.s \
 	x64-elf-gas/aes/aes-x86_64.s \
+        x64-elf-gas/aes/aesni-mb-x86_64.s \
+        x64-elf-gas/aes/aesni-sha256-x86_64.s \
 	x64-elf-gas/aes/aesni-x86_64.s \
 	x64-elf-gas/aes/vpaes-x86_64.s \
 	x64-elf-gas/aes/bsaes-x86_64.s \
 	x64-elf-gas/aes/aesni-sha1-x86_64.s \
-	x64-elf-gas/bn/modexp512-x86_64.s \
+        x64-elf-gas/bn/rsaz-avx2.s \
+        x64-elf-gas/bn/rsaz-x86_64.s \
 	x64-elf-gas/bn/x86_64-mont.s \
 	x64-elf-gas/bn/x86_64-mont5.s \
 	x64-elf-gas/bn/x86_64-gf2m.s \
 	x64-elf-gas/camellia/cmll-x86_64.s \
+        x64-elf-gas/ec/ecp_nistz256-x86_64.s \
 	x64-elf-gas/md5/md5-x86_64.s \
 	x64-elf-gas/rc4/rc4-x86_64.s \
 	x64-elf-gas/rc4/rc4-md5-x86_64.s \
+        x64-elf-gas/sha/sha1-mb-x86_64.s \
 	x64-elf-gas/sha/sha1-x86_64.s \
+        x64-elf-gas/sha/sha256-mb-x86_64.s \
 	x64-elf-gas/sha/sha256-x86_64.s \
-	x64-elf-gas/sha/sha512-x86_64.s \
+	sha512/x64-elf-gas/sha/sha512-x86_64.s \
 	x64-elf-gas/whrlpool/wp-x86_64.s \
+        x64-elf-gas/modes/aesni-gcm-x86_64.s \
 	x64-elf-gas/modes/ghash-x86_64.s \
 	x64-elf-gas/x86_64cpuid.s \
 	arm-elf-gas/aes/aes-armv4.S \
@@ -72,20 +79,25 @@ OUTPUTS	= \
 	x64-macosx-gas/aes/aes-x86_64.s \
 	x64-macosx-gas/aes/aesni-x86_64.s \
 	x64-macosx-gas/aes/vpaes-x86_64.s \
+	x64-macosx-gas/aes/aesni-mb-x86_64.s \
+	x64-macosx-gas/aes/aesni-sha256-x86_64.s \
 	x64-macosx-gas/aes/bsaes-x86_64.s \
 	x64-macosx-gas/aes/aesni-sha1-x86_64.s \
-	x64-macosx-gas/bn/modexp512-x86_64.s \
+	x64-macosx-gas/bn/rsaz-avx2.s \
+	x64-macosx-gas/bn/rsaz-x86_64.s \
 	x64-macosx-gas/bn/x86_64-mont.s \
 	x64-macosx-gas/bn/x86_64-mont5.s \
 	x64-macosx-gas/bn/x86_64-gf2m.s \
 	x64-macosx-gas/camellia/cmll-x86_64.s \
+	x64-macosx-gas/ec/ecp_nistz256-x86_64.s \
 	x64-macosx-gas/md5/md5-x86_64.s \
-	x64-macosx-gas/rc4/rc4-x86_64.s \
-	x64-macosx-gas/rc4/rc4-md5-x86_64.s \
+	x64-macosx-gas/sha/sha1-mb-x86_64.s \
 	x64-macosx-gas/sha/sha1-x86_64.s \
+	x64-macosx-gas/sha/sha256-mb-x86_64.s \
 	x64-macosx-gas/sha/sha256-x86_64.s \
-	x64-macosx-gas/sha/sha512-x86_64.s \
+	sha512/x64-macosx-gas/sha/sha512-x86_64.s \
 	x64-macosx-gas/whrlpool/wp-x86_64.s \
+	x64-macosx-gas/modes/aesni-gcm-x86_64.s \
 	x64-macosx-gas/modes/ghash-x86_64.s \
 	x64-macosx-gas/x86_64cpuid.s \
 	x86-win32-masm/aes/aes-586.asm \
@@ -131,6 +143,9 @@ OUTPUTS	= \
 arm-elf-gas/%.S x64-elf-gas/%.s x86-elf-gas/%.s:
 	$(PERL) $< elf > $@
 
+sha512/arm-elf-gas/%.S sha512/x64-elf-gas/%.s sha512/x86-elf-gas/%.s sha512/x64-macosx-gas/%s:
+	$(PERL) $< elf  $@
+
 x64-macosx-gas/%.s x86-macosx-gas/%.s:
 	$(PERL) $< macosx > $@
 
@@ -154,40 +169,52 @@ clean:
 
 x64-elf-gas/aes/aes-x86_64.s: ../openssl/crypto/aes/asm/aes-x86_64.pl
 x64-elf-gas/aes/aesni-x86_64.s: ../openssl/crypto/aes/asm/aesni-x86_64.pl
+x64-elf-gas/aes/aesni-mb-x86_64.s: ../openssl/crypto/aes/asm/aesni-mb-x86_64.pl
+x64-elf-gas/aes/aesni-sha256-x86_64.s:  ../openssl/crypto/aes/asm/aesni-sha256-x86_64.pl
 x64-elf-gas/aes/vpaes-x86_64.s: ../openssl/crypto/aes/asm/vpaes-x86_64.pl
 x64-elf-gas/aes/bsaes-x86_64.s: ../openssl/crypto/aes/asm/bsaes-x86_64.pl
 x64-elf-gas/aes/aesni-sha1-x86_64.s: ../openssl/crypto/aes/asm/aesni-sha1-x86_64.pl
-x64-elf-gas/bn/modexp512-x86_64.s: ../openssl/crypto/bn/asm/modexp512-x86_64.pl
+x64-elf-gas/bn/rsaz-avx2.s: ../openssl/crypto/bn/asm/rsaz-avx2.pl
+x64-elf-gas/bn/rsaz-x86_64.s: ../openssl/crypto/bn/asm/rsaz-x86_64.pl
 x64-elf-gas/bn/x86_64-mont.s: ../openssl/crypto/bn/asm/x86_64-mont.pl
 x64-elf-gas/bn/x86_64-mont5.s: ../openssl/crypto/bn/asm/x86_64-mont5.pl
 x64-elf-gas/bn/x86_64-gf2m.s: ../openssl/crypto/bn/asm/x86_64-gf2m.pl
 x64-elf-gas/camellia/cmll-x86_64.s: ../openssl/crypto/camellia/asm/cmll-x86_64.pl
+x64-elf-gas/ec/ecp_nistz256-x86_64.s: ../openssl/crypto/ec/asm/ecp_nistz256-x86_64.pl
 x64-elf-gas/md5/md5-x86_64.s: ../openssl/crypto/md5/asm/md5-x86_64.pl
 x64-elf-gas/rc4/rc4-x86_64.s: ../openssl/crypto/rc4/asm/rc4-x86_64.pl
 x64-elf-gas/rc4/rc4-md5-x86_64.s: ../openssl/crypto/rc4/asm/rc4-md5-x86_64.pl
+x64-elf-gas/sha/sha1-mb-x86_64.s: ../openssl/crypto/sha/asm/sha1-mb-x86_64.pl
 x64-elf-gas/sha/sha1-x86_64.s: ../openssl/crypto/sha/asm/sha1-x86_64.pl
-x64-elf-gas/sha/sha512-x86_64.s: ../openssl/crypto/sha/asm/sha512-x86_64.pl
-x64-elf-gas/sha/sha256-x86_64.s: ../openssl/crypto/sha/asm/sha256-x86_64.pl
+sha512/x64-elf-gas/sha/sha512-x86_64.s: ../openssl/crypto/sha/asm/sha512-x86_64.pl
+x64-elf-gas/sha/sha256-mb-x86_64.s: ../openssl/crypto/sha/asm/sha256-mb-x86_64.pl
+x64-elf-gas/sha/sha256-x86_64.s: ../openssl/crypto/sha/asm/sha512-x86_64.pl
 x64-elf-gas/whrlpool/wp-x86_64.s: ../openssl/crypto/whrlpool/asm/wp-x86_64.pl
+x64-elf-gas/modes/aesni-gcm-x86_64.s: ../openssl/crypto/modes/asm/aesni-gcm-x86_64.pl
 x64-elf-gas/modes/ghash-x86_64.s: ../openssl/crypto/modes/asm/ghash-x86_64.pl
 x64-elf-gas/x86_64cpuid.s: ../openssl/crypto/x86_64cpuid.pl
 x64-macosx-gas/aes/aes-x86_64.s: ../openssl/crypto/aes/asm/aes-x86_64.pl
 x64-macosx-gas/aes/aesni-x86_64.s: ../openssl/crypto/aes/asm/aesni-x86_64.pl
 x64-macosx-gas/aes/vpaes-x86_64.s: ../openssl/crypto/aes/asm/vpaes-x86_64.pl
+x64-macosx-gas/aes/aesni-mb-x86_64.s: ../openssl/crypto/aes/asm/aesni-mb-x86_64.pl
+x64-macosx-gas/aes/aesni-sha256-x86_64.s: ../openssl/crypto/aes/asm/aesni-sha256-x86_64.pl
 x64-macosx-gas/aes/bsaes-x86_64.s: ../openssl/crypto/aes/asm/bsaes-x86_64.pl
 x64-macosx-gas/aes/aesni-sha1-x86_64.s: ../openssl/crypto/aes/asm/aesni-sha1-x86_64.pl
-x64-macosx-gas/bn/modexp512-x86_64.s: ../openssl/crypto/bn/asm/modexp512-x86_64.pl
+x64-macosx-gas/bn/rsaz-avx2.s: ../openssl/crypto/bn/asm/rsaz-avx2.pl
+x64-macosx-gas/bn/rsaz-x86_64.s: ../openssl/crypto/bn/asm/rsaz-x86_64.pl
 x64-macosx-gas/bn/x86_64-mont.s: ../openssl/crypto/bn/asm/x86_64-mont.pl
 x64-macosx-gas/bn/x86_64-mont5.s: ../openssl/crypto/bn/asm/x86_64-mont5.pl
 x64-macosx-gas/bn/x86_64-gf2m.s: ../openssl/crypto/bn/asm/x86_64-gf2m.pl
 x64-macosx-gas/camellia/cmll-x86_64.s: ../openssl/crypto/camellia/asm/cmll-x86_64.pl
+x64-macosx-gas/ec/ecp_nistz256-x86_64.s: ../openssl/crypto/ec/asm/ecp_nistz256-x86_64.pl
 x64-macosx-gas/md5/md5-x86_64.s: ../openssl/crypto/md5/asm/md5-x86_64.pl
-x64-macosx-gas/rc4/rc4-x86_64.s: ../openssl/crypto/rc4/asm/rc4-x86_64.pl
-x64-macosx-gas/rc4/rc4-md5-x86_64.s: ../openssl/crypto/rc4/asm/rc4-md5-x86_64.pl
 x64-macosx-gas/sha/sha1-x86_64.s: ../openssl/crypto/sha/asm/sha1-x86_64.pl
-x64-macosx-gas/sha/sha256-x86_64.s: ../openssl/crypto/sha/asm/sha256-x86_64.pl
-x64-macosx-gas/sha/sha512-x86_64.s: ../openssl/crypto/sha/asm/sha512-x86_64.pl
+x64-macosx-gas/sha/sha1-mb-x86_64.s: ../openssl/crypto/sha/asm/sha1-mb-x86_64.pl
+x64-macosx-gas/sha/sha256-mb-x86_64.s: ../openssl/crypto/sha/asm/sha256-mb-x86_64.pl
+x64-macosx-gas/sha/sha256-x86_64.s: ../openssl/crypto/sha/asm/sha512-x86_64.pl
+sha512/x64-macosx-gas/sha/sha512-x86_64.s: ../openssl/crypto/sha/asm/sha512-x86_64.pl
 x64-macosx-gas/whrlpool/wp-x86_64.s: ../openssl/crypto/whrlpool/asm/wp-x86_64.pl
+x64-macosx-gas/modes/aesni-gcm-x86_64.s: ../openssl/crypto/modes/asm/aesni-gcm-x86_64.pl
 x64-macosx-gas/modes/ghash-x86_64.s: ../openssl/crypto/modes/asm/ghash-x86_64.pl
 x64-macosx-gas/x86_64cpuid.s: ../openssl/crypto/x86_64cpuid.pl
 x64-win32-masm/aes/aes-x86_64.asm: ../openssl/crypto/aes/asm/aes-x86_64.pl
@@ -204,7 +231,7 @@ x64-win32-masm/md5/md5-x86_64.asm: ../openssl/crypto/md5/asm/md5-x86_64.pl
 x64-win32-masm/rc4/rc4-x86_64.asm: ../openssl/crypto/rc4/asm/rc4-x86_64.pl
 x64-win32-masm/rc4/rc4-md5-x86_64.asm: ../openssl/crypto/rc4/asm/rc4-md5-x86_64.pl
 x64-win32-masm/sha/sha1-x86_64.asm: ../openssl/crypto/sha/asm/sha1-x86_64.pl
-x64-win32-masm/sha/sha256-x86_64.asm: ../openssl/crypto/sha/asm/sha256-x86_64.pl
+x64-win32-masm/sha/sha256-x86_64.asm: ../openssl/crypto/sha/asm/sha512-x86_64.pl
 x64-win32-masm/sha/sha512-x86_64.asm: ../openssl/crypto/sha/asm/sha512-x86_64.pl
 x64-win32-masm/whrlpool/wp-x86_64.asm: ../openssl/crypto/whrlpool/asm/wp-x86_64.pl
 x64-win32-masm/modes/ghash-x86_64.asm: ../openssl/crypto/modes/asm/ghash-x86_64.pl
