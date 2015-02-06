@@ -31,40 +31,50 @@
             ['target_arch=="arm"', {
               'defines': ['<@(openssl_defines_asm)'],
               'sources': ['<@(openssl_sources_arm_elf_gas)'],
-            }, 'target_arch=="ia32"', {
-              'defines': ['<@(openssl_defines_asm)'],
-               'conditions': [
-                 ['OS=="mac"', {
-                   'defines': ['<@(openssl_defines_x86_mac)'],
-                   'sources': ['<@(openssl_sources_x86_macosx_gas)'],
-                 }, 'OS=="win"', {
-                   'defines': ['<@(openssl_defines_x86_win)'],
-                   'sources': ['<@(openssl_sources_x86_win32_masm)'],
-                 }, { # Linux or others
-                   'defines': ['<@(openssl_defines_x86_elf)'],
-                   'sources': ['<@(openssl_sources_x86_elf_gas)'],
-                 }], # end of conditions of OS
-               ],
-            }, 'target_arch=="x64"', {
-              'defines': ['<@(openssl_defines_asm)'],
-              'conditions': [
-                ['OS=="mac"', {
-                  'defines': ['<@(openssl_defines_x64_mac)'],
-                  'sources': ['<@(openssl_sources_x64_macosx_gas)'],
-                }, 'OS=="win"', {
-                  'defines': ['<@(openssl_defines_x64_win)'],
-                  'sources': ['<@(openssl_sources_x64_win32_masm)'],
-                }, { # Linux or others
-                  'defines': ['<@(openssl_defines_x64_elf)'],
-                  'sources': ['<@(openssl_sources_x64_elf_gas)'],
-                }], # end of conditions of OS
+            }, 'target_arch=="ia32" and OS=="mac"', {
+              'defines': [
+                '<@(openssl_defines_asm)',
+                '<@(openssl_defines_x86_mac)',
               ],
+              'sources': ['<@(openssl_sources_x86_macosx_gas)'],
+            }, 'target_arch=="ia32" and OS=="win"', {
+              'defines': [
+                '<@(openssl_defines_asm)',
+                '<@(openssl_defines_x86_win)',
+              ],
+              'sources': ['<@(openssl_sources_x86_win32_masm)'],
+            }, 'target_arch=="ia32"', {
+              # Linux or others
+              'defines': [
+                '<@(openssl_defines_asm)',
+                '<@(openssl_defines_x86_elf)',
+              ],
+              'sources': ['<@(openssl_sources_x86_elf_gas)'],
+            }, 'target_arch=="x64" and OS=="mac"', {
+              'defines': [
+                '<@(openssl_defines_asm)',
+                '<@(openssl_defines_x64_mac)',
+              ],
+              'sources': ['<@(openssl_sources_x64_macosx_gas)'],
+            }, 'target_arch=="x64" and OS=="win"', {
+              'defines': [
+                '<@(openssl_defines_asm)',
+                '<@(openssl_defines_x64_win)',
+              ],
+              'sources': ['<@(openssl_sources_x64_win32_masm)'],
+            }, 'target_arch=="x64"', {
+              # Linux or others
+              'defines': [
+                '<@(openssl_defines_asm)',
+                '<@(openssl_defines_x64_elf)',
+              ],
+              'sources': ['<@(openssl_sources_x64_elf_gas)'],
             }, { # else other archtectures does not use asm
               'defines': [
                 'OPENSSL_NO_ASM',
               ],
               'sources': ['<@(openssl_sources_no_asm)'],
-            }], # end of conditions of target_arch
+            }],
           ],
         }], # end of conditions of openssl_no_asm
         ['OS=="win"', {
