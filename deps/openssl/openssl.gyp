@@ -40,25 +40,6 @@
                  }, 'OS=="win"', {
                    'defines': ['<@(openssl_defines_x86_win)'],
                    'sources': ['<@(openssl_sources_x86_win32_masm)'],
-                   'rules': [
-                     {
-                       'rule_name': 'Assemble',
-                       'extension': 'asm',
-                       'inputs': [],
-                       'outputs': [
-                         '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
-                       ],
-                       'action': [
-                         'ml.exe',
-                         '/Zi',
-                         '/safeseh',
-                         '/Fo', '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
-                         '/c', '<(RULE_INPUT_PATH)',
-                      ],
-                       'process_outputs_as_sources': 0,
-                       'message': 'Assembling <(RULE_INPUT_PATH) to <(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj.',
-                     }
-                   ],
                  }, { # Linux or others
                    'defines': ['<@(openssl_defines_x86_elf)'],
                    'sources': ['<@(openssl_sources_x86_elf_gas)'],
@@ -73,24 +54,6 @@
                 }, 'OS=="win"', {
                   'defines': ['<@(openssl_defines_x64_win)'],
                   'sources': ['<@(openssl_sources_x64_win32_masm)'],
-                  'rules': [
-                    {
-                      'rule_name': 'Assemble',
-                      'extension': 'asm',
-                      'inputs': [],
-                      'outputs': [
-                        '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
-                      ],
-                      'action': [
-                        'ml64.exe',
-                        '/Zi',
-                        '/Fo', '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
-                        '/c', '<(RULE_INPUT_PATH)',
-                      ],
-                      'process_outputs_as_sources': 0,
-                      'message': 'Assembling <(RULE_INPUT_PATH) to <(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj.',
-                    }
-                  ],
                 }, { # Linux or others
                   'defines': ['<@(openssl_defines_x64_elf)'],
                   'sources': ['<@(openssl_sources_x64_elf_gas)'],
@@ -105,7 +68,49 @@
           ],
         }], # end of conditions of openssl_no_asm
         ['OS=="win"', {
-          'defines' : ['<@(openssl_defines_all_win)']
+          'defines' : ['<@(openssl_defines_all_win)'],
+          'conditions': [
+            ['target_arch=="ia32"', {
+              'rules': [
+                {
+                  'rule_name': 'Assemble',
+                  'extension': 'asm',
+                  'inputs': [],
+                  'outputs': [
+                    '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
+                  ],
+                  'action': [
+                    'ml.exe',
+                    '/Zi',
+                    '/safeseh',
+                    '/Fo', '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
+                    '/c', '<(RULE_INPUT_PATH)',
+                  ],
+                  'process_outputs_as_sources': 0,
+                  'message': 'Assembling <(RULE_INPUT_PATH) to <(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj.',
+                }
+              ],
+            }, 'target_arch=="x64"', {
+              'rules': [
+                {
+                  'rule_name': 'Assemble',
+                  'extension': 'asm',
+                  'inputs': [],
+                  'outputs': [
+                    '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
+                  ],
+                  'action': [
+                    'ml64.exe',
+                    '/Zi',
+                    '/Fo', '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
+                    '/c', '<(RULE_INPUT_PATH)',
+                  ],
+                  'process_outputs_as_sources': 0,
+                  'message': 'Assembling <(RULE_INPUT_PATH) to <(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj.',
+                }
+              ],
+            }],
+          ],
         }, {
           'defines' : ['<@(openssl_defines_all_non_win)']
         }]
