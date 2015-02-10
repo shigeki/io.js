@@ -150,6 +150,13 @@
     'conditions': [
       ['OS=="win"', {
         'defines': ['<@(openssl_default_defines_win)'],
+        'msvs_disabled_warnings': [
+          4244, # conversion from 'signed type', possible loss of data
+          4267, # conversion from 'unsigned type', possible loss of data
+          4996, # 'GetVersionExA': was declared deprecated
+          4293,
+          4305,
+        ],
         'link_settings': {
           'libraries': ['<@(openssl_default_libraries_win)'],
         },

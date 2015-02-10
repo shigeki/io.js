@@ -870,6 +870,7 @@
       # No asm available
       'openssl/crypto/bn/bn_asm.c',
       'openssl/crypto/bf/bf_enc.c',
+      'openssl/crypto/bn/rsaz_exp.c',
       'openssl/crypto/cast/c_enc.c',
       'openssl/crypto/camellia/cmll_misc.c',
       'openssl/crypto/des/des_enc.c',
@@ -1027,7 +1028,7 @@
       'openssl/crypto/modes',
       'openssl/crypto/store',
       'openssl/include',
-      'config/<(target_arch)>',
+      'config/<(target_arch)',
     ],
     'openssl_default_defines_all': [
       # No clue what these are for.
