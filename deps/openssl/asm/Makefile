@@ -121,30 +121,46 @@ OUTPUTS	= \
 	x86-win32-masm/modes/ghash-x86.asm \
 	x86-win32-masm/x86cpuid.asm \
 	x64-win32-masm/aes/aes-x86_64.asm \
+        x64-win32-masm/aes/aesni-mb-x86_64.asm \
+        x64-win32-masm/aes/aesni-sha256-x86_64.asm \
 	x64-win32-masm/aes/aesni-x86_64.asm \
 	x64-win32-masm/aes/vpaes-x86_64.asm \
 	x64-win32-masm/aes/bsaes-x86_64.asm \
 	x64-win32-masm/aes/aesni-sha1-x86_64.asm \
-	x64-win32-masm/bn/modexp512-x86_64.asm \
+        x64-win32-masm/bn/rsaz-avx2.asm \
+        x64-win32-masm/bn/rsaz-x86_64.asm \
 	x64-win32-masm/bn/x86_64-mont.asm \
 	x64-win32-masm/bn/x86_64-mont5.asm \
 	x64-win32-masm/bn/x86_64-gf2m.asm \
 	x64-win32-masm/camellia/cmll-x86_64.asm \
+        x64-win32-masm/ec/ecp_nistz256-x86_64.asm \
 	x64-win32-masm/md5/md5-x86_64.asm \
 	x64-win32-masm/rc4/rc4-x86_64.asm \
 	x64-win32-masm/rc4/rc4-md5-x86_64.asm \
+        x64-win32-masm/sha/sha1-mb-x86_64.asm \
 	x64-win32-masm/sha/sha1-x86_64.asm \
+        x64-win32-masm/sha/sha256-mb-x86_64.asm \
 	x64-win32-masm/sha/sha256-x86_64.asm \
-	x64-win32-masm/sha/sha512-x86_64.asm \
+        sha512/x64-win32-masm/sha/sha512-x86_64.asm \
 	x64-win32-masm/whrlpool/wp-x86_64.asm \
+        x64-win32-masm/modes/aesni-gcm-x86_64.asm \
 	x64-win32-masm/modes/ghash-x86_64.asm \
 	x64-win32-masm/x86_64cpuid.asm \
 
 arm-elf-gas/%.S x64-elf-gas/%.s x86-elf-gas/%.s:
 	$(PERL) $< elf > $@
 
-sha512/arm-elf-gas/%.S sha512/x64-elf-gas/%.s sha512/x86-elf-gas/%.s sha512/x64-macosx-gas/%s:
+sha512/arm-elf-gas/%.S sha512/x64-elf-gas/%.s sha512/x86-elf-gas/%.s:
 	$(PERL) $< elf  $@
+
+sha512/x64-macosx-gas/%.s:
+	$(PERL) $< macosx  $@
+
+sha512/x64-win32-masm/%.asm:
+	$(PERL) $< masm  $@
+
+sha512/x86-win32-masm/%.asm:
+	$(PERL) $< win32  $@
 
 x64-macosx-gas/%.s x86-macosx-gas/%.s:
 	$(PERL) $< macosx > $@
@@ -219,21 +235,28 @@ x64-macosx-gas/modes/ghash-x86_64.s: ../openssl/crypto/modes/asm/ghash-x86_64.pl
 x64-macosx-gas/x86_64cpuid.s: ../openssl/crypto/x86_64cpuid.pl
 x64-win32-masm/aes/aes-x86_64.asm: ../openssl/crypto/aes/asm/aes-x86_64.pl
 x64-win32-masm/aes/aesni-x86_64.asm: ../openssl/crypto/aes/asm/aesni-x86_64.pl
+x64-win32-masm/aes/aesni-mb-x86_64.asm: ../openssl/crypto/aes/asm/aesni-mb-x86_64.pl
+x64-win32-masm/aes/aesni-sha256-x86_64.asm: ../openssl/crypto/aes/asm/aesni-sha256-x86_64.pl
 x64-win32-masm/aes/vpaes-x86_64.asm: ../openssl/crypto/aes/asm/vpaes-x86_64.pl
 x64-win32-masm/aes/bsaes-x86_64.asm: ../openssl/crypto/aes/asm/bsaes-x86_64.pl
 x64-win32-masm/aes/aesni-sha1-x86_64.asm: ../openssl/crypto/aes/asm/aesni-sha1-x86_64.pl
-x64-win32-masm/bn/modexp512-x86_64.asm: ../openssl/crypto/bn/asm/modexp512-x86_64.pl
+x64-win32-masm/bn/rsaz-avx2.asm: ../openssl/crypto/bn/asm/rsaz-avx2.pl
+x64-win32-masm/bn/rsaz-x86_64.asm: ../openssl/crypto/bn/asm/rsaz-x86_64.pl
 x64-win32-masm/bn/x86_64-mont.asm: ../openssl/crypto/bn/asm/x86_64-mont.pl
 x64-win32-masm/bn/x86_64-mont5.asm: ../openssl/crypto/bn/asm/x86_64-mont5.pl
 x64-win32-masm/bn/x86_64-gf2m.asm: ../openssl/crypto/bn/asm/x86_64-gf2m.pl
 x64-win32-masm/camellia/cmll-x86_64.asm: ../openssl/crypto/camellia/asm/cmll-x86_64.pl
+x64-win32-masm/ec/ecp_nistz256-x86_64.asm: ../openssl/crypto/ec/asm/ecp_nistz256-x86_64.pl
 x64-win32-masm/md5/md5-x86_64.asm: ../openssl/crypto/md5/asm/md5-x86_64.pl
 x64-win32-masm/rc4/rc4-x86_64.asm: ../openssl/crypto/rc4/asm/rc4-x86_64.pl
 x64-win32-masm/rc4/rc4-md5-x86_64.asm: ../openssl/crypto/rc4/asm/rc4-md5-x86_64.pl
+x64-win32-masm/sha/sha1-mb-x86_64.asm: ../openssl/crypto/sha/asm/sha1-mb-x86_64.pl
 x64-win32-masm/sha/sha1-x86_64.asm: ../openssl/crypto/sha/asm/sha1-x86_64.pl
+x64-win32-masm/sha/sha256-mb-x86_64.asm: ../openssl/crypto/sha/asm/sha256-mb-x86_64.pl
 x64-win32-masm/sha/sha256-x86_64.asm: ../openssl/crypto/sha/asm/sha512-x86_64.pl
-x64-win32-masm/sha/sha512-x86_64.asm: ../openssl/crypto/sha/asm/sha512-x86_64.pl
+sha512/x64-win32-masm/sha/sha512-x86_64.asm: ../openssl/crypto/sha/asm/sha512-x86_64.pl
 x64-win32-masm/whrlpool/wp-x86_64.asm: ../openssl/crypto/whrlpool/asm/wp-x86_64.pl
+x64-win32-masm/modes/aesni-gcm-x86_64.asm: ../openssl/crypto/modes/asm/aesni-gcm-x86_64.pl
 x64-win32-masm/modes/ghash-x86_64.asm: ../openssl/crypto/modes/asm/ghash-x86_64.pl
 x64-win32-masm/x86_64cpuid.asm: ../openssl/crypto/x86_64cpuid.pl
 x86-elf-gas/aes/aes-586.s: ../openssl/crypto/aes/asm/aes-586.pl
