@@ -83,9 +83,11 @@
                       ],
                       'action': [
                         'ml64.exe',
+                        '/c',
+                        '/Cp',
+                        '/Cx',
                         '/Zi',
                         '/Fo', '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
-                        '/c', '<(RULE_INPUT_PATH)',
                       ],
                       'process_outputs_as_sources': 0,
                       'message': 'Assembling <(RULE_INPUT_PATH) to <(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj.',
