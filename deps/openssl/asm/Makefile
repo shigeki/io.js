@@ -157,7 +157,7 @@ sha512/x64-macosx-gas/%.s:
 	$(PERL) $< macosx  $@
 
 sha512/x64-win32-masm/%.asm:
-	$(PERL) $< $@
+	$(PERL) $< masm $@
 
 sha512/x86-win32-masm/%.asm:
 	$(PERL) $< win32  $@
