@@ -19,6 +19,9 @@ extern "C" {
 #ifndef OPENSSL_DOING_MAKEDEPEND
 
 
+# ifndef OPENSSL_NO_CAPIENG
+#  define OPENSSL_NO_CAPIENG
+# endif
 #ifndef OPENSSL_NO_EC_NISTP_64_GCC_128
 # define OPENSSL_NO_EC_NISTP_64_GCC_128
 #endif
@@ -61,9 +64,7 @@ extern "C" {
 #ifndef OPENSSL_THREADS
 # define OPENSSL_THREADS
 #endif
-
-#undef OPENSSL_NO_DYNAMIC_ENGINE
-#if !defined(_WIN32)
+#ifndef OPENSSL_NO_DYNAMIC_ENGINE
 # define OPENSSL_NO_DYNAMIC_ENGINE
 #endif
 
@@ -110,7 +111,7 @@ extern "C" {
 # endif
 #endif
 
-#define OPENSSL_CPUID_OBJ
+/* #define OPENSSL_CPUID_OBJ */
 
 /* crypto/opensslconf.h.in */
 
