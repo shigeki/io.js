@@ -173,7 +173,7 @@ x64-win32-masm/%.asm:
 	$(PERL) $< masm > $@
 
 x86-win32-masm/%.asm:
-	$(PERL) $< win32 > $@
+	$(PERL) $< win32  -DOPENSSL_IA32_SSE2 > $@
 
 .PHONY:	all
 all:	$(OUTPUTS)
