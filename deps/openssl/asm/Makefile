@@ -103,16 +103,16 @@ OUTPUTS	= \
 	x86-win32-masm/aes/aes-586.asm \
 	x86-win32-masm/aes/aesni-x86.asm \
 	x86-win32-masm/aes/vpaes-x86.asm \
-	x86-win32-masm/bf/bf-686.asm \
+	x86-win32-masm/bf/bf-586.asm \
+	x86-win32-masm/bn/bn-586.asm \
 	x86-win32-masm/bn/x86-mont.asm \
-	x86-win32-masm/bn/x86.asm \
+	x86-win32-masm/bn/x86-gf2m.asm \
 	x86-win32-masm/camellia/cmll-x86.asm \
 	x86-win32-masm/cast/cast-586.asm \
 	x86-win32-masm/des/crypt586.asm \
 	x86-win32-masm/des/des-586.asm \
 	x86-win32-masm/md5/md5-586.asm \
 	x86-win32-masm/rc4/rc4-586.asm \
-	x86-win32-masm/rc5/rc5-586.asm \
 	x86-win32-masm/ripemd/rmd-586.asm \
 	x86-win32-masm/sha/sha1-586.asm \
 	x86-win32-masm/sha/sha256-586.asm \
@@ -303,8 +303,10 @@ x86-macosx-gas/x86cpuid.s: ../openssl/crypto/x86cpuid.pl
 x86-win32-masm/aes/aes-586.asm: ../openssl/crypto/aes/asm/aes-586.pl
 x86-win32-masm/aes/aesni-x86.asm: ../openssl/crypto/aes/asm/aesni-x86.pl
 x86-win32-masm/aes/vpaes-x86.asm: ../openssl/crypto/aes/asm/vpaes-x86.pl
-x86-win32-masm/bf/bf-686.asm: ../openssl/crypto/bf/asm/bf-686.pl
-x86-win32-masm/bn/x86.asm: ../openssl/crypto/bn/asm/x86.pl
+x86-win32-masm/bf/bf-586.asm: ../openssl/crypto/bf/asm/bf-586.pl
+x86-win32-masm/bn/bn-586.asm: ../openssl/crypto/bn/asm/bn-586.pl
+x86-win32-masm/bn/co-586.asm: ../openssl/crypto/bn/asm/co-586.pl
+x86-win32-masm/bn/x86-gf2m.asm: ../openssl/crypto/bn/asm/x86-gf2m.pl
 x86-win32-masm/bn/x86-mont.asm: ../openssl/crypto/bn/asm/x86-mont.pl
 x86-win32-masm/camellia/cmll-x86.asm: ../openssl/crypto/camellia/asm/cmll-x86.pl
 x86-win32-masm/cast/cast-586.asm: ../openssl/crypto/cast/asm/cast-586.pl
@@ -312,7 +314,6 @@ x86-win32-masm/des/crypt586.asm: ../openssl/crypto/des/asm/crypt586.pl
 x86-win32-masm/des/des-586.asm: ../openssl/crypto/des/asm/des-586.pl
 x86-win32-masm/md5/md5-586.asm: ../openssl/crypto/md5/asm/md5-586.pl
 x86-win32-masm/rc4/rc4-586.asm: ../openssl/crypto/rc4/asm/rc4-586.pl
-x86-win32-masm/rc5/rc5-586.asm: ../openssl/crypto/rc5/asm/rc5-586.pl
 x86-win32-masm/ripemd/rmd-586.asm: ../openssl/crypto/ripemd/asm/rmd-586.pl
 x86-win32-masm/sha/sha1-586.asm: ../openssl/crypto/sha/asm/sha1-586.pl
 x86-win32-masm/sha/sha256-586.asm: ../openssl/crypto/sha/asm/sha256-586.pl
