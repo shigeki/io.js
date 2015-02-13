@@ -183,8 +183,6 @@ clean:
 	find . -iname '*.asm' -exec rm "{}" \;
 	find . -iname '*.s' -exec rm "{}" \;
 
-hoge:
-	echo $(CC)
 
 x64-elf-gas/aes/aes-x86_64.s: ../openssl/crypto/aes/asm/aes-x86_64.pl
 x64-elf-gas/aes/aesni-x86_64.s: ../openssl/crypto/aes/asm/aesni-x86_64.pl
