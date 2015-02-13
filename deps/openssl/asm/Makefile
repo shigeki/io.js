@@ -105,6 +105,7 @@ OUTPUTS	= \
 	x86-win32-masm/aes/vpaes-x86.asm \
 	x86-win32-masm/bf/bf-586.asm \
 	x86-win32-masm/bn/bn-586.asm \
+	x86-win32-masm/bn/co-586.asm \
 	x86-win32-masm/bn/x86-mont.asm \
 	x86-win32-masm/bn/x86-gf2m.asm \
 	x86-win32-masm/camellia/cmll-x86.asm \
