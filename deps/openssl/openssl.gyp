@@ -29,10 +29,10 @@
           # "else if" was supported in https://codereview.chromium.org/601353002
           'conditions': [
             ['target_arch=="arm"', {
-              'defines': ['<@(openssl_defines_asm)'],
+              'defines': ['<@(openssl_defines_asm_arm)'],
               'sources': ['<@(openssl_sources_arm_elf_gas)'],
             }, 'target_arch=="ia32"', {
-              'defines': ['<@(openssl_defines_asm)'],
+              'defines': ['<@(openssl_defines_asm_x86)'],
                'conditions': [
                  ['OS=="mac"', {
                    'defines': ['<@(openssl_defines_x86_mac)'],
@@ -65,7 +65,7 @@
                  }], # end of conditions of OS
                ],
             }, 'target_arch=="x64"', {
-              'defines': ['<@(openssl_defines_asm)'],
+              'defines': ['<@(openssl_defines_asm_x64)'],
               'conditions': [
                 ['OS=="mac"', {
                   'defines': ['<@(openssl_defines_x64_mac)'],
