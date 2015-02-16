@@ -6,16 +6,17 @@ OUTPUTS	= \
 	x86-elf-gas/aes/aes-586.s \
 	x86-elf-gas/aes/aesni-x86.s \
 	x86-elf-gas/aes/vpaes-x86.s \
-	x86-elf-gas/bf/bf-686.s \
+	x86-elf-gas/bf/bf-586.s \
+	x86-elf-gas/bn/bn-586.s \
+	x86-elf-gas/bn/co-586.s \
 	x86-elf-gas/bn/x86-mont.s \
-	x86-elf-gas/bn/x86.s \
+	x86-elf-gas/bn/x86-gf2m.s \
 	x86-elf-gas/camellia/cmll-x86.s \
 	x86-elf-gas/cast/cast-586.s \
 	x86-elf-gas/des/crypt586.s \
 	x86-elf-gas/des/des-586.s \
 	x86-elf-gas/md5/md5-586.s \
 	x86-elf-gas/rc4/rc4-586.s \
-	x86-elf-gas/rc5/rc5-586.s \
 	x86-elf-gas/ripemd/rmd-586.s \
 	x86-elf-gas/sha/sha1-586.s \
 	x86-elf-gas/sha/sha256-586.s \
@@ -148,10 +149,16 @@ OUTPUTS	= \
 	x64-win32-masm/modes/ghash-x86_64.asm \
 	x64-win32-masm/x86_64cpuid.asm \
 
-arm-elf-gas/%.S x64-elf-gas/%.s x86-elf-gas/%.s:
+arm-elf-gas/%.S x64-elf-gas/%.s:
 	$(PERL) $< elf > $@
 
-sha512/arm-elf-gas/%.S sha512/x64-elf-gas/%.s sha512/x86-elf-gas/%.s:
+x64-macosx-gas/%.s:
+	$(PERL) $< macosx > $@
+
+x64-win32-masm/%.asm:
+	$(PERL) $< masm > $@
+
+sha512/arm-elf-gas/%.S sha512/x64-elf-gas/%.s:
 	$(PERL) $< elf  $@
 
 sha512/x64-macosx-gas/%.s:
@@ -160,17 +167,11 @@ sha512/x64-macosx-gas/%.s:
 sha512/x64-win32-masm/%.asm:
 	$(PERL) $< masm $@
 
-sha512/x86-win32-masm/%.asm:
-	$(PERL) $< win32  $@
+x86-elf-gas/%.s:
+	$(PERL) $< elf  -DOPENSSL_IA32_SSE2 > $@
 
-x64-macosx-gas/%.s x86-macosx-gas/%.s:
-	$(PERL) $< macosx > $@
-
-x64-macosx-gas/%.s x86-macosx-gas/%.s:
-	$(PERL) $< macosx > $@
-
-x64-win32-masm/%.asm:
-	$(PERL) $< masm > $@
+x86-macosx-gas/%.s:
+	$(PERL) $< macosx  -DOPENSSL_IA32_SSE2 > $@
 
 x86-win32-masm/%.asm:
 	$(PERL) $< win32  -DOPENSSL_IA32_SSE2 > $@
@@ -264,9 +265,11 @@ x64-win32-masm/x86_64cpuid.asm: ../openssl/crypto/x86_64cpuid.pl
 x86-elf-gas/aes/aes-586.s: ../openssl/crypto/aes/asm/aes-586.pl
 x86-elf-gas/aes/aesni-x86.s: ../openssl/crypto/aes/asm/aesni-x86.pl
 x86-elf-gas/aes/vpaes-x86.s: ../openssl/crypto/aes/asm/vpaes-x86.pl
-x86-elf-gas/bf/bf-686.s: ../openssl/crypto/bf/asm/bf-686.pl
+x86-elf-gas/bf/bf-586.s: ../openssl/crypto/bf/asm/bf-586.pl
+x86-elf-gas/bn/bn-586.s: ../openssl/crypto/bn/asm/bn-586.pl
+x86-elf-gas/bn/co-586.s: ../openssl/crypto/bn/asm/co-586.pl
 x86-elf-gas/bn/x86-mont.s: ../openssl/crypto/bn/asm/x86-mont.pl
-x86-elf-gas/bn/x86.s: ../openssl/crypto/bn/asm/x86.pl
+x86-elf-gas/bn/x86-gf2m.s: ../openssl/crypto/bn/asm/x86-gf2m.pl
 x86-elf-gas/camellia/cmll-x86.s: ../openssl/crypto/camellia/asm/cmll-x86.pl
 x86-elf-gas/cast/cast-586.s: ../openssl/crypto/cast/asm/cast-586.pl
 x86-elf-gas/des/crypt586.s: ../openssl/crypto/des/asm/crypt586.pl
