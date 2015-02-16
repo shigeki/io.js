@@ -1429,7 +1429,7 @@ $Lshaext_shortcut::
 	mov	ecx,DWORD PTR 28[esp]
 	sub	esp,32
 	movdqu	xmm0,XMMWORD PTR [edi]
-	movd	xmm1,XMMWORD PTR 16[edi]
+	movd	xmm1,DWORD PTR 16[edi]
 	and	esp,-32
 	movdqa	xmm3,XMMWORD PTR 80[ebp]
 	movdqu	xmm4,XMMWORD PTR [esi]
@@ -1573,7 +1573,7 @@ DB	15,56,200,202
 	pshufd	xmm0,xmm0,27
 	pshufd	xmm1,xmm1,27
 	movdqu	XMMWORD PTR [edi],xmm0
-	movd	XMMWORD PTR 16[edi],xmm1
+	movd	DWORD PTR 16[edi],xmm1
 	mov	esp,ebx
 	pop	edi
 	pop	esi
