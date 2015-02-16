@@ -60,16 +60,16 @@ OUTPUTS	= \
 	x86-macosx-gas/aes/aes-586.s \
 	x86-macosx-gas/aes/aesni-x86.s \
 	x86-macosx-gas/aes/vpaes-x86.s \
-	x86-macosx-gas/bf/bf-686.s \
+	x86-macosx-gas/bf/bf-586.s \
+	x86-macosx-gas/bn/bn-586.s \
+	x86-macosx-gas/bn/co-586.s \
 	x86-macosx-gas/bn/x86-mont.s \
-	x86-macosx-gas/bn/x86.s \
+	x86-macosx-gas/bn/x86-gf2m.s \
 	x86-macosx-gas/camellia/cmll-x86.s \
-	x86-macosx-gas/cast/cast-586.s \
 	x86-macosx-gas/des/crypt586.s \
 	x86-macosx-gas/des/des-586.s \
 	x86-macosx-gas/md5/md5-586.s \
 	x86-macosx-gas/rc4/rc4-586.s \
-	x86-macosx-gas/rc5/rc5-586.s \
 	x86-macosx-gas/ripemd/rmd-586.s \
 	x86-macosx-gas/sha/sha1-586.s \
 	x86-macosx-gas/sha/sha256-586.s \
@@ -287,11 +287,12 @@ x86-elf-gas/x86cpuid.s: ../openssl/crypto/x86cpuid.pl
 x86-macosx-gas/aes/aes-586.s: ../openssl/crypto/aes/asm/aes-586.pl
 x86-macosx-gas/aes/aesni-x86.s: ../openssl/crypto/aes/asm/aesni-x86.pl
 x86-macosx-gas/aes/vpaes-x86.s: ../openssl/crypto/aes/asm/vpaes-x86.pl
-x86-macosx-gas/bf/bf-686.s: ../openssl/crypto/bf/asm/bf-686.pl
+x86-macosx-gas/bf/bf-586.s: ../openssl/crypto/bf/asm/bf-686.pl
+x86-macosx-gas/bn/bn-586.s: ../openssl/crypto/bn/asm/bn-586.pl
+x86-macosx-gas/bn/co-586.s: ../openssl/crypto/bn/asm/co-586.pl
 x86-macosx-gas/bn/x86-mont.s: ../openssl/crypto/bn/asm/x86-mont.pl
-x86-macosx-gas/bn/x86.s: ../openssl/crypto/bn/asm/x86.pl
+x86-macosx-gas/bn/x86-gf2m.s: ../openssl/crypto/bn/asm/x86-gf2m.pl
 x86-macosx-gas/camellia/cmll-x86.s: ../openssl/crypto/camellia/asm/cmll-x86.pl
-x86-macosx-gas/cast/cast-586.s: ../openssl/crypto/cast/asm/cast-586.pl
 x86-macosx-gas/des/crypt586.s: ../openssl/crypto/des/asm/crypt586.pl
 x86-macosx-gas/des/des-586.s: ../openssl/crypto/des/asm/des-586.pl
 x86-macosx-gas/md5/md5-586.s: ../openssl/crypto/md5/asm/md5-586.pl
