@@ -29,43 +29,43 @@
           # "else if" was supported in https://codereview.chromium.org/601353002
           'conditions': [
             ['target_arch=="arm"', {
-              'defines': ['<@(openssl_defines_asm)'],
+              'defines': ['<@(openssl_defines_asm_arm)'],
               'sources': ['<@(openssl_sources_arm_elf_gas)'],
             }, 'target_arch=="ia32" and OS=="mac"', {
               'defines': [
-                '<@(openssl_defines_asm)',
+                '<@(openssl_defines_asm_x86)',
                 '<@(openssl_defines_x86_mac)',
               ],
               'sources': ['<@(openssl_sources_x86_macosx_gas)'],
             }, 'target_arch=="ia32" and OS=="win"', {
               'defines': [
-                '<@(openssl_defines_asm)',
+                '<@(openssl_defines_asm_x86)',
                 '<@(openssl_defines_x86_win)',
               ],
               'sources': ['<@(openssl_sources_x86_win32_masm)'],
             }, 'target_arch=="ia32"', {
               # Linux or others
               'defines': [
-                '<@(openssl_defines_asm)',
+                '<@(openssl_defines_asm_x86)',
                 '<@(openssl_defines_x86_elf)',
               ],
               'sources': ['<@(openssl_sources_x86_elf_gas)'],
             }, 'target_arch=="x64" and OS=="mac"', {
               'defines': [
-                '<@(openssl_defines_asm)',
+                '<@(openssl_defines_asm_x64)',
                 '<@(openssl_defines_x64_mac)',
               ],
               'sources': ['<@(openssl_sources_x64_macosx_gas)'],
             }, 'target_arch=="x64" and OS=="win"', {
               'defines': [
-                '<@(openssl_defines_asm)',
+                '<@(openssl_defines_asm_x64)',
                 '<@(openssl_defines_x64_win)',
               ],
               'sources': ['<@(openssl_sources_x64_win32_masm)'],
             }, 'target_arch=="x64"', {
               # Linux or others
               'defines': [
-                '<@(openssl_defines_asm)',
+                '<@(openssl_defines_asm_x64)',
                 '<@(openssl_defines_x64_elf)',
               ],
               'sources': ['<@(openssl_sources_x64_elf_gas)'],
@@ -163,6 +163,11 @@
     'conditions': [
       ['OS=="win"', {
         'defines': ['<@(openssl_default_defines_win)'],
+        'msvs_disabled_warnings': [
+          4244, # conversion from 'signed type', possible loss of data
+          4267, # conversion from 'unsigned type', possible loss of data
+          4996, # 'GetVersionExA': was declared deprecated
+        ],
         'link_settings': {
           'libraries': ['<@(openssl_default_libraries_win)'],
         },
