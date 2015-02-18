@@ -197,10 +197,12 @@ extern "C" {
 #undef SIXTY_FOUR_BIT_LONG
 #undef SIXTY_FOUR_BIT
 #undef THIRTY_TWO_BIT
-# if (defined(_M_X64) || defined(__x86_64__)) && defined(_WIN32)
-#  define SIXTY_FOUR_BIT
-# elif (defined(_M_X64) || defined(__x86_64__)) && !defined(_WIN32)
-#  define SIXTY_FOUR_BIT_LONG
+# if (defined(_M_X64) || defined(__x86_64__))
+#  if defined(_LP64)
+#   define SIXTY_FOUR_BIT_LONG
+#  else
+#   define SIXTY_FOUR_BIT
+#  endif
 # elif defined(_M_IX86) || defined(__i386__) || defined(__arm__) || defined(__mips__)
 #  define THIRTY_TWO_BIT
 # endif
