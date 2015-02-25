@@ -14,179 +14,86 @@
       'target_name': 'openssl',
       'type': '<(library)',
       'sources': ['<@(openssl_sources)'],
-      'sources/': [
-        ['exclude', 'md2/.*$'],
-        ['exclude', 'store/.*$']
-      ],
+      'direct_dependent_settings': {
+        'include_dirs': ['openssl/include'],
+      },
       'conditions': [
         ['openssl_no_asm!=0', {
           # Disable asm
-          'defines': [
-            'OPENSSL_NO_ASM',
-          ],
           'sources': ['<@(openssl_sources_no_asm)'],
         }, {
           # "else if" was supported in https://codereview.chromium.org/601353002
           'conditions': [
             ['target_arch=="arm"', {
-              'defines': ['<@(openssl_defines_asm)'],
-              'sources': ['<@(openssl_sources_arm_elf_gas)'],
+              'sources': ['<@(openssl_sources_arm_void_gas)'],
             }, 'target_arch=="ia32" and OS=="mac"', {
-              'defines': [
-                '<@(openssl_defines_asm)',
-                '<@(openssl_defines_x86_mac)',
-              ],
-              'sources': ['<@(openssl_sources_x86_macosx_gas)'],
+              'sources': ['<@(openssl_sources_ia32_mac_gas)'],
             }, 'target_arch=="ia32" and OS=="win"', {
-              'defines': [
-                '<@(openssl_defines_asm)',
-                '<@(openssl_defines_x86_win)',
-              ],
-              'sources': ['<@(openssl_sources_x86_win32_masm)'],
+              'sources': ['<@(openssl_sources_ia32_win32_masm)'],
             }, 'target_arch=="ia32"', {
               # Linux or others
-              'defines': [
-                '<@(openssl_defines_asm)',
-                '<@(openssl_defines_x86_elf)',
-              ],
-              'sources': ['<@(openssl_sources_x86_elf_gas)'],
+              'sources': ['<@(openssl_sources_ia32_elf_gas)'],
             }, 'target_arch=="x64" and OS=="mac"', {
-              'defines': [
-                '<@(openssl_defines_asm)',
-                '<@(openssl_defines_x64_mac)',
-              ],
-              'sources': ['<@(openssl_sources_x64_macosx_gas)'],
+              'sources': ['<@(openssl_sources_x64_mac_gas)'],
             }, 'target_arch=="x64" and OS=="win"', {
-              'defines': [
-                '<@(openssl_defines_asm)',
-                '<@(openssl_defines_x64_win)',
-              ],
               'sources': ['<@(openssl_sources_x64_win32_masm)'],
             }, 'target_arch=="x64"', {
               # Linux or others
-              'defines': [
-                '<@(openssl_defines_asm)',
-                '<@(openssl_defines_x64_elf)',
-              ],
               'sources': ['<@(openssl_sources_x64_elf_gas)'],
             }, { # else other archtectures does not use asm
-              'defines': [
-                'OPENSSL_NO_ASM',
-              ],
               'sources': ['<@(openssl_sources_no_asm)'],
             }],
           ],
-        }], # end of conditions of openssl_no_asm
-        ['OS=="win"', {
-          'defines' : ['<@(openssl_defines_all_win)'],
-          'conditions': [
-            ['target_arch=="ia32"', {
-              'rules': [
-                {
-                  'rule_name': 'Assemble',
-                  'extension': 'asm',
-                  'inputs': [],
-                  'outputs': [
-                    '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
-                  ],
-                  'action': [
-                    'ml.exe',
-                    '/Zi',
-                    '/safeseh',
-                    '/Fo', '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
-                    '/c', '<(RULE_INPUT_PATH)',
-                  ],
-                  'process_outputs_as_sources': 0,
-                  'message': 'Assembling <(RULE_INPUT_PATH) to <(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj.',
-                }
-              ],
-            }, 'target_arch=="x64"', {
-              'rules': [
-                {
-                  'rule_name': 'Assemble',
-                  'extension': 'asm',
-                  'inputs': [],
-                  'outputs': [
-                    '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
-                  ],
-                  'action': [
-                    'ml64.exe',
-                    '/Zi',
-                    '/Fo', '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
-                    '/c', '<(RULE_INPUT_PATH)',
-                  ],
-                  'process_outputs_as_sources': 0,
-                  'message': 'Assembling <(RULE_INPUT_PATH) to <(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj.',
-                }
-              ],
-            }],
-          ],
-        }, {
-          'defines' : ['<@(openssl_defines_all_non_win)']
-        }]
-      ],
-      'include_dirs': ['<@(openssl_include_dirs)'],
-      'direct_dependent_settings': {
-        'include_dirs': [
-          'openssl/include'
-        ],
-      },
-    },
-    {
-      'target_name': 'openssl-cli',
-      'type': 'executable',
-      'dependencies': ['openssl'],
-      'defines': [
-        'MONOLITH'
-      ],
-      'sources': ['<@(openssl_cli_sources)'],
-      'conditions': [
-        ['OS=="solaris"', {
-          'libraries': ['<@(openssl_cli_libraries_solaris)']
-        }, 'OS=="win"', {
-          'link_settings': {
-            'libraries': ['<@(openssl_cli_libraries_win)'],
-          },
-        }, 'OS in "linux android"', {
-          'link_settings': {
-            'libraries': [
-              '-ldl',
-            ],
-          },
         }],
-      ]
+        # masm rules for Win
+        ['OS=="win"', {
+          'includes': ['masm_compile.gypi',],
+        }],
+      ],
+    },{
+      # openssl-cli
+      'includes': ['openssl-cli.gypi',],
     }
   ],
   'target_defaults': {
-    'include_dirs': ['<@(openssl_default_include_dirs)'],
-    'defines': ['<@(openssl_default_defines_all)'],
+    'include_dirs': ['<@(openssl_include_dirs)'],
     'conditions': [
+      ['openssl_no_asm!=0', {
+        'defines': ['<@(openssl_defines_no_asm)'],
+      }, {
+        'conditions': [
+          ['target_arch=="arm"', {
+            'defines': ['<@(openssl_defines_arm)'],
+          }, 'target_arch=="ia32" and OS=="mac"', {
+            'defines': ['<@(openssl_defines_ia32_mac)'],
+          }, 'target_arch=="ia32" and OS=="win"', {
+            'defines': ['<@(openssl_defines_ia32_win)'],
+          }, 'target_arch=="ia32"', {
+            'defines': ['<@(openssl_defines_ia32_linux)'],
+          }, 'target_arch=="x64" and OS=="mac"', {
+            'defines': ['<@(openssl_defines_x64_mac)'],
+          }, 'target_arch=="x64" and OS=="win"', {
+            'defines': ['<@(openssl_defines_x64_win)'],
+          }, 'target_arch=="x64"', {
+            'defines': ['<@(openssl_defines_x64_linux)'],
+          }, {
+            'defines': ['<@(openssl_defines_no_asm)'],
+          }],
+        ],
+      }],
       ['OS=="win"', {
-        'defines': ['<@(openssl_default_defines_win)'],
+        'msvs_disabled_warnings': ['<@(msvs_disabled_warnings)'],
         'link_settings': {
           'libraries': ['<@(openssl_default_libraries_win)'],
-        },
+        }
       }, {
-        'defines': ['<@(openssl_default_defines_not_win)'],
-        'cflags': [
-          '-Wno-missing-field-initializers',
-        ],
-        'conditions': [
-          ['OS=="mac"', {
-            'defines': ['<@(openssl_default_defines_mac)'],
-          }, {
-            'defines': ['<@(openssl_default_defines_linux_others)'],
-          }],
-        ]
-      }],
-      ['is_clang==1 or gcc_version>=43', {
-        'cflags': ['-Wno-old-style-declaration'],
+          'cflags': ['<@(openssl_cflags_unix)'],
       }],
       ['OS=="solaris"', {
-        'defines': ['__EXTENSIONS__'],
+        'defines': ['<@(openssl_defines_solaris)'],
       }],
     ],
-  },
+  }, #end of target_defaults
 }
 
 # Local Variables:
