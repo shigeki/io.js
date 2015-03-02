@@ -403,6 +403,11 @@ def cc_macros():
       k[key] = val
   return k
 
+def is_arch_arm64():
+  """Check for ARMv8-64 instructions"""
+  cc_macros_cache = cc_macros()
+  return ('__aarch64__' in cc_macros_cache)
+
 
 def is_arch_armv7():
   """Check for ARMv7 instructions"""
@@ -439,6 +444,7 @@ def host_arch_cc():
     '__x86_64__'  : 'x64',
     '__i386__'    : 'ia32',
     '__arm__'     : 'arm',
+    '__aarch64__' : 'arm',
     '__mips__'    : 'mips',
   }
 
@@ -476,7 +482,10 @@ def configure_arm(o):
   else:
     arm_float_abi = 'default'
 
-  if is_arch_armv7():
+  if is_arch_arm64():
+    o['variables']['arm_fpu'] = 'vfpv4'
+    o['variables']['arm_version'] = '8'
+  elif is_arch_armv7():
     o['variables']['arm_fpu'] = 'vfpv3'
     o['variables']['arm_version'] = '7'
   else:
