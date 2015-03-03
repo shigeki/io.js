@@ -69,6 +69,12 @@
                 '<@(openssl_defines_x64_elf)',
               ],
               'sources': ['<@(openssl_sources_x64_elf_gas)'],
+            }, 'target_arch=="arm64"', {
+              # use no-asm for openssl-1.0.1
+              'defines': [
+                'OPENSSL_NO_ASM',
+              ],
+              'sources': ['<@(openssl_sources_no_asm)'],
             }, { # else other archtectures does not use asm
               'defines': [
                 'OPENSSL_NO_ASM',
