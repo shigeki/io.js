@@ -514,11 +514,12 @@ def configure_node(o):
     configure_arm(o)
   elif (target_arch == 'arm64' and
         not options.shared_openssl and
-        not options.without_ssl):
+        not options.without_ssl and
+        not options.openssl_no_asm ):
     # FIXME(bnoordhuis) It's not possible to build the bundled openssl due to
     # deps/openssl/asm/arm-elf-gas/modes/ghash-armv4.S, which is 32 bits only.
-    warn('not building openssl, arm64 not yet supported')
-    options.without_ssl = True
+    warn('not building openssl with asm, arm64 not yet supported')
+    options.openssl_no_asm = True
 
   if flavor in ('solaris', 'mac', 'linux', 'freebsd'):
     use_dtrace = not options.without_dtrace
