@@ -61,6 +61,11 @@ OUTPUTS	= \
 	arm-void-gas/sha/sha512-armv4.S \
 	arm-void-gas/modes/ghash-armv4.S \
 	arm-void-gas/modes/ghashv8-armx.S \
+	arm64-linux64-gas/aes/aesv8-armx.S \
+	arm64-linux64-gas/modes/ghashv8-armx.S \
+	arm64-linux64-gas/sha/sha1-armv8.S \
+	arm64-linux64-gas/sha/sha256-armv8.S \
+	sha512/arm64-linux64-gas/sha/sha512-armv8.S \
 	x86-macosx-gas/aes/aes-586.s \
 	x86-macosx-gas/aes/aesni-x86.s \
 	x86-macosx-gas/aes/vpaes-x86.s \
@@ -160,6 +165,12 @@ x64-elf-gas/%.s:
 arm-void-gas/%.S:
 	$(PERL) $< void > $@
 
+arm64-linux64-gas/%.S:
+	$(PERL) $< linux64 > $@
+
+sha512/arm64-linux64-gas/%.S:
+	$(PERL) $< linux64 $@
+
 x64-macosx-gas/%.s:
 	$(PERL) $< macosx > $@
 
@@ -194,6 +205,7 @@ outputs: $(OUTPUTS)
 clean:
 	find . -iname '*.asm' -exec rm "{}" \;
 	find . -iname '*.s' -exec rm "{}" \;
+	find . -iname '*.S' -exec rm "{}" \;
 
 # CC and ASM enviroments are needed to genrate asm files from perl.
 # Use gcc and nasm to run on unix.
@@ -358,3 +370,8 @@ arm-void-gas/sha/sha512-armv4.S: ../openssl/crypto/sha/asm/sha512-armv4.pl
 arm-void-gas/sha/sha256-armv4.S: ../openssl/crypto/sha/asm/sha256-armv4.pl
 arm-void-gas/modes/ghash-armv4.S: ../openssl/crypto/modes/asm/ghash-armv4.pl
 arm-void-gas/modes/ghashv8-armx.S: ../openssl/crypto/modes/asm/ghashv8-armx.pl
+arm64-linux64-gas/aes/aesv8-armx.S: ../openssl/crypto/aes/asm/aesv8-armx.pl
+arm64-linux64-gas/modes/ghashv8-armx.S: ../openssl/crypto/modes/asm/ghashv8-armx.pl
+arm64-linux64-gas/sha/sha1-armv8.S: ../openssl/crypto/sha/asm/sha1-armv8.pl
+arm64-linux64-gas/sha/sha256-armv8.S: ../openssl/crypto/sha/asm/sha512-armv8.pl
+sha512/arm64-linux64-gas/sha/sha512-armv8.S: ../openssl/crypto/sha/asm/sha512-armv8.pl
