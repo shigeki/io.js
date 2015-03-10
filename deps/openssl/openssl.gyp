@@ -30,7 +30,7 @@
           'conditions': [
             ['target_arch=="arm"', {
               'defines': ['<@(openssl_defines_asm)'],
-              'sources': ['<@(openssl_sources_arm_elf_gas)'],
+              'sources': ['<@(openssl_sources_arm_void_gas)'],
             }, 'target_arch=="ia32" and OS=="mac"', {
               'defines': [
                 '<@(openssl_defines_asm)',
@@ -70,11 +70,8 @@
               ],
               'sources': ['<@(openssl_sources_x64_elf_gas)'],
             }, 'target_arch=="arm64"', {
-              # use no-asm for openssl-1.0.1
-              'defines': [
-                'OPENSSL_NO_ASM',
-              ],
-              'sources': ['<@(openssl_sources_no_asm)'],
+              'defines': ['<@(openssl_defines_arm64)',],
+              'sources': ['<@(openssl_sources_arm64_linux64_gas)'],
             }, { # else other archtectures does not use asm
               'defines': [
                 'OPENSSL_NO_ASM',
