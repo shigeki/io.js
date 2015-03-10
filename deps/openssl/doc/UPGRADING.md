@@ -10,11 +10,11 @@ In io.js, build target is defined as `--dest-os` and `--dest-cpu` by using confi
 
 Here is a table of mapping each dest-os and dest-cpu in gyp to the config targets in openssl.
 
-|   | ia32 | x64 | arm | others |
-|---|------|-----|-----|--------|
-| win | VC-WIN32 | VC-WIN64A | - | - |
-| mac | darwin-i386-cc|darwin64-x86_64-cc | - | - |
-| linux and others | linux-elf | linux-x86_64 | linux_armv4 | linux-elf + no-asm |
+|   | ia32 | x64 | arm | arm64 | others |
+|---|------|-----|-----|-------|--------|
+| win | VC-WIN32 | VC-WIN64A | - | - | - |
+| mac | darwin-i386-cc|darwin64-x86_64-cc | - | - | - |
+| linux and others | linux-elf | linux-x86_64 | linux_armv4 | linux-aarch64 | linux-elf + no-asm |
 
 We need to convert all parameters such as sources, defines, cflags and others generated in Makefile and write them into gypi files. Since `crypto/opensslconf.h` depends on os and arch, we also need to change `dep/openssl/config/opensslconf.h` so as to work on all targets.
 
