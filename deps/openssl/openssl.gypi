@@ -1057,7 +1057,7 @@
     # https://github.com/openssl/openssl/blob/OpenSSL_1_0_2-stable/crypto/ec/asm/ecp_nistz256-avx2.pl#L45-L67
     #
     'conditions': [
-      ['masm_version>=12 or llvm_version>=33 or gas_version>=223', {
+      ['(OS=="win" and MSVS_VERSION[0:4]>="2012") or llvm_version>=33 or gas_version>=223', {
         'openssl_sources_x64_win_masm': [
           '<@(openssl_sources_asm_latest_x64_win_masm)',
           '<@(openssl_sources_common_x64_win_masm)',
