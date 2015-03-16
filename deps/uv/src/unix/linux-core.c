@@ -579,6 +579,7 @@ static int read_models(unsigned int numcpus, uv_cpu_info_t* ci) {
   speed_idx = 0;
 
 #if defined(__arm__) || \
+    defined(__aarch64__) || \
     defined(__i386__) || \
     defined(__mips__) || \
     defined(__x86_64__)
@@ -599,9 +600,9 @@ static int read_models(unsigned int numcpus, uv_cpu_info_t* ci) {
         continue;
       }
     }
-#if defined(__arm__) || defined(__mips__)
+#if defined(__arm__) || defined(__mips__) || defined(__aarch64__)
     if (model_idx < numcpus) {
-#if defined(__arm__)
+#if defined(__arm__) || defined(__aarch64__)
       /* Fallback for pre-3.8 kernels. */
       static const char model_marker[] = "Processor\t: ";
 #else	/* defined(__mips__) */
