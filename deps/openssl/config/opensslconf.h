@@ -155,7 +155,11 @@ extern "C" {
  * - Intel P6 because partial register stalls are very expensive;
  * - elder Alpha because it lacks byte load/store instructions;
  */
-#define RC4_INT unsigned int
+# if defined(__aarch64__)
+#  define RC4_INT unsigned char
+# else
+#  define RC4_INT unsigned int
+# endif
 #endif
 
 /*
@@ -217,7 +221,7 @@ extern "C" {
 #if defined(HEADER_BF_LOCL_H) && !defined(CONFIG_HEADER_BF_LOCL_H)
 #define CONFIG_HEADER_BF_LOCL_H
 #undef BF_PTR
-#ifdef __APPLE__
+#if defined (__APPLE__) || defined(__aarch64__)
 #define BF_PTR
 #endif
 #endif /* HEADER_BF_LOCL_H */
