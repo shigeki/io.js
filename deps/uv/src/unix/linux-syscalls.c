@@ -47,6 +47,8 @@
    /* Nothing. Handled through socketcall(). */
 # elif defined(__arm__)
 #  define __NR_accept4 (UV_SYSCALL_BASE + 366)
+# elif defined(__aarch64__)
+#  define __NR_accept4 242
 # endif
 #endif /* __NR_accept4 */
 
@@ -57,6 +59,8 @@
 #  define __NR_eventfd 323
 # elif defined(__arm__)
 #  define __NR_eventfd (UV_SYSCALL_BASE + 351)
+# elif defined(__aarch64__)
+#  define __NR_eventfd 1044
 # endif
 #endif /* __NR_eventfd */
 
@@ -67,6 +71,8 @@
 #  define __NR_eventfd2 328
 # elif defined(__arm__)
 #  define __NR_eventfd2 (UV_SYSCALL_BASE + 356)
+# elif defined(__aarch64__)
+#  define __NR_eventfd2 19
 # endif
 #endif /* __NR_eventfd2 */
 
@@ -87,6 +93,8 @@
 #  define __NR_epoll_create1 329
 # elif defined(__arm__)
 #  define __NR_epoll_create1 (UV_SYSCALL_BASE + 357)
+# elif defined(__aarch64__)
+#  define __NR_epoll_create1 20
 # endif
 #endif /* __NR_epoll_create1 */
 
@@ -97,6 +105,8 @@
 #  define __NR_epoll_ctl 255
 # elif defined(__arm__)
 #  define __NR_epoll_ctl (UV_SYSCALL_BASE + 251)
+# elif defined(__aarch64__)
+#  define __NR_epoll_ctl 21
 # endif
 #endif /* __NR_epoll_ctl */
 
@@ -107,6 +117,8 @@
 #  define __NR_epoll_wait 256
 # elif defined(__arm__)
 #  define __NR_epoll_wait (UV_SYSCALL_BASE + 252)
+# elif defined(__aarch64__)
+/* deprecated */
 # endif
 #endif /* __NR_epoll_wait */
 
@@ -117,6 +129,8 @@
 #  define __NR_epoll_pwait 319
 # elif defined(__arm__)
 #  define __NR_epoll_pwait (UV_SYSCALL_BASE + 346)
+# elif defined(__aarch64__)
+#  define __NR_epoll_pwait 22
 # endif
 #endif /* __NR_epoll_pwait */
 
@@ -137,6 +151,8 @@
 #  define __NR_inotify_init1 332
 # elif defined(__arm__)
 #  define __NR_inotify_init1 (UV_SYSCALL_BASE + 360)
+# elif defined(__aarch64__)
+#  define __NR_inotify_init1 26
 # endif
 #endif /* __NR_inotify_init1 */
 
@@ -147,6 +163,8 @@
 #  define __NR_inotify_add_watch 292
 # elif defined(__arm__)
 #  define __NR_inotify_add_watch (UV_SYSCALL_BASE + 317)
+# elif defined(__aarch64__)
+#  define __NR_inotify_add_watch 27
 # endif
 #endif /* __NR_inotify_add_watch */
 
@@ -157,6 +175,8 @@
 #  define __NR_inotify_rm_watch 293
 # elif defined(__arm__)
 #  define __NR_inotify_rm_watch (UV_SYSCALL_BASE + 318)
+# elif defined(__aarch64__)
+#  define __NR_inotify_rm_watch 28
 # endif
 #endif /* __NR_inotify_rm_watch */
 
@@ -167,6 +187,8 @@
 #  define __NR_pipe2 331
 # elif defined(__arm__)
 #  define __NR_pipe2 (UV_SYSCALL_BASE + 359)
+# elif defined(__aarch64__)
+#  define __NR_pipe2 59
 # endif
 #endif /* __NR_pipe2 */
 
@@ -177,6 +199,8 @@
 #  define __NR_recvmmsg 337
 # elif defined(__arm__)
 #  define __NR_recvmmsg (UV_SYSCALL_BASE + 365)
+# elif defined(__aarch64__)
+#  define __NR_recvmmsg 212
 # endif
 #endif /* __NR_recvmsg */
 
@@ -187,6 +211,8 @@
 #  define __NR_sendmmsg 345
 # elif defined(__arm__)
 #  define __NR_sendmmsg (UV_SYSCALL_BASE + 374)
+# elif defined(__aarch64__)
+#  define __NR_sendmmsg 211
 # endif
 #endif /* __NR_sendmmsg */
 
@@ -197,6 +223,8 @@
 #  define __NR_utimensat 320
 # elif defined(__arm__)
 #  define __NR_utimensat (UV_SYSCALL_BASE + 348)
+# elif defined(__aarch64__)
+#  define __NR_utimensat 88
 # endif
 #endif /* __NR_utimensat */
 
@@ -207,6 +235,8 @@
 #  define __NR_preadv 333
 # elif defined(__arm__)
 #  define __NR_preadv (UV_SYSCALL_BASE + 361)
+# elif defined(__aarch64__)
+#  define __NR_preadv 69
 # endif
 #endif /* __NR_preadv */
 
@@ -217,6 +247,8 @@
 #  define __NR_pwritev 334
 # elif defined(__arm__)
 #  define __NR_pwritev (UV_SYSCALL_BASE + 362)
+# elif defined(__aarch64__)
+#  define __NR_pwritev 70
 # endif
 #endif /* __NR_pwritev */
 
@@ -227,6 +259,8 @@
 #  define __NR_dup3 330
 # elif defined(__arm__)
 #  define __NR_dup3 (UV_SYSCALL_BASE + 358)
+# elif defined(__aarch64__)
+#  define __NR_dup3 24
 # endif
 #endif /* __NR_pwritev */
 
