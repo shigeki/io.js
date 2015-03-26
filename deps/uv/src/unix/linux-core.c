@@ -210,7 +210,7 @@ void uv__io_poll(uv_loop_t* loop, int timeout) {
       if (pthread_sigmask(SIG_BLOCK, &sigset, NULL))
         abort();
 
-    if (sigmask != 0 && no_epoll_pwait == 0) {
+    if (no_epoll_pwait == 0) {
       nfds = uv__epoll_pwait(loop->backend_fd,
                              events,
                              ARRAY_SIZE(events),
@@ -579,6 +579,7 @@ static int read_models(unsigned int numcpus, uv_cpu_info_t* ci) {
   speed_idx = 0;
 
 #if defined(__arm__) || \
+    defined(__aarch64__) || \
     defined(__i386__) || \
     defined(__mips__) || \
     defined(__x86_64__)
@@ -599,9 +600,9 @@ static int read_models(unsigned int numcpus, uv_cpu_info_t* ci) {
         continue;
       }
     }
-#if defined(__arm__) || defined(__mips__)
+#if defined(__arm__) || defined(__mips__) || defined(__aarch64__)
     if (model_idx < numcpus) {
-#if defined(__arm__)
+#if defined(__arm__) || defined(__aarch64)
       /* Fallback for pre-3.8 kernels. */
       static const char model_marker[] = "Processor\t: ";
 #else	/* defined(__mips__) */
@@ -618,18 +619,18 @@ static int read_models(unsigned int numcpus, uv_cpu_info_t* ci) {
         continue;
       }
     }
-#else  /* !__arm__ && !__mips__ */
+#else  /* !__arm__ && !__mips__ && !__aarch64__ */
     if (speed_idx < numcpus) {
       if (strncmp(buf, speed_marker, sizeof(speed_marker) - 1) == 0) {
         ci[speed_idx++].speed = atoi(buf + sizeof(speed_marker) - 1);
         continue;
       }
     }
-#endif  /* __arm__ || __mips__ */
+#endif  /* __arm__ || __mips__ || __aarch64__ */
   }
 
   fclose(fp);
-#endif  /* __arm__ || __i386__ || __mips__ || __x86_64__ */
+#endif  /* __arm__ || __aarch64__ || __i386__ || __mips__ || __x86_64__ */
 
   /* Now we want to make sure that all the models contain *something* because
    * it's not safe to leave them as null. Copy the last entry unless there
