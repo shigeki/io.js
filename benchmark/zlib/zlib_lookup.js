@@ -29,9 +29,10 @@ function main(conf) {
 
   bench.start();
   for (var i = 0; i < n; i += 1) {
-    Object.keys(zlib.codes).forEach(function(key) {
-      assert.equal(zlib.codes[key], zlib_codes[key]);
-    });
+    var keys = Object.keys(zlib.codes);
+    for(var j = 0; j < keys.length; ++j) {
+      assert.equal(zlib.codes[keys[j]], zlib_codes[keys[j]]);
+    };
   }
   bench.end(n);
 }
