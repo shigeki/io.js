@@ -147,9 +147,11 @@ Be sure you have downloaded and extracted [Android NDK]
 before in a folder. Then run:
 
 ```
-$ ./android-configure /path/to/your/android-ndk
+$ ./android-configure [-p] /path/to/your/android-ndk
 $ make
 ```
+In order to execute iojs above Android 5.0, `-p` option is needed for
+PIE(Position Independent Executable) build.
 
 ### `Intl` (ECMA-402) support:
 

@@ -303,6 +303,11 @@ parser.add_option('--enable-static',
     dest='enable_static',
     help='build as static library')
 
+parser.add_option('--pie',
+    action='store_true',
+    dest='enable_pie',
+    help='enable PIE build')
+
 (options, args) = parser.parse_args()
 
 # set up auto-download list
@@ -578,6 +583,11 @@ def configure_mips(o):
 def configure_node(o):
   if options.dest_os == 'android':
     o['variables']['OS'] = 'android'
+    # PIE(Position-Independent Executable) build is needed above Android 5.x
+    if (options.enable_pie):
+      o['cflags'] = ['-pie', '-fPIE']
+      o['ldflags'] = ['-pie', '-fPIE']
+
   o['variables']['node_prefix'] = os.path.expanduser(options.prefix or '')
   o['variables']['node_install_npm'] = b(not options.without_npm)
   o['default_configuration'] = 'Debug' if options.debug else 'Release'
@@ -668,7 +678,7 @@ def configure_libz(o):
 
 def configure_http_parser(o):
     o['variables']['node_shared_http_parser'] = b(options.shared_http_parser)
-    
+
     if b(options.shared_http_parser) == True:
       o['libraries'] += ['-l%s' % options.shared_http_parser_libname]
     if options.shared_http_parser_libpath:
