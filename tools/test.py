@@ -41,7 +41,7 @@ import tempfile
 import time
 import threading
 import utils
-import multiprocessing
+# import multiprocessing
 import errno
 
 from os.path import join, dirname, abspath, basename, isdir, exists
@@ -1273,8 +1273,8 @@ def ProcessOptions(options):
   VERBOSE = options.verbose
   options.arch = options.arch.split(',')
   options.mode = options.mode.split(',')
-  if options.J:
-    options.j = multiprocessing.cpu_count()
+#  if options.J:
+#    options.j = multiprocessing.cpu_count()
   return True
 
 
