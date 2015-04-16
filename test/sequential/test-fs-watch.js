@@ -5,6 +5,7 @@ var fs = require('fs');
 
 var expectFilePath = process.platform === 'win32' ||
                      process.platform === 'linux' ||
+                     process.platform === 'android' ||
                      process.platform === 'darwin';
 
 var watchSeenOne = 0;

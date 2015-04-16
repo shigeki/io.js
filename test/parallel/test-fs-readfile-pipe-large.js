@@ -3,10 +3,12 @@ var assert = require('assert');
 var path = require('path');
 
 // simulate `cat readfile.js | node readfile.js`
+var isWindows = process.platform === 'win32';
+var isAndroid = process.platform === 'android';
 
 // TODO: Have some way to make this work on windows.
-if (process.platform === 'win32') {
-  console.error('No /dev/stdin on windows.  Skipping test.');
+if (isWindows || isAndroid) {
+  console.error('No /dev/stdin on windows and Android.  Skipping test.');
   process.exit();
 }
 

@@ -57,7 +57,10 @@ noEntSocketClient.on('error', function(err) {
 
 
 // On Windows or when running as root, a chmod has no effect on named pipes
-if (process.platform !== 'win32' && process.getuid() !== 0) {
+var isWindows = process.platform === 'win32';
+var isAndroid = process.platform === 'android';
+
+if (!isWindows && !isAndroid && process.getuid() !== 0) {
   // Trying to connect to a socket one has no access to should result in EACCES
   var accessServer = net.createServer(function() {
     assert.ok(false);
@@ -82,7 +85,7 @@ if (process.platform !== 'win32' && process.getuid() !== 0) {
 process.on('exit', function() {
   assert.ok(notSocketErrorFired);
   assert.ok(noEntErrorFired);
-  if (process.platform !== 'win32' && process.getuid() !== 0) {
+  if (!isWindows && !isAndroid && process.getuid() !== 0) {
     assert.ok(accessErrorFired);
   }
 });

@@ -47,13 +47,20 @@ createFileWithPerms(readWriteFile, 0666);
  * continuous integration platform to take care of that.
  */
 var hasWriteAccessForReadonlyFile = false;
-if (process.platform !== 'win32' && process.getuid() === 0) {
+var isWindows = process.platform === 'win32';
+var isAndroid = process.platform === 'android';
+
+if (!isWindows && !isAndroid && process.getuid() === 0) {
   hasWriteAccessForReadonlyFile = true;
   try {
     process.setuid('nobody');
     hasWriteAccessForReadonlyFile = false;
   } catch (err) {
   }
+}
+
+if (isAndroid) {
+  hasWriteAccessForReadonlyFile = true;
 }
 
 assert(typeof fs.F_OK === 'number');

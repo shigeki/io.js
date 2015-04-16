@@ -6,6 +6,9 @@ var error_count = 0;
 var response = '';
 var child;
 
+var isWindows = process.platform === 'win32';
+var isAndroid = process.platform === 'android';
+
 function after(err, stdout, stderr) {
   if (err) {
     error_count++;
@@ -19,10 +22,12 @@ function after(err, stdout, stderr) {
   }
 }
 
-if (process.platform !== 'win32') {
-  child = exec('/usr/bin/env', { env: { 'HELLO': 'WORLD' } }, after);
-} else {
+if (isWindows) {
   child = exec('set', { env: { 'HELLO': 'WORLD' } }, after);
+} else if (isAndroid) {
+  child = exec('/system/bin/printenv', { env: { 'HELLO': 'WORLD' } }, after);
+} else {
+  child = exec('/usr/bin/env', { env: { 'HELLO': 'WORLD' } }, after);
 }
 
 child.stdout.setEncoding('utf8');

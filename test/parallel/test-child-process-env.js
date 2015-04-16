@@ -4,6 +4,7 @@ var assert = require('assert');
 var spawn = require('child_process').spawn;
 
 var isWindows = process.platform === 'win32';
+var isAndroid = process.platform === 'android';
 
 var env = {
   'HELLO': 'WORLD'
@@ -14,6 +15,8 @@ env.__proto__ = {
 
 if (isWindows) {
   var child = spawn('cmd.exe', ['/c', 'set'], {env: env});
+} else if (isAndroid) {
+  var child = spawn('/system/bin/printenv', [], {env: env});
 } else {
   var child = spawn('/usr/bin/env', [], {env: env});
 }

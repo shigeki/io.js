@@ -3,8 +3,11 @@ var assert = require('assert');
 var cluster = require('cluster');
 var net = require('net');
 
-if (process.platform === 'win32') {
-  console.log('Skipping test, not reliable on Windows.');
+var isWindows = process.platform === 'win32';
+var isAndroid = process.platform === 'android';
+
+if (isWindows || isAndroid) {
+  console.log('Skipping test, not reliable on Windows and Android.');
   process.exit(0);
 }
 
