@@ -5,7 +5,8 @@
 #include "node_crypto_clienthello.h"  // ClientHelloParser
 #include "node_crypto_clienthello-inl.h"
 
-#ifdef OPENSSL_NPN_NEGOTIATED
+#if defined(OPENSSL_NPN_NEGOTIATED) || \
+  defined(TLSEXT_TYPE_application_layer_protocol_negotiation)
 #include "node_buffer.h"
 #endif
 
@@ -184,9 +185,16 @@ class SSLWrap {
     npn_protos_.Reset();
     selected_npn_proto_.Reset();
 #endif
+
 #ifdef SSL_CTRL_SET_TLSEXT_SERVERNAME_CB
     sni_context_.Reset();
 #endif
+
+#ifdef TLSEXT_TYPE_application_layer_protocol_negotiation
+    alpn_protos_.Reset();
+    selected_alpn_proto_.Reset();
+#endif
+
 #ifdef NODE__HAVE_TLSEXT_STATUS_CB
     ocsp_response_.Reset();
 #endif  // NODE__HAVE_TLSEXT_STATUS_CB
@@ -209,6 +217,7 @@ class SSLWrap {
       sizeof(SSL) + sizeof(SSL3_STATE) + 42 * 1024;
 
   static void InitNPN(SecureContext* sc);
+  static void InitALPN(SecureContext* sc, Base* base);
   static void AddMethods(Environment* env, v8::Handle<v8::FunctionTemplate> t);
 
   static SSL_SESSION* GetSessionCallback(SSL* s,
@@ -257,6 +266,17 @@ class SSLWrap {
                                      unsigned int inlen,
                                      void* arg);
 #endif  // OPENSSL_NPN_NEGOTIATED
+#ifdef TLSEXT_TYPE_application_layer_protocol_negotiation
+  static void GetALPNNegotiatedProto(
+    const v8::FunctionCallbackInfo<v8::Value>& args);
+  static void SetALPNProtocols(const v8::FunctionCallbackInfo<v8::Value>& args);
+  static int SelectALPNCallback(SSL* s,
+        const unsigned char** out,
+        unsigned char* outlen,
+        const unsigned char* in,
+        unsigned int inlen,
+        void* arg);
+#endif
   static int TLSExtStatusCallback(SSL* s, void* arg);
   static int SSLCertCallback(SSL* s, void* arg);
   static void SSLGetter(v8::Local<v8::String> property,
@@ -292,8 +312,14 @@ class SSLWrap {
   v8::Persistent<v8::Value> selected_npn_proto_;
 #endif  // OPENSSL_NPN_NEGOTIATED
 
+
 #ifdef SSL_CTRL_SET_TLSEXT_SERVERNAME_CB
   v8::Persistent<v8::Value> sni_context_;
+#endif
+
+#ifdef TLSEXT_TYPE_application_layer_protocol_negotiation
+  v8::Persistent<v8::Object> alpn_protos_;
+  v8::Persistent<v8::Value> selected_alpn_proto_;
 #endif
 
   friend class SecureContext;

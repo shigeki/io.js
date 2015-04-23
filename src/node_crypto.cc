@@ -137,6 +137,7 @@ template class SSLWrap<TLSWrap>;
 template void SSLWrap<TLSWrap>::AddMethods(Environment* env,
                                            Handle<FunctionTemplate> t);
 template void SSLWrap<TLSWrap>::InitNPN(SecureContext* sc);
+template void SSLWrap<TLSWrap>::InitALPN(SecureContext* sc, TLSWrap* w);
 template SSL_SESSION* SSLWrap<TLSWrap>::GetSessionCallback(
     SSL* s,
     unsigned char* key,
@@ -167,6 +168,15 @@ template void SSLWrap<TLSWrap>::DestroySSL();
 template int SSLWrap<TLSWrap>::SSLCertCallback(SSL* s, void* arg);
 template void SSLWrap<TLSWrap>::WaitForCertCb(CertCb cb, void* arg);
 
+#ifdef TLSEXT_TYPE_application_layer_protocol_negotiation
+template int SSLWrap<TLSWrap>::SelectALPNCallback(
+    SSL* s,
+    const unsigned char** out,
+    unsigned char* outlen,
+    const unsigned char* in,
+    unsigned int inlen,
+    void* arg);
+#endif
 
 static void crypto_threadid_cb(CRYPTO_THREADID* tid) {
   static_assert(sizeof(uv_thread_t) <= sizeof(void*),  // NOLINT(runtime/sizeof)
@@ -1144,12 +1154,19 @@ void SSLWrap<Base>::AddMethods(Environment* env, Handle<FunctionTemplate> t) {
   env->SetProtoMethod(t, "setMaxSendFragment", SetMaxSendFragment);
 #endif  // SSL_set_max_send_fragment
 
-#ifdef OPENSSL_NPN_NEGOTIATED
+#if defined(OPENSSL_NPN_NEGOTIATED) || \
+  defined(TLSEXT_TYPE_application_layer_protocol_negotiation)
   env->SetProtoMethod(t, "getNegotiatedProtocol", GetNegotiatedProto);
-#endif  // OPENSSL_NPN_NEGOTIATED
+#endif
 
 #ifdef OPENSSL_NPN_NEGOTIATED
   env->SetProtoMethod(t, "setNPNProtocols", SetNPNProtocols);
+#endif
+
+#ifdef TLSEXT_TYPE_application_layer_protocol_negotiation
+  NODE_SET_PROTOTYPE_METHOD(t, "getALPNNegotiatedProtocol",
+                            GetALPNNegotiatedProto);
+  NODE_SET_PROTOTYPE_METHOD(t, "setALPNProtocols", SetALPNProtocols);
 #endif
 
   t->PrototypeTemplate()->SetAccessor(
@@ -1181,6 +1198,16 @@ void SSLWrap<Base>::InitNPN(SecureContext* sc) {
 #endif  // NODE__HAVE_TLSEXT_STATUS_CB
 }
 
+
+template <class Base>
+void SSLWrap<Base>::InitALPN(SecureContext* sc, Base* base) {
+#ifdef TLSEXT_TYPE_application_layer_protocol_negotiation
+  if (base->is_server()) {
+    // Server should select ALPN protocol from list of advertised by client
+    SSL_CTX_set_alpn_select_cb(sc->ctx_, SelectALPNCallback, nullptr);
+  }
+#endif
+}
 
 template <class Base>
 SSL_SESSION* SSLWrap<Base>::GetSessionCallback(SSL* s,
@@ -1967,6 +1994,92 @@ void SSLWrap<Base>::SetNPNProtocols(const FunctionCallbackInfo<Value>& args) {
 }
 #endif  // OPENSSL_NPN_NEGOTIATED
 
+#ifdef TLSEXT_TYPE_application_layer_protocol_negotiation
+typedef struct tlsextalpnctx_st {
+  unsigned char *data;
+  unsigned short len;
+} tlsextalpnctx;
+
+template <class Base>
+int SSLWrap<Base>::SelectALPNCallback(SSL* s,
+                                      const unsigned char** out,
+                                      unsigned char* outlen,
+                                      const unsigned char* in,
+                                      unsigned int inlen,
+                                      void* arg) {
+  Base* w = static_cast<Base*>(SSL_get_app_data(s));
+  Environment* env = w->env();
+  HandleScope handle_scope(env->isolate());
+  Context::Scope context_scope(env->context());
+
+  if (w->alpn_protos_.IsEmpty()) {
+    // We should at least select one protocol
+    // If server is using ALPN
+    *out = reinterpret_cast<unsigned char*>(const_cast<char*>("http/1.1"));
+    *outlen = 8;
+    return SSL_TLSEXT_ERR_OK;
+  }
+
+  Local<Object> obj = PersistentToLocal(env->isolate(), w->alpn_protos_);
+  const unsigned char* alpn_protos =
+      reinterpret_cast<const unsigned char*>(Buffer::Data(obj));
+  size_t len = Buffer::Length(obj);
+
+  int status = SSL_select_next_proto(
+      (unsigned char**) out, outlen, alpn_protos, len, in, inlen);
+
+  switch (status) {
+    case OPENSSL_NPN_NO_OVERLAP:
+      // Need to send no_application_protocol alert
+      // but current openssl does not support it yet.
+      return SSL_TLSEXT_ERR_ALERT_WARNING;
+    case OPENSSL_NPN_NEGOTIATED:
+      return SSL_TLSEXT_ERR_OK;
+    default:
+      return SSL_TLSEXT_ERR_ALERT_FATAL;
+  }
+}
+
+
+template <class Base>
+void SSLWrap<Base>::GetALPNNegotiatedProto(
+    const FunctionCallbackInfo<v8::Value>& args) {
+  HandleScope scope(args.GetIsolate());
+  Base* w = Unwrap<Base>(args.Holder());
+
+  const unsigned char* alpn_proto;
+  unsigned int alpn_proto_len;
+
+  SSL_get0_alpn_selected(w->ssl_, &alpn_proto, &alpn_proto_len);
+
+  if (!alpn_proto)
+    return args.GetReturnValue().Set(false);
+
+  args.GetReturnValue().Set(
+      OneByteString(args.GetIsolate(), alpn_proto, alpn_proto_len));
+}
+
+
+template <class Base>
+void SSLWrap<Base>::SetALPNProtocols(
+    const FunctionCallbackInfo<v8::Value>& args) {
+  HandleScope scope(args.GetIsolate());
+  Base* w = Unwrap<Base>(args.Holder());
+  if (args.Length() < 1 || !Buffer::HasInstance(args[0]))
+    return w->env()->ThrowTypeError("Must give a Buffer as first argument");
+
+    if (w->is_client()) {
+      const unsigned char* alpn_protos =
+          reinterpret_cast<const unsigned char*>(Buffer::Data(args[0]));
+      unsigned alpn_protos_len = Buffer::Length(args[0]);
+      int r = SSL_set_alpn_protos(w->ssl_, alpn_protos, alpn_protos_len);
+      assert(r == 0);
+    } else {
+      w->alpn_protos_.Reset(args.GetIsolate(), args[0].As<Object>());
+    }
+}
+#endif
+
 
 #ifdef NODE__HAVE_TLSEXT_STATUS_CB
 template <class Base>
@@ -2469,6 +2582,7 @@ int Connection::SelectSNIContextCallback_(SSL *s, int *ad, void* arg) {
         conn->sni_context_.Reset(env->isolate(), ret);
         SecureContext* sc = Unwrap<SecureContext>(ret.As<Object>());
         InitNPN(sc);
+        InitALPN(sc, conn);
         SSL_set_SSL_CTX(s, sc->ctx_);
       } else {
         return SSL_TLSEXT_ERR_NOACK;
@@ -2504,6 +2618,7 @@ void Connection::New(const FunctionCallbackInfo<Value>& args) {
     SSL_set_info_callback(conn->ssl_, SSLInfoCallback);
 
   InitNPN(sc);
+  InitALPN(sc, conn);
 
   SSL_set_cert_cb(conn->ssl_, SSLWrap<Connection>::SSLCertCallback, conn);
 

@@ -143,6 +143,7 @@ void TLSWrap::InitSSL() {
 #endif  // SSL_CTRL_SET_TLSEXT_SERVERNAME_CB
 
   InitNPN(sc_);
+  InitALPN(sc_, this);
 
   SSL_set_cert_cb(ssl_, SSLWrap<TLSWrap>::SSLCertCallback, this);
 
@@ -863,6 +864,7 @@ int TLSWrap::SelectSNIContextCallback(SSL* s, int* ad, void* arg) {
 
   SecureContext* sc = Unwrap<SecureContext>(ctx.As<Object>());
   InitNPN(sc);
+  InitALPN(sc, p);
   SSL_set_SSL_CTX(s, sc->ctx_);
   return SSL_TLSEXT_ERR_OK;
 }
