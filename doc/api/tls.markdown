@@ -102,6 +102,10 @@ the character "E" appended to the traditional abbreviations):
 Ephemeral methods may have some performance drawbacks, because key generation
 is expensive.
 
+## tls.DEFAULT_ECDH_CURVE
+
+The default curve name to use for ECDH key agreement. The default
+value is `'prime256v1'`. Consult [RFC 4492] for more details.
 
 ## tls.getCiphers()
 
@@ -154,9 +158,7 @@ automatically set as a listener for the [secureConnection][] event.  The
     on the format, see the [OpenSSL cipher list format documentation].
 
   - `ecdhCurve`: A string describing a named curve to use for ECDH key agreement
-    or false to disable ECDH.
-
-    Defaults to `prime256v1`. Consult [RFC 4492] for more details.
+    or false to disable ECDH. The default is set by [tls.DEFAULT_ECDH_CURVE].
 
   - `dhparam`: A string or `Buffer` containing Diffie Hellman parameters,
     required for Perfect Forward Secrecy. Use `openssl dhparam` to create it.
@@ -785,6 +787,7 @@ The numeric representation of the local port.
 
 [OpenSSL cipher list format documentation]: http://www.openssl.org/docs/apps/ciphers.html#CIPHER_LIST_FORMAT
 [BEAST attacks]: http://blog.ivanristic.com/2011/10/mitigating-the-beast-attack-on-tls.html
+[tls.DEFAULT_ECDH_CURVE]: #tls_tls_default_ecdh_curve
 [tls.createServer]: #tls_tls_createserver_options_secureconnectionlistener
 [tls.createSecurePair]: #tls_tls_createsecurepair_credentials_isserver_requestcert_rejectunauthorized
 [tls.TLSSocket]: #tls_class_tls_tlssocket
