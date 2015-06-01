@@ -531,8 +531,7 @@ SNI.
 
 `function (exception, tlsSocket) { }`
 
-When a client connection emits an 'error' event before secure connection is
-established - it will be forwarded here.
+When a client connection emits an 'error' event, it will be forwarded here.
 
 `tlsSocket` is the [tls.TLSSocket][] that the error originated from.
 
