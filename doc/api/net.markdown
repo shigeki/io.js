@@ -320,6 +320,15 @@ event is not emitted until all connections are ended.
 Emitted when an error occurs.  The `'close'` event will be called directly
 following this event.  See example in discussion of `server.listen`.
 
+### Event: 'clientError'
+
+`function (exception, socket) { }`
+
+When a client connection emits an 'error' event, it will be forwarded here.
+
+`socket` is the ['net.Socket'](#net_class_net_socket) that the error
+originated from.
+
 ## Class: net.Socket
 
 This object is an abstraction of a TCP or local socket.  `net.Socket`
