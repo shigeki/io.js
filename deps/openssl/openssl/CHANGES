@@ -2,6 +2,24 @@
  OpenSSL CHANGES
  _______________
 
+ Changes between 1.0.2a and 1.0.2b [xx XXX xxxx]
+
+  *) Removed support for the two export grade static DH ciphersuites
+     EXP-DH-RSA-DES-CBC-SHA and EXP-DH-DSS-DES-CBC-SHA. These two ciphersuites
+     were newly added (along with a number of other static DH ciphersuites) to
+     1.0.2. However the two export ones have *never* worked since they were
+     introduced. It seems strange in any case to be adding new export
+     ciphersuites, and given "logjam" it also does not seem correct to fix them.
+     [Matt Caswell]
+
+  *) Only support 256-bit or stronger elliptic curves with the
+     'ecdh_auto' setting (server) or by default (client). Of supported
+     curves, prefer P-256 (both).
+     [Emilia Kasper]
+
+  *) Reject DH handshakes with parameters shorter than 768 bits.
+     [Kurt Roeckx and Emilia Kasper]
+
  Changes between 1.0.2 and 1.0.2a [19 Mar 2015]
 
   *) ClientHello sigalgs DoS fix
@@ -373,7 +391,7 @@
      [Steve Henson]
 
   *) Add new "valid_flags" field to CERT_PKEY structure which determines what
-     the certificate can be used for (if anything). Set valid_flags field
+     the certificate can be used for (if anything). Set valid_flags field 
      in new tls1_check_chain function. Simplify ssl_set_cert_masks which used
      to have similar checks in it.
 
@@ -416,7 +434,7 @@
   *) Fix OCSP checking.
      [Rob Stradling <rob.stradling@comodo.com> and Ben Laurie]
 
-  *) Initial experimental support for explicitly trusted non-root CAs.
+  *) Initial experimental support for explicitly trusted non-root CAs. 
      OpenSSL still tries to build a complete chain to a root but if an
      intermediate CA has a trust setting included that is used. The first
      setting is used: whether to trust (e.g., -addtrust option to the x509
@@ -467,7 +485,7 @@
      to set list of supported curves.
      [Steve Henson]
 
-  *) New ctrls to retrieve supported signature algorithms and
+  *) New ctrls to retrieve supported signature algorithms and 
      supported curve values as an array of NIDs. Extend openssl utility
      to print out received values.
      [Steve Henson]

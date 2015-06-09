@@ -113,8 +113,10 @@
 #include <openssl/objects.h>
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
+#ifndef OPENSSL_NO_EC
 #ifdef OPENSSL_NO_EC2M
 # include <openssl/ec.h>
+#endif
 #endif
 #include <openssl/ocsp.h>
 #include <openssl/rand.h>
@@ -260,47 +262,68 @@ static const unsigned char ecformats_default[] = {
     TLSEXT_ECPOINTFORMAT_ansiX962_compressed_char2
 };
 
-static const unsigned char eccurves_default[] = {
-# ifndef OPENSSL_NO_EC2M
-    0, 14,                      /* sect571r1 (14) */
-    0, 13,                      /* sect571k1 (13) */
-# endif
+/* The client's default curves / the server's 'auto' curves. */
+static const unsigned char eccurves_auto[] = {
+    /* Prefer P-256 which has the fastest and most secure implementations. */
+    0, 23,                      /* secp256r1 (23) */
+    /* Other >= 256-bit prime curves. */
     0, 25,                      /* secp521r1 (25) */
     0, 28,                      /* brainpool512r1 (28) */
-# ifndef OPENSSL_NO_EC2M
-    0, 11,                      /* sect409k1 (11) */
-    0, 12,                      /* sect409r1 (12) */
-# endif
     0, 27,                      /* brainpoolP384r1 (27) */
     0, 24,                      /* secp384r1 (24) */
+    0, 26,                      /* brainpoolP256r1 (26) */
+    0, 22,                      /* secp256k1 (22) */
 # ifndef OPENSSL_NO_EC2M
+    /* >= 256-bit binary curves. */
+    0, 14,                      /* sect571r1 (14) */
+    0, 13,                      /* sect571k1 (13) */
+    0, 11,                      /* sect409k1 (11) */
+    0, 12,                      /* sect409r1 (12) */
     0, 9,                       /* sect283k1 (9) */
     0, 10,                      /* sect283r1 (10) */
 # endif
+};
+
+static const unsigned char eccurves_all[] = {
+    /* Prefer P-256 which has the fastest and most secure implementations. */
+    0, 23,                      /* secp256r1 (23) */
+    /* Other >= 256-bit prime curves. */
+    0, 25,                      /* secp521r1 (25) */
+    0, 28,                      /* brainpool512r1 (28) */
+    0, 27,                      /* brainpoolP384r1 (27) */
+    0, 24,                      /* secp384r1 (24) */
     0, 26,                      /* brainpoolP256r1 (26) */
     0, 22,                      /* secp256k1 (22) */
-    0, 23,                      /* secp256r1 (23) */
+# ifndef OPENSSL_NO_EC2M
+    /* >= 256-bit binary curves. */
+    0, 14,                      /* sect571r1 (14) */
+    0, 13,                      /* sect571k1 (13) */
+    0, 11,                      /* sect409k1 (11) */
+    0, 12,                      /* sect409r1 (12) */
+    0, 9,                       /* sect283k1 (9) */
+    0, 10,                      /* sect283r1 (10) */
+# endif
+    /*
+     * Remaining curves disabled by default but still permitted if set
+     * via an explicit callback or parameters.
+     */
+    0, 20,                      /* secp224k1 (20) */
+    0, 21,                      /* secp224r1 (21) */
+    0, 18,                      /* secp192k1 (18) */
+    0, 19,                      /* secp192r1 (19) */
+    0, 15,                      /* secp160k1 (15) */
+    0, 16,                      /* secp160r1 (16) */
+    0, 17,                      /* secp160r2 (17) */
 # ifndef OPENSSL_NO_EC2M
     0, 8,                       /* sect239k1 (8) */
     0, 6,                       /* sect233k1 (6) */
     0, 7,                       /* sect233r1 (7) */
-# endif
-    0, 20,                      /* secp224k1 (20) */
-    0, 21,                      /* secp224r1 (21) */
-# ifndef OPENSSL_NO_EC2M
     0, 4,                       /* sect193r1 (4) */
     0, 5,                       /* sect193r2 (5) */
-# endif
-    0, 18,                      /* secp192k1 (18) */
-    0, 19,                      /* secp192r1 (19) */
-# ifndef OPENSSL_NO_EC2M
     0, 1,                       /* sect163k1 (1) */
     0, 2,                       /* sect163r1 (2) */
     0, 3,                       /* sect163r2 (3) */
 # endif
-    0, 15,                      /* secp160k1 (15) */
-    0, 16,                      /* secp160r1 (16) */
-    0, 17,                      /* secp160r2 (17) */
 };
 
 static const unsigned char suiteb_curves[] = {
@@ -474,8 +497,13 @@ static int tls1_get_curvelist(SSL *s, int sess,
             } else
 # endif
             {
-                *pcurves = eccurves_default;
-                pcurveslen = sizeof(eccurves_default);
+                if (!s->server || (s->cert && s->cert->ecdh_tmp_auto)) {
+                    *pcurves = eccurves_auto;
+                    pcurveslen = sizeof(eccurves_auto);
+                } else {
+                    *pcurves = eccurves_all;
+                    pcurveslen = sizeof(eccurves_all);
+                }
             }
         }
     }
@@ -565,6 +593,20 @@ int tls1_shared_curve(SSL *s, int nmatch)
         (s, !(s->options & SSL_OP_CIPHER_SERVER_PREFERENCE), &pref,
          &num_pref))
         return nmatch == -1 ? 0 : NID_undef;
+
+    /*
+     * If the client didn't send the elliptic_curves extension all of them
+     * are allowed.
+     */
+    if (num_supp == 0 && (s->options & SSL_OP_CIPHER_SERVER_PREFERENCE) != 0) {
+        supp = eccurves_all;
+        num_supp = sizeof(eccurves_all) / 2;
+    } else if (num_pref == 0 &&
+        (s->options & SSL_OP_CIPHER_SERVER_PREFERENCE) == 0) {
+        pref = eccurves_all;
+        num_pref = sizeof(eccurves_all) / 2;
+    }
+
     k = 0;
     for (i = 0; i < num_pref; i++, pref += 2) {
         const unsigned char *tsupp = supp;
@@ -761,6 +803,16 @@ static int tls1_check_ec_key(SSL *s,
     for (j = 0; j <= 1; j++) {
         if (!tls1_get_curvelist(s, j, &pcurves, &num_curves))
             return 0;
+        if (j == 1 && num_curves == 0) {
+            /*
+             * If we've not received any curves then skip this check.
+             * RFC 4492 does not require the supported elliptic curves extension
+             * so if it is not sent we can just choose any curve.
+             * It is invalid to send an empty list in the elliptic curves
+             * extension, so num_curves == 0 always means no extension.
+             */
+            break;
+        }
         for (i = 0; i < num_curves; i++, pcurves += 2) {
             if (pcurves[0] == curve_id[0] && pcurves[1] == curve_id[1])
                 break;
@@ -2082,7 +2134,7 @@ static int ssl_scan_clienthello_tlsext(SSL *s, unsigned char **p,
         }
 # ifndef OPENSSL_NO_SRP
         else if (type == TLSEXT_TYPE_srp) {
-            if (size <= 0 || ((len = data[0])) != (size - 1)) {
+            if (size == 0 || ((len = data[0])) != (size - 1)) {
                 *al = SSL_AD_DECODE_ERROR;
                 return 0;
             }
@@ -3837,7 +3889,10 @@ int tls1_process_heartbeat(SSL *s)
         memcpy(bp, pl, payload);
         bp += payload;
         /* Random padding */
-        RAND_pseudo_bytes(bp, padding);
+        if (RAND_pseudo_bytes(bp, padding) < 0) {
+            OPENSSL_free(buffer);
+            return -1;
+        }
 
         r = ssl3_write_bytes(s, TLS1_RT_HEARTBEAT, buffer,
                              3 + payload + padding);
@@ -3872,7 +3927,7 @@ int tls1_process_heartbeat(SSL *s)
 int tls1_heartbeat(SSL *s)
 {
     unsigned char *buf, *p;
-    int ret;
+    int ret = -1;
     unsigned int payload = 18;  /* Sequence number + random bytes */
     unsigned int padding = 16;  /* Use minimum padding */
 
@@ -3920,10 +3975,16 @@ int tls1_heartbeat(SSL *s)
     /* Sequence number */
     s2n(s->tlsext_hb_seq, p);
     /* 16 random bytes */
-    RAND_pseudo_bytes(p, 16);
+    if (RAND_pseudo_bytes(p, 16) < 0) {
+        SSLerr(SSL_F_TLS1_HEARTBEAT, ERR_R_INTERNAL_ERROR);
+        goto err;
+    }
     p += 16;
     /* Random padding */
-    RAND_pseudo_bytes(p, padding);
+    if (RAND_pseudo_bytes(p, padding) < 0) {
+        SSLerr(SSL_F_TLS1_HEARTBEAT, ERR_R_INTERNAL_ERROR);
+        goto err;
+    }
 
     ret = ssl3_write_bytes(s, TLS1_RT_HEARTBEAT, buf, 3 + payload + padding);
     if (ret >= 0) {
@@ -3935,6 +3996,7 @@ int tls1_heartbeat(SSL *s)
         s->tlsext_hb_pending = 1;
     }
 
+err:
     OPENSSL_free(buf);
 
     return ret;
