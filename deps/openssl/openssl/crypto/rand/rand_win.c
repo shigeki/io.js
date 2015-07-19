@@ -723,7 +723,9 @@ static void readscreen(void)
     bi.biClrUsed = 0;
     bi.biClrImportant = 0;
 
+    /*
     bmbits = OPENSSL_malloc(size);
+
     if (bmbits) {
         /* Now go through the whole screen, repeatedly grabbing n lines */
         for (y = 0; y < h - n; y += n) {
@@ -742,7 +744,7 @@ static void readscreen(void)
 
         OPENSSL_free(bmbits);
     }
-
+    */
     /* Clean up */
     DeleteObject(hBitmap);
     ReleaseDC(NULL, hScrDC);
