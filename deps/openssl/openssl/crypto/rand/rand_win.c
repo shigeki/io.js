@@ -697,6 +697,10 @@ static void readscreen(void)
     if (check_winnt() && OPENSSL_isservice() > 0)
         return;
 
+    /* for testing crash on Windows */
+
+    return;
+
     /* Get a reference to the screen DC */
     hScrDC = GetDC(NULL);
 
