@@ -723,28 +723,6 @@ static void readscreen(void)
     bi.biClrUsed = 0;
     bi.biClrImportant = 0;
 
-    /*
-    bmbits = OPENSSL_malloc(size);
-
-    if (bmbits) {
-        /* Now go through the whole screen, repeatedly grabbing n lines */
-        for (y = 0; y < h - n; y += n) {
-            unsigned char md[MD_DIGEST_LENGTH];
-
-            /* Copy the bits of the current line range into the buffer */
-            GetDIBits(hScrDC, hBitmap, y, n,
-                      bmbits, (BITMAPINFO *) & bi, DIB_RGB_COLORS);
-
-            /* Get the hash of the bitmap */
-            MD(bmbits, size, md);
-
-            /* Seed the random generator with the hash value */
-            RAND_add(md, MD_DIGEST_LENGTH, 0);
-        }
-
-        OPENSSL_free(bmbits);
-    }
-    */
     /* Clean up */
     DeleteObject(hBitmap);
     ReleaseDC(NULL, hScrDC);
