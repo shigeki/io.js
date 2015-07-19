@@ -730,14 +730,14 @@ static void readscreen(void)
             unsigned char md[MD_DIGEST_LENGTH];
 
             /* Copy the bits of the current line range into the buffer */
-            GetDIBits(hScrDC, hBitmap, y, n,
-                      bmbits, (BITMAPINFO *) & bi, DIB_RGB_COLORS);
+            /* GetDIBits(hScrDC, hBitmap, y, n,
+               bmbits, (BITMAPINFO *) & bi, DIB_RGB_COLORS); */
 
             /* Get the hash of the bitmap */
-            MD(bmbits, size, md);
+            /* MD(bmbits, size, md); */
 
             /* Seed the random generator with the hash value */
-            RAND_add(md, MD_DIGEST_LENGTH, 0);
+            /* RAND_add(md, MD_DIGEST_LENGTH, 0); */
         }
 
         OPENSSL_free(bmbits);
