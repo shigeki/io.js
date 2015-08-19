@@ -122,6 +122,7 @@ static bool track_heap_objects = false;
 static const char* eval_string = nullptr;
 static unsigned int preload_module_count = 0;
 static const char** preload_modules = nullptr;
+static const char* tls_defaults_string = nullptr;
 static bool use_debug_agent = false;
 static bool debug_wait_connect = false;
 static int debug_port = 5858;
@@ -2865,6 +2866,13 @@ void SetupProcessObject(Environment* env,
     preload_module_count = 0;
   }
 
+  // --overwrite-tls-defaults
+  if (tls_defaults_string) {
+    READONLY_PROPERTY(process,
+                      "_tls_defaults",
+                      String::NewFromUtf8(env->isolate(), tls_defaults_string));
+  }
+
   // --no-deprecation
   if (no_deprecation) {
     READONLY_PROPERTY(process, "noDeprecation", True(env->isolate()));
@@ -3105,6 +3113,8 @@ static void PrintHelp() {
          "  --no-deprecation      silence deprecation warnings\n"
          "  --throw-deprecation   throw an exception anytime a deprecated "
          "function is used\n"
+         "  --overwrite-tls-defaults  overwrite tls default properties "
+         "with JSON argument\n"
          "  --trace-deprecation   show stack traces on deprecations\n"
          "  --trace-sync-io       show stack trace when use of sync IO\n"
          "                        is detected after the first tick\n"
@@ -3224,6 +3234,13 @@ static void ParseArgs(int* argc,
       }
       args_consumed += 1;
       local_preload_modules[preload_module_count++] = module;
+    } else if (strcmp(arg, "--overwrite-tls-defaults") == 0) {
+      args_consumed += 1;
+      tls_defaults_string = argv[index + 1];
+      if (tls_defaults_string == nullptr) {
+        fprintf(stderr, "%s: %s requires an argument\n", argv[0], arg);
+        exit(9);
+      }
     } else if (strcmp(arg, "--interactive") == 0 || strcmp(arg, "-i") == 0) {
       force_repl = true;
     } else if (strcmp(arg, "--no-deprecation") == 0) {
