@@ -140,6 +140,9 @@ the character "E" appended to the traditional abbreviations):
 Ephemeral methods may have some performance drawbacks, because key generation
 is expensive.
 
+## tls.RootCA
+
+An array of root certificates alternative to built-in certs.
 
 ## tls.getCiphers()
 

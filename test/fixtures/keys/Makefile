@@ -245,6 +245,31 @@ agent7-cert.pem: agent7-csr.pem fake-cnnic-root-cert.pem fake-cnnic-root-key.pem
 agent7-verify: agent7-cert.pem fake-cnnic-root-cert.pem
 	openssl verify -CAfile fake-cnnic-root-cert.pem agent7-cert.pem
 
+#
+# agent8 is CN=localhost signed by ca1
+#
+
+agent8-key.pem:
+	openssl genrsa -out agent8-key.pem 2048
+
+agent8-csr.pem: agent8.cnf agent8-key.pem
+	openssl req -new -config agent8.cnf -key agent8-key.pem -out agent8-csr.pem
+
+agent8-cert.pem: agent8-csr.pem ca3-cert.pem ca3-key.pem
+	openssl x509 -req \
+		-extfile agent8.cnf \
+		-days 9999 \
+		-passin "pass:password" \
+		-in agent8-csr.pem \
+		-CA ca3-cert.pem \
+		-CAkey ca3-key.pem \
+		-CAcreateserial \
+		-out agent8-cert.pem
+
+agent8-verify: agent8-cert.pem ca3-cert.pem
+	cat ca1-cert.pem ca3-cert.pem > ca1ca3-cert.pem
+	openssl verify -CAfile ca1ca3-cert.pem agent8-cert.pem
+
 ec-key.pem:
 	openssl ecparam -genkey -out ec-key.pem -name prime256v1
 
