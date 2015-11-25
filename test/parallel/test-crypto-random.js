@@ -48,6 +48,8 @@ process.setMaxListeners(256);
   assert.throws(function() { crypto.addEntropy(value); });
 });
 
+crypto.addEntropy();
+
 // assert that the callback is indeed called
 function checkCall(cb, desc) {
   var called_ = false;
