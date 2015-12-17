@@ -412,6 +412,9 @@ void SecureContext::Init(const FunctionCallbackInfo<Value>& args) {
   SSL_CTX_set_options(sc->ctx_, SSL_OP_NO_SSLv2);
   SSL_CTX_set_options(sc->ctx_, SSL_OP_NO_SSLv3);
 
+  // Add Padding Option to avoid BIG-IP bug
+  SSL_CTX_set_options(sc->ctx_, SSL_OP_TLSEXT_PADDING);
+
   // SSL session cache configuration
   SSL_CTX_set_session_cache_mode(sc->ctx_,
                                  SSL_SESS_CACHE_SERVER |
