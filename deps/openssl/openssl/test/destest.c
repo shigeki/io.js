@@ -1,1 +1,1 @@
-openssl-1.0.2e/../crypto/des/destest.c
+../crypto/des/destest.c

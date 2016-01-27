@@ -1,4 +1,4 @@
-/* ssl/s3_srvr.c -*- mode:C; c-file-style: "eay" -*- */
+/* ssl/s3_srvr.c */
 /* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
  * All rights reserved.
  *
@@ -1001,6 +1001,12 @@ int ssl3_get_client_hello(SSL *s)
     if (p + j > d + n) {
         al = SSL_AD_DECODE_ERROR;
         SSLerr(SSL_F_SSL3_GET_CLIENT_HELLO, SSL_R_LENGTH_TOO_SHORT);
+        goto f_err;
+    }
+
+    if ((j < 0) || (j > SSL_MAX_SSL_SESSION_ID_LENGTH)) {
+        al = SSL_AD_DECODE_ERROR;
+        SSLerr(SSL_F_SSL3_GET_CLIENT_HELLO, SSL_R_LENGTH_MISMATCH);
         goto f_err;
     }
 

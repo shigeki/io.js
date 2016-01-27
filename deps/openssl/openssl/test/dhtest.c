@@ -1,1 +1,1 @@
-openssl-1.0.2e/../crypto/dh/dhtest.c
+../crypto/dh/dhtest.c

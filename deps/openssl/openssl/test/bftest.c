@@ -1,1 +1,1 @@
-openssl-1.0.2e/../crypto/bf/bftest.c
+../crypto/bf/bftest.c

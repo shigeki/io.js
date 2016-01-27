@@ -1,1 +1,1 @@
-openssl-1.0.2e/../crypto/hmac/hmactest.c
+../crypto/hmac/hmactest.c

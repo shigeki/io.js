@@ -1,1 +1,1 @@
-openssl-1.0.2e/../crypto/dsa/dsatest.c
+../crypto/dsa/dsatest.c

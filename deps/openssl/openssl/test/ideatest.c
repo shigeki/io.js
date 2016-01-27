@@ -1,1 +1,1 @@
-openssl-1.0.2e/../crypto/idea/ideatest.c
+../crypto/idea/ideatest.c
