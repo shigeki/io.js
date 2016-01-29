@@ -93,7 +93,8 @@ https://github.com/openssl/openssl/blob/OpenSSL_1_0_2-stable/crypto/sha/asm/sha5
 otherwise asm_obsolete are used.
 
 The following is the detail instruction steps how to upgrade openssl
-version from 1.0.2e to 1.0.2f in node.
+version from 1.0.2e to 1.0.2f in node. This needs to run Linux
+enviroment.
 
 ### 1. Replace openssl source in `deps/openssl/openssl`
 Remove old openssl sources in `deps/openssl/openssl` .
@@ -161,7 +162,6 @@ Configured for linux-x86_64.
 ohtsu@ubuntu:~/github/node/deps/openssl/openssl$ cd include/openssl/
 ohtsu@ubuntu:~/github/node/deps/openssl/openssl/include/openssl$ ~/copy_symlink.sh *.h
 ohtsu@ubuntu:~/github/node/deps/openssl/openssl/include/openssl$ cd ../..
-ohtsu@ubuntu:~/github/node/deps/openssl/openssl$ git commit include crypto/opensslconf.h
 ohtsu@ubuntu:~/github/node/deps/openssl/openssl$ git add include
 ohtsu@ubuntu:~/github/node/deps/openssl/openssl$ git commit include/ crypto/opensslconf.h
 ohtsu@ubuntu:~/github/node/deps/openssl/openssl$ git clean -f
@@ -189,9 +189,70 @@ to openssl.
   makes test time of test-tls-server-verify be much faster.
 
 These fixes can be applied via cherry-pick the commits in the past
-upgrade but the last one leads a conflict. The conflict can be
-resolved easily by removing the line diff from HEAD. This commit
-should not be squashed to reuse in the future upgrade.
+upgrade but the last one leads a conflict in
+`deps/openssl/openssl/apps/app_rand.c` as below.
+
+```sh
+ohtsu@omb:openssl$ git diff
+diff --cc deps/openssl/openssl/apps/app_rand.c
+index 7f40bba,b6fe294..0000000
+--- a/deps/openssl/openssl/apps/app_rand.c
++++ b/deps/openssl/openssl/apps/app_rand.c
+@@@ -124,7 -124,16 +124,20 @@@ int app_RAND_load_file(const char *file
+      char buffer[200];
+
+  #ifdef OPENSSL_SYS_WINDOWS
+  ++<<<<<<< HEAD
+   +    RAND_screen();
+   ++=======
+   +     /*
+   +      * allocate 2 to dont_warn not to use RAND_screen() via
+   +      * -no_rand_screen option in s_client
+   +      */
+   +     if (dont_warn != 2) {
+   +       BIO_printf(bio_e, "Loading 'screen' into random state -");
+   +       BIO_flush(bio_e);
+   +       RAND_screen();
+   +       BIO_printf(bio_e, " done\n");
+   +     }
+   ++>>>>>>> 664a659... deps: add -no_rand_screen to openssl s_client
+     #endif
+
+      if (file == NULL)
+````
+
+The conflict can be resolved easily by removing the four lines,
+three lines from `<<<<<<< HEAD` to `   ++=======` and one line of
+'++>>>>>>> 664a659... deps: add -no_rand_screen to openssl s_client'.
+
+After four lines above are removed, the conflict is resolved. The diff
+of 'deps/openssl/openssl/apps/app_rand.c' is as below.
+
+```diff
+diff --git a/deps/openssl/openssl/apps/app_rand.c
+b/deps/openssl/openssl/apps/app_rand.c
+index 7f40bba..b6fe294 100644
+--- a/deps/openssl/openssl/apps/app_rand.c
++++ b/deps/openssl/openssl/apps/app_rand.c
+@@ -124,7 +124,16 @@ int app_RAND_load_file(const char *file, BIO
+*bio_e, int dont_warn)
+     char buffer[200];
+
+ #ifdef OPENSSL_SYS_WINDOWS
+ -    RAND_screen();
+ +    /*
+ +     * allocate 2 to dont_warn not to use RAND_screen() via
+ +     * -no_rand_screen option in s_client
+ +     */
+ +    if (dont_warn != 2) {
+ +      BIO_printf(bio_e, "Loading 'screen' into random state -");
+ +      BIO_flush(bio_e);
+ +      RAND_screen();
+ +      BIO_printf(bio_e, " done\n");
+ +    }
+  #endif
+````
+This commit should not be squashed to reuse in the future upgrade.
 
 ```sh
 git cherry-pick c66c3d9fa3f5bab0bdfe363dd947136cf8a3907f
