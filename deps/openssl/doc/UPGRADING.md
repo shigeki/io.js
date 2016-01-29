@@ -1,8 +1,8 @@
 ## How to upgrade openssl library in Node.js
 
-This document describes the procedure to upgrade openssl from 1.0.2a
-to 1.0.2c in Node.js.
-
+This document describes the procedure to upgrade openssl from 1.0.2e
+to 1.0.2f in Node.js. This procedure might be applied to upgrading
+any versions in 1.0.2.
 
 ### Build System and Upgrading Overview
 The openssl build system is based on the `Configure` perl script in
@@ -31,6 +31,8 @@ The tested platform in CI are also listed.
 
 | --dest-os | --dest-cpu | conf | asm  | openssl target     | CI |
 |---------- |----------- |----- |----- |------------------- |--- |
+| aix       | ppc        | o    | x(*2)| aix-gcc            | o  |
+| aix       | ppc64      | o    | x(*2)| aix64-gcc          | o  |
 | linux     | ia32       | o    | o    |linux-elf           | o  |
 | linux     | x32        | o    | x(*2)|linux-x32           | x  |
 | linux     | x64        | o    | o    |linux-x86_64        | o  |
@@ -91,39 +93,150 @@ https://github.com/openssl/openssl/blob/OpenSSL_1_0_2-stable/crypto/sha/asm/sha5
 otherwise asm_obsolete are used.
 
 The following is the detail instruction steps how to upgrade openssl
-version from 1.0.2a to 1.0.2c in node.
+version from 1.0.2e to 1.0.2f in node.
 
 ### 1. Replace openssl source in `deps/openssl/openssl`
 Remove old openssl sources in `deps/openssl/openssl` .
 Get original openssl sources from
-https://www.openssl.org/source/openssl-1.0.2c.tar.gz and extract all
+https://www.openssl.org/source/openssl-1.0.2f.tar.gz and extract all
 files into `deps/openssl/openssl` .
 
-### 2. Apply private patches
-There are three kinds of private patches to be applied in openssl-1.0.2c.
+```sh
+ohtsu@ubuntu:~/github/node$ cd deps/openssl/
+ohtsu@ubuntu:~/github/node/deps/openssl$ rm -rf openssl
+ohtsu@ubuntu:~/github/node/deps/openssl$ tar zxf ~/tmp/openssl-1.0.2f.tar.gz
+ohtsu@ubuntu:~/github/node/deps/openssl$ mv openssl-1.0.2f openssl
+ohtsu@ubuntu:~/github/node/deps/openssl$ git add --all openssl
+ohtsu@ubuntu:~/github/node/deps/openssl$ git commit openssl
+````
+The commit message is like
 
-- The two fixes of assembly error on ia32 win32. masm is no longer
-  supported in openssl. We should move to use nasm or yasm in future
-  version of node.
+>deps: upgrade openssl sources to 1.0.2f
+>
+>This just replaces all sources of openssl-1.0.2f.tar.gz into
+>deps/openssl/openssl
 
-- The fix of openssl-cli built on win. Key press requirement of
-  openssl-cli in win causes timeout failures of several tests.
-
-- A new `-no_rand_screen` option to openssl s_client. This makes test
-  time of test-tls-server-verify be much faster.
-
-### 3. Replace openssl header files in `deps/openssl/openssl/include/openssl`
+### 2. Replace openssl header files in `deps/openssl/openssl/include/openssl`
 all header files in `deps/openssl/openssl/include/openssl/*.h` are
 symbolic links in the distributed release tar.gz. They cause issues in
 Windows. They are copied from the real files of symlink origin into
 the include directory. During installation, they also copied into
 `PREFIX/node/include` by tools/install.py.
+`deps/openssl/openssl/include/openssl/opensslconf.h` and
+`deps/openssl/openssl/crypto/opensslconf.h` needs to be changed so as
+to refer the platform independent file of `deps/openssl/config/opensslconf.h`
+
+The following shell script (copy_symlink.sh) is my tool for working
+this procedures to invoke it in the `deps/openssl/openssl/include/openssl/`.
+
+```sh
+#!/bin/bash
+for var in "$@"
+do
+    if [ -L $var ]; then
+	origin=`readlink $var`
+	rm $var
+	cp $origin $var
+    fi
+done
+rm opensslconf.h
+echo '#include "../../crypto/opensslconf.h"' >  opensslconf.h
+rm ../../crypto/opensslconf.h
+echo '#include "../../config/opensslconf.h"' > ../../crypto/opensslconf.h
+````
+
+This step somehow gets troublesome since openssl-1.0.2f because
+symlink headers are removed in tar.gz file and we have to execute
+./config script to generate them. The config script also generate
+unnecessary platform dependent files in the repository so that we have
+to clean up them after committing header files.
+
+```sh
+ohtsu@ubuntu:~/github/node/deps/openssl$ cd openssl/
+ohtsu@ubuntu:~/github/node/deps/openssl/openssl$ ./config
+
+make[1]: Leaving directory `/home/ohtsu/github/node/deps/openssl/openssl/test'
+
+Configured for linux-x86_64.
+ohtsu@ubuntu:~/github/node/deps/openssl/openssl$ cd include/openssl/
+ohtsu@ubuntu:~/github/node/deps/openssl/openssl/include/openssl$ ~/copy_symlink.sh *.h
+ohtsu@ubuntu:~/github/node/deps/openssl/openssl/include/openssl$ cd ../..
+ohtsu@ubuntu:~/github/node/deps/openssl/openssl$ git commit include crypto/opensslconf.h
+ohtsu@ubuntu:~/github/node/deps/openssl/openssl$ git add include
+ohtsu@ubuntu:~/github/node/deps/openssl/openssl$ git commit include/ crypto/opensslconf.h
+ohtsu@ubuntu:~/github/node/deps/openssl/openssl$ git clean -f
+ohtsu@ubuntu:~/github/node/deps/openssl/openssl$ git checkout Makefile Makefile.bak
+````
+The commit message is like
+
+>deps: copy all openssl header files to include dir
+>
+>All symlink files in `deps/openssl/openssl/include/openssl/`
+>are removed and replaced with real header files to avoid
+>issues on Windows. Two files of opensslconf.h in crypto and
+>include dir are replaced to refer config/opensslconf.h.
+
+### 3. Apply floating patches
+At the time of writing, there are four floating patches to be applied
+to openssl.
+
+- Two fixes for assembly errors on ia32 win32.
+
+- One fix for openssl-cli built on win. Key press requirement of
+  openssl-cli in win causes timeout failures of several tests.
+
+- Adding a new `-no_rand_screen` option to openssl s_client. This
+  makes test time of test-tls-server-verify be much faster.
+
+These fixes can be applied via cherry-pick the commits in the past
+upgrade but the last one leads a conflict. The conflict can be
+resolved easily by removing the line diff from HEAD. This commit
+should not be squashed to reuse in the future upgrade.
+
+```sh
+git cherry-pick c66c3d9fa3f5bab0bdfe363dd947136cf8a3907f
+git cherry-pick 42a8de2ac66b6953cbc731fdb0b128b8019643b2
+git cherry-pick 2eb170874aa5e84e71b62caab7ac9792fd59c10f
+git cherry-pick 664a6596960655e214fef25e74d3285097703e95
+error: could not apply 664a659... deps: add -no_rand_screen to openssl s_client
+hint: after resolving the conflicts, mark the corrected paths
+hint: with 'git add <paths>' or 'git rm <paths>'
+hint: and commit the result with 'git commit'
+ohtsu@ubuntu:~/github/node/deps/openssl/openssl$ vi apps/app_rand.c
+ohtsu@ubuntu:~/github/node/deps/openssl/openssl$ git add apps/app_rand.c
+ohtsu@ubuntu:~/github/node/deps/openssl/openssl$ git cherry-pick --continue
+````
+
+The commit messages can be followed by the cherry-picking but some of
+them contains the word of iojs. They can be changed via rebasing.
 
 ### 4. Change `opensslconf.h` so as to fit each platform.
-No change.
+opensslconf.h includes defines and macros which are platform
+dependent. Each files can be generated via `deps/openssl/config/Makefile`
+We can regenerate them and commit them if any diffs exist.
+
+```sh
+ohtsu@ubuntu:~/github/node/deps/openssl$ cd config
+ohtsu@ubuntu:~/github/node/deps/openssl/config$ make clean
+find archs -name opensslconf.h -exec rm "{}" \;
+ohtsu@ubuntu:~/github/node/deps/openssl/config$ make
+cd ../openssl; perl ./Configure no-shared no-symlinks aix-gcc > /dev/null
+ohtsu@ubuntu:~/github/node/deps/openssl/config$ git diff
+ohtsu@ubuntu:~/github/node/deps/openssl/config$ git commit .
+````
+The commit message is like
+
+>deps: update openssl config files
+>
+>Regenerate config files for supported platforms with Makefile.
 
 ### 5. Update openssl.gyp and openssl.gypi
-No change.
+This process is needed when source files are removed, renamed and added.
+It seldom happen in the minor bug fix release. Build errors would be
+thrown if it happens. In case of build errors, we need to check source
+files in Makefiles of its platform and change openssl.gyp or
+openssl.gypi according to the changes of source files. Please contact
+@shigeki if it is needed.
 
 ### 6. ASM files for openssl
 We provide two sets of asm files. One is for the latest assembler
@@ -132,7 +245,7 @@ and the other is the older one.
 ### 6.1. asm files for the latest compiler
 This was made in `deps/openssl/asm/Makefile`
 - Updated asm files for each platforms which are required in
-  openssl-1.0.2c.
+  openssl-1.0.2f.
 - Some perl files need CC and ASM envs. Added a check if these envs
   exist. Followed asm files are to be generated with CC=gcc and
   ASM=nasm on Linux. See
@@ -148,8 +261,9 @@ This was made in `deps/openssl/asm/Makefile`
 
 With export environments of CC=gcc and ASM=nasm, then type make
 command and check if new asm files are generated.
+If you don't have nasm please install it such as `apt-get install nasm`.
 
-### 6.2.asm files for the older compiler
+### 6.2. asm files for the older compiler
 For older assembler, the version check of CC and ASM should be
 skipped in generating asm file with perl scripts.
 Copy files from `deps/openssl/asm` into
@@ -158,3 +272,40 @@ into this directories and remove the check of CC and ASM envs.
 
 Without environments of CC and ASM, then type make command and check
 if new asm files for older compilers are generated.
+
+The following steps includes version check of gcc and nasm.
+The commit is needed if any diff exists.
+```sh
+ohtsu@ubuntu:~/github/node/deps/openssl/config$ cd ../asm
+ohtsu@ubuntu:~/github/node/deps/openssl/asm$ gcc --version
+gcc (Ubuntu 4.8.4-2ubuntu1~14.04) 4.8.4
+Copyright (C) 2013 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+ohtsu@ubuntu:~/github/node/deps/openssl/asm$ nasm -v
+NASM version 2.10.09 compiled on Dec 29 2013
+ohtsu@ubuntu:~/github/node/deps/openssl/asm$ export CC=gcc
+ohtsu@ubuntu:~/github/node/deps/openssl/asm$ export ASM=nasm
+ohtsu@ubuntu:~/github/node/deps/openssl/asm$ make clean
+find . -iname '*.asm' -exec rm "{}" \;
+find . -iname '*.s' -exec rm "{}" \;
+find . -iname '*.S' -exec rm "{}" \;
+ohtsu@ubuntu:~/github/node/deps/openssl/asm$ make
+ohtsu@ubuntu:~/github/node/deps/openssl/asm$ cd ../asm_obsolete/
+ohtsu@ubuntu:~/github/node/deps/openssl/asm_obsolete$ unset CC
+ohtsu@ubuntu:~/github/node/deps/openssl/asm_obsolete$ unset ASM
+ohtsu@ubuntu:~/github/node/deps/openssl/asm_obsolete$ make clean
+find . -iname '*.asm' -exec rm "{}" \;
+find . -iname '*.s' -exec rm "{}" \;
+find . -iname '*.S' -exec rm "{}" \;
+ohtsu@ubuntu:~/github/node/deps/openssl$ git status
+ohtsu@ubuntu:~/github/node/deps/openssl$ git commit asm asm_obsolete
+````
+The commit message is like
+
+>deps: update openssl asm and asm_obsolete files
+>
+>Regenerate asm files with Makefile and CC=gcc and ASM=gcc where
+>gcc-4.8.4. Also asm files in asm_obsolete dir to support old compiler
+>and assembler are regenerated without CC and ASM envs.
