@@ -110,6 +110,23 @@ agent2-cert.pem: agent2-csr.pem agent2-key.pem
 		-signkey agent2-key.pem \
 		-out agent2-cert.pem
 
+# Create a PKCS#12 file with CA for the agent.
+agent2.pfx: agent2-cert.pem agent2-key.pem
+	openssl pkcs12 -export \
+		-in agent2-cert.pem \
+		-inkey agent2-key.pem \
+		-certfile agent2-cert.pem \
+		-out agent2.pfx \
+		-password pass:sample
+
+# Create a PKCS#12 file without CA for the agent.
+agent2_noCA.pfx: agent2-cert.pem agent2-key.pem
+	openssl pkcs12 -export \
+		-in agent2-cert.pem \
+		-inkey agent2-key.pem \
+		-out agent2_noCA.pfx \
+		-password pass:sample
+
 agent2-verify: agent2-cert.pem
 	openssl verify -CAfile agent2-cert.pem agent2-cert.pem
 
