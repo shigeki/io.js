@@ -3012,7 +3012,6 @@ static void PrintHelp() {
          "                       present.\n"
 #endif
 #endif
-         "  --enable-ssl2        enable ssl2\n"
          "  --enable-ssl3        enable ssl3\n"
          "\n"
          "Environment variables:\n"
@@ -3081,10 +3080,6 @@ static void ParseArgs(int* argc,
     } else if (strcmp(arg, "--version") == 0 || strcmp(arg, "-v") == 0) {
       printf("%s\n", NODE_VERSION);
       exit(0);
-    } else if (strcmp(arg, "--enable-ssl2") == 0) {
-#if HAVE_OPENSSL
-      SSL2_ENABLE = true;
-#endif
     } else if (strcmp(arg, "--enable-ssl3") == 0) {
 #if HAVE_OPENSSL
       SSL3_ENABLE = true;
