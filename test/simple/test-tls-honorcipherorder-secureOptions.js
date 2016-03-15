@@ -49,7 +49,7 @@ function test(honorCipherOrder, clientCipher, expectedCipher, secureOptions, cb)
     secureProtocol: SSL_Method,
     key: fs.readFileSync(common.fixturesDir + '/keys/agent2-key.pem'),
     cert: fs.readFileSync(common.fixturesDir + '/keys/agent2-cert.pem'),
-    ciphers: 'AES256-SHA:RC4-SHA:ECDHE-RSA-AES256-SHA',
+    ciphers: 'AES256-SHA:RC4-SHA:AES128-SHA',
     secureOptions: secureOptions,
     honorCipherOrder: !!honorCipherOrder
   };
@@ -95,13 +95,13 @@ test1();
 
 function test1() {
   // Client has the preference of cipher suites by default
-  test(false, 'RC4-SHA:AES256-SHA:ECDHE-RSA-AES256-SHA','RC4-SHA', 0, test2);
+  test(false, 'RC4-SHA:AES256-SHA:AES128-SHA','RC4-SHA', 0, test2);
 }
 
 function test2() {
   // Server has the preference of cipher suites where AES256-SHA is in
   // the first.
-  test(true, 'RC4-SHA:AES256-SHA:ECDHE-RSA-AES256-SHA', 'AES256-SHA', 0, test3);
+  test(true, 'RC4-SHA:AES256-SHA:AES128-SHA', 'AES256-SHA', 0, test3);
 }
 
 function test3() {
@@ -113,7 +113,7 @@ function test3() {
 function test4() {
   // As client has only one cipher, server has no choice in regardless
   // of honorCipherOrder.
-  test(true, 'ECDHE-RSA-AES256-SHA', 'ECDHE-RSA-AES256-SHA', 0, test5);
+  test(true, 'AES128-SHA', 'AES128-SHA', 0, test5);
 }
 
 function test5() {
