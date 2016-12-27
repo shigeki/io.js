@@ -29,6 +29,7 @@ PHONY = all clean backup restore
 all: $(ARCHS) replace
 
 $(ARCHS):
+	if [ -e ../openssl/.gitignore ]; then rm ../openssl/.gitignore ; fi
 	cd ../openssl; $(PERL) $(CONFIGURE) $(COPT) $@ > /dev/null; \
 	$(MAKE) build_generated crypto/buildinf.h > /dev/null
 	if [ ! -d ./archs/$@ ]; then mkdir ./archs/$@ ; fi
