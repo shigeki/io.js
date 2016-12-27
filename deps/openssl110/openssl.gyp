@@ -24,6 +24,7 @@
       'include_dirs': [
         'openssl/',
         'openssl/include/',
+        'openssl/crypto/',
         'openssl/crypto/include/',
         'openssl/crypto/modes/',
       ],
