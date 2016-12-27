@@ -6,6 +6,16 @@ if (!common.hasCrypto) {
   common.skip('missing crypto');
   return;
 }
+
+/*
+  This test is skipped due to failure in checking signature strength
+  of 0-dns-key.pem that is Signature Algorithm: rsaEncryption with openssl-1.1.x
+*/
+if (!common.isOpenSSL10) {
+  common.skip('due to openssl-' + process.versions.openssl);
+  return;
+}
+
 const tls = require('tls');
 
 const fs = require('fs');

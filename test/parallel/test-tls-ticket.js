@@ -12,7 +12,8 @@ const fs = require('fs');
 const net = require('net');
 const crypto = require('crypto');
 
-const keys = crypto.randomBytes(48);
+const ticketKeySize = common.isOpenSSL10 ? 48 : 80;
+const keys = crypto.randomBytes(ticketKeySize);
 const serverLog = [];
 const ticketLog = [];
 
@@ -36,7 +37,7 @@ function createServer() {
     // Rotate ticket keys
     if (counter === 1) {
       previousKey = server.getTicketKeys();
-      server.setTicketKeys(crypto.randomBytes(48));
+      server.setTicketKeys(crypto.randomBytes(ticketKeySize));
     } else if (counter === 2) {
       server.setTicketKeys(previousKey);
     } else if (counter === 3) {

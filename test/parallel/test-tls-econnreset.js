@@ -6,6 +6,13 @@ if (!common.hasCrypto) {
   common.skip('missing crypto');
   return;
 }
+
+// 384 bits RSA key cannot be accepted in openssl-1.1.x
+if (!common.isOpenSSL10) {
+  common.skip('due to openssl-' + process.versions.openssl);
+  return;
+}
+
 var tls = require('tls');
 
 var cacert =
