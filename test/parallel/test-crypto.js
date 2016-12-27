@@ -6,6 +6,8 @@ if (!common.hasCrypto) {
   return;
 }
 
+const isOpenSSL10 = common.isOpenssl10;
+
 const assert = require('assert');
 const crypto = require('crypto');
 const fs = require('fs');
@@ -74,7 +76,9 @@ assertSorted(tls.getCiphers());
 // Assert that we have sha and sha1 but not SHA and SHA1.
 assert.notStrictEqual(0, crypto.getHashes().length);
 assert(crypto.getHashes().includes('sha1'));
-assert(crypto.getHashes().includes('sha'));
+if (isOpenSSL10)
+  assert(crypto.getHashes().includes('sha'));
+
 assert(!crypto.getHashes().includes('SHA1'));
 assert(!crypto.getHashes().includes('SHA'));
 assert(crypto.getHashes().includes('RSA-SHA1'));
@@ -136,7 +140,7 @@ assert.throws(function() {
                                         '/test_bad_rsa_privkey.pem', 'ascii');
   // this would inject errors onto OpenSSL's error stack
   crypto.createSign('sha1').sign(sha1_privateKey);
-}, /asn1 encoding routines:asn1_check_tlen:wrong tag/);
+}, /asn1 encoding routines:ASN1_CHECK_TLEN:wrong tag/);
 
 // Make sure memory isn't released before being returned
 console.log(crypto.randomBytes(16));

@@ -25,7 +25,8 @@
 #include <string.h>
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
-static void DH_get0_pqg(const DH *dh, const BIGNUM **p, const BIGNUM **q, const BIGNUM **g) {
+static void DH_get0_pqg(const DH *dh, const BIGNUM **p, const BIGNUM **q,
+                        const BIGNUM **g) {
   if (p != NULL)
     *p = dh->p;
   if (q != NULL)
@@ -34,7 +35,8 @@ static void DH_get0_pqg(const DH *dh, const BIGNUM **p, const BIGNUM **q, const 
     *g = dh->g;
 }
 
-static void RSA_get0_key(const RSA *r, const BIGNUM **n, const BIGNUM **e, const BIGNUM **d) {
+static void RSA_get0_key(const RSA *r, const BIGNUM **n, const BIGNUM **e,
+                         const BIGNUM **d) {
   if (n != NULL)
     *n = r->n;
   if (e != NULL)
@@ -63,16 +65,15 @@ static int DH_set0_pqg(DH *dh, BIGNUM *p, BIGNUM *q, BIGNUM *g) {
   return 1;
 }
 
-static void DH_get0_key(const DH *dh, const BIGNUM **pub_key, const BIGNUM **priv_key)
-{
+static void DH_get0_key(const DH *dh, const BIGNUM **pub_key,
+                        const BIGNUM **priv_key) {
   if (pub_key != NULL)
     *pub_key = dh->pub_key;
   if (priv_key != NULL)
     *priv_key = dh->priv_key;
 }
 
-static int DH_set0_key(DH *dh, BIGNUM *pub_key, BIGNUM *priv_key)
-{
+static int DH_set0_key(DH *dh, BIGNUM *pub_key, BIGNUM *priv_key) {
   if (dh->pub_key == NULL && pub_key == NULL)
     return 0;
 
@@ -92,7 +93,8 @@ static const char *SSL_SESSION_get0_hostname(const SSL_SESSION *s) {
   return s->tlsext_hostname;
 }
 
-static void SSL_SESSION_get0_ticket(const SSL_SESSION *s, const unsigned char **tick, size_t *len) {
+static void SSL_SESSION_get0_ticket(const SSL_SESSION *s,
+                                    const unsigned char **tick, size_t *len) {
   *len = s->tlsext_ticklen;
   if (tick != NULL)
     *tick = s->tlsext_tick;
@@ -1205,7 +1207,7 @@ void SecureContext::GetTicketKeys(const FunctionCallbackInfo<Value>& args) {
   SecureContext* wrap;
   ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
 
-  long length = SSL_CTX_get_tlsext_ticket_keys(wrap->ctx_, NULL, 0);
+  size_t length = SSL_CTX_get_tlsext_ticket_keys(wrap->ctx_, NULL, 0);
   Local<Object> buff = Buffer::New(wrap->env(), length).ToLocalChecked();
   if (SSL_CTX_get_tlsext_ticket_keys(wrap->ctx_,
                                      Buffer::Data(buff),
@@ -1230,8 +1232,8 @@ void SecureContext::SetTicketKeys(const FunctionCallbackInfo<Value>& args) {
 
   THROW_AND_RETURN_IF_NOT_BUFFER(args[0], "Ticket keys");
 
-  long length = SSL_CTX_get_tlsext_ticket_keys(wrap->ctx_, NULL, 0);
-  if (Buffer::Length(args[0]) != (size_t)length) {
+  size_t length = SSL_CTX_get_tlsext_ticket_keys(wrap->ctx_, NULL, 0);
+  if (Buffer::Length(args[0]) != length) {
     return env->ThrowTypeError("Ticket keys length incorrect");
   }
 
@@ -1484,7 +1486,8 @@ int SSLWrap<Base>::NewSessionCallback(SSL* s, SSL_SESSION* sess) {
   i2d_SSL_SESSION(sess, &serialized);
 
   unsigned int session_id_length;
-  const unsigned char *session_id = SSL_SESSION_get_id(sess, &session_id_length);
+  const unsigned char *session_id = SSL_SESSION_get_id(sess,
+                                                       &session_id_length);
 
   Local<Object> session = Buffer::Copy(
       env, reinterpret_cast<const char *>(session_id),
@@ -1632,7 +1635,7 @@ static Local<Object> X509ToObject(Environment* env, X509* cert) {
     rsa = EVP_PKEY_get1_RSA(pkey);
 
   if (rsa != nullptr) {
-      const BIGNUM* n,* e;
+      const BIGNUM* n, * e;
       RSA_get0_key(rsa, &n, &e, NULL);
       BN_print(bio, n);
       BIO_get_mem_ptr(bio, &mem);
