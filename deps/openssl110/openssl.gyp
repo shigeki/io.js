@@ -74,9 +74,16 @@
         }, {
           # "else if" was supported in https://codereview.chromium.org/601353002
           'conditions': [
-            ['target_arch=="arm"', {
-              'defines': ['<@(openssl_defines_asm)'],
-              'sources': ['<@(openssl_sources_arm_void_gas)'],
+            ['target_arch=="arm" and OS=="linux"', {
+             'include_dirs': ['config/archs/linux-armv4/'],
+             'includes': ['config/archs/linux-armv4/openssl_asm.gypi'],
+              'defines': [
+                'OPENSSL_CPUID_OBJ',
+                'ENGINESDIR="/dev/null"',
+                'OPENSSLDIR="/etc/ssl"',
+                '<@(openssl_defines_linux-armv4)',
+              ],
+              'sources': ['<@(openssl_sources)', '<@(openssl_sources_linux-armv4)'],
             }, 'target_arch=="ia32" and OS=="mac"', {
               'defines': [
                 '<@(openssl_defines_asm)',
