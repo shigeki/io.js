@@ -43,7 +43,7 @@ foreach my $src (@generated_srcs) {
     system("$cmd 2>$configdir/cms.err 1>$configdir/cms.out");
 }
 
-open(GYPI, "> archs/$arch/openssl_asm.gypi");
+open(GYPI, "> archs/$arch/openssl.gypi");
 
 print GYPI "{
   'variables': {
@@ -70,11 +70,21 @@ foreach my $define (@{$config{defines}}) {
     print GYPI "      '$define',\n";
 }
 print GYPI "    ],\n";
+
+print GYPI "    'openssl_cflags_$arch': [\n";
+print GYPI "      '$target{cflags}',\n";
+print GYPI "    ],\n";
+
+print GYPI "    'openssl_ex_libs_$arch': [\n";
+print GYPI "      '$target{ex_libs}',\n";
+print GYPI "    ],\n";
+
+print GYPI "    'openssl_cli_srcs_$arch': [\n";
+foreach my $src (@apps_openssl_srcs) {
+    print GYPI "      'openssl/$src',\n";
+}
+print GYPI "    ],\n";
 print GYPI "  }
 }\n";
 
 close(GYPI);
-
-# foreach my $src (@apps_openssl_srcs) {
-#    print $src, "\n";
-#}

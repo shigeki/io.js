@@ -4,23 +4,12 @@
 
 {
   'variables': {
-    'is_clang': 0,
-    'gcc_version': 0,
     'openssl_no_asm%': 0,
-    'llvm_version%': 0,
-    'xcode_version%': 0,
-    'gas_version%': 0,
-    'openssl_fips%': 'false',
   },
   'targets': [
     {
       'target_name': 'openssl',
       'type': '<(library)',
-      'sources': ['<@(openssl_sources)'],
-      'sources/': [
-        ['exclude', 'md2/.*$'],
-        ['exclude', 'store/.*$']
-      ],
       'include_dirs': [
         'openssl/',
         'openssl/include/',
@@ -29,27 +18,6 @@
         'openssl/crypto/modes/',
       ],
       'conditions': [
-        # FIPS
-        ['openssl_fips != ""', {
-          'defines': [
-            'OPENSSL_FIPS',
-          ],
-          'include_dirs': [
-            '<(openssl_fips)/include',
-          ],
-
-          # Trick fipsld, it expects to see libcrypto.a
-          'product_name': 'crypto',
-
-          'direct_dependent_settings': {
-            'defines': [
-              'OPENSSL_FIPS',
-            ],
-            'include_dirs': [
-              '<(openssl_fips)/include',
-            ],
-          },
-        }],
         [ 'OS=="aix"', {
             # AIX is missing /usr/include/endian.h
             'defines': [
@@ -76,13 +44,14 @@
           'conditions': [
             ['target_arch=="arm" and OS=="linux"', {
              'include_dirs': ['config/archs/linux-armv4/'],
-             'includes': ['config/archs/linux-armv4/openssl_asm.gypi'],
+             'includes': ['config/archs/linux-armv4/openssl.gypi'],
               'defines': [
                 'OPENSSL_CPUID_OBJ',
                 'ENGINESDIR="/dev/null"',
                 'OPENSSLDIR="/etc/ssl"',
                 '<@(openssl_defines_linux-armv4)',
               ],
+              'cflags' : ['<@(openssl_cflags_linux-armv4)'],
               'sources': ['<@(openssl_sources)', '<@(openssl_sources_linux-armv4)'],
             }, 'target_arch=="ia32" and OS=="mac"', {
               'defines': [
@@ -105,7 +74,7 @@
               'sources': ['<@(openssl_sources_ia32_elf_gas)'],
             }, 'target_arch=="x64" and OS=="mac"', {
              'include_dirs': ['config/archs/darwin64-x86_64-cc/'],
-             'includes': ['config/archs/darwin64-x86_64-cc/openssl_asm.gypi'],
+             'includes': ['config/archs/darwin64-x86_64-cc/openssl.gypi'],
               'defines': [
                 'OPENSSL_CPUID_OBJ',
                 'ENGINESDIR="/dev/null"',
@@ -119,19 +88,20 @@
                 '<@(openssl_defines_x64_win)',
               ],
               'sources': ['<@(openssl_sources_x64_win_masm)'],
-            }, 'target_arch=="x64"', {
+            }, 'target_arch=="x64" and OS=="linux"', {
              'include_dirs': ['config/archs/linux-x86_64/'],
-             'includes': ['config/archs/linux-x86_64/openssl_asm.gypi'],
+             'includes': ['config/archs/linux-x86_64/openssl.gypi'],
               # Linux or others
               'defines': [
-#                'SSL_DEBUG',
                 'OPENSSL_CPUID_OBJ',
                 'ENGINESDIR="/dev/null"',
                 'OPENSSLDIR="/etc/ssl"',
                 '<@(openssl_defines_linux-x86_64)',
               ],
+              'cflags' : ['<@(openssl_cflags_linux-x86_64)'],
+              'libraries': ['<@(openssl_ex_libs_linux-x86_64)'],
               'sources': ['<@(openssl_sources)', '<@(openssl_sources_linux-x86_64)'],
-            }, 'target_arch=="arm64"', {
+            }, 'target_arch=="arm64" and OS=="linux"', {
               'defines': ['<@(openssl_defines_arm64)',],
               'sources': ['<@(openssl_sources_arm64_linux64_gas)'],
             }, {
@@ -162,27 +132,43 @@
     },
     {
       # openssl-cli target
-      'includes': ['openssl-cli.gypi',],
-    }
+      'target_name': 'openssl-cli',
+      'type': 'executable',
+      'dependencies': ['openssl'],
+      'include_dirs': [
+        'openssl/',
+        'openssl/include/'
+       ],
+       'conditions': [
+         ['target_arch=="arm" and OS=="linux"', {
+             'includes': ['config/archs/linux-armv4/openssl.gypi'],
+             'cflags': ['<@(openssl_cflags_linux-armv4)'],
+             'defines': ['<@(openssl_defines_linux-armv4)'],
+             'sources': ['<@(openssl_cli_srcs_linux-armv4)'],
+             'libraries': ['<@(openssl_ex_libs_linux-armv4)'],
+           }, 'target_arch=="ia32" and OS=="mac"', {
+           }, 'target_arch=="ia32" and OS=="win"', {
+           }, 'target_arch=="ia32" and OS=="linux"', {
+           }, 'target_arch=="x64" and OS=="mac"', {
+             'includes': ['config/archs/darwin64-x86_64-cc/openssl.gypi'],
+             'cflags': ['<@(openssl_cflags_darwin64-x86_64-cc)'],
+             'defines': ['<@(openssl_defines_darwin64-x86_64-cc)'],
+             'sources': ['<@(openssl_cli_srcs_darwin64-x86_64-cc)'],
+             'libraries': ['<@(openssl_ex_libs_darwin64-x86_64-cc)'],
+           }, 'target_arch=="x64" and OS=="win"', {
+           }, 'target_arch=="x64" and OS=="linux"', {
+             'includes': ['config/archs/linux-x86_64/openssl.gypi'],
+             'cflags': ['<@(openssl_cflags_linux-x86_64)'],
+             'defines': ['<@(openssl_defines_linux-x86_64)'],
+             'sources': ['<@(openssl_cli_srcs_linux-x86_64)'],
+             'libraries': ['<@(openssl_ex_libs_linux-x86_64)'],
+           }, 'target_arch=="arm64" and OS=="linux"', {
+           }, { # other archs
+           }
+          ],
+        ],
+     }
   ],
-  'target_defaults': {
-    'conditions': [
-      ['OS=="win"', {
-        'defines': ['<@(openssl_default_defines_win)'],
-        'link_settings': {
-          'libraries': ['<@(openssl_default_libraries_win)'],
-        },
-      }, {
-        'cflags': ['-Wno-missing-field-initializers'],
-      }],
-      ['is_clang==1 or gcc_version>=43', {
-        'cflags': ['-Wno-old-style-declaration'],
-      }],
-      ['OS=="solaris"', {
-        'defines': ['__EXTENSIONS__'],
-      }],
-    ],
-  },
 }
 
 # Local Variables:
