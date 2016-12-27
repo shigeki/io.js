@@ -178,7 +178,6 @@
       'openssl/crypto/bn/bn_srp.c',
       'openssl/crypto/bn/bn_word.c',
       'openssl/crypto/bn/bn_x931p.c',
-      'openssl/crypto/bn/s390x-mont.s',
       'openssl/crypto/buffer/buf_err.c',
       'openssl/crypto/buffer/buffer.c',
       'openssl/crypto/camellia/camellia.c',
@@ -652,6 +651,7 @@
     ],
     'openssl_sources_linux32-s390x': [
       'config/archs/linux32-s390x/asm/crypto/bn/s390x-gf2m.s',
+      'config/archs/linux32-s390x/asm/crypto/bn/s390x-mont.s',
     ],
     'openssl_defines_linux32-s390x': [
       'DSO_DLFCN',
