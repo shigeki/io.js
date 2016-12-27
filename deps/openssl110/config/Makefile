@@ -40,7 +40,7 @@ $(ARCHS):
 	cp $(OPSSL_SRC)/configdata.pm ./archs/$@/
 	./generate.pl $@
 	cd ../openssl; make clean > /dev/null; make distclean > /dev/null
-
+	cd ../openssl; find crypto \( -name \*.S \) -exec rm "{}" \;
 replace:
 	cp ./$(CFG).tmpl $(SRC_CFG)
 	@for c in $(INT_CFGS); do \

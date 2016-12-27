@@ -12,6 +12,9 @@ my @libcrypto_srcs = ();
 my @generated_srcs = ();
 foreach my $obj (@{$unified_info{sources}->{libcrypto}}) {
     my $src = ${$unified_info{sources}->{$obj}}[0];
+    # .S files should be proprocessed into .s
+    $src =~ s/\.S$/\.s/;
+    printf STDOUT "$src\n";
     if ($unified_info{generate}->{$src}) {
         push(@generated_srcs, $src);
     } else {
