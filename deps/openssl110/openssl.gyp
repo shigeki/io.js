@@ -96,11 +96,15 @@
               ],
               'sources': ['<@(openssl_sources_ia32_elf_gas)'],
             }, 'target_arch=="x64" and OS=="mac"', {
+             'include_dirs': ['config/archs/darwin64-x86_64-cc/'],
+             'includes': ['config/archs/darwin64-x86_64-cc/openssl_asm.gypi'],
               'defines': [
-                '<@(openssl_defines_asm)',
-                '<@(openssl_defines_x64_mac)',
+                'OPENSSL_CPUID_OBJ',
+                'ENGINESDIR="/dev/null"',
+                'OPENSSLDIR="/etc/ssl"',
+                '<@(openssl_defines_darwin64-x86_64-cc)',
               ],
-              'sources': ['<@(openssl_sources_x64_mac_gas)'],
+              'sources': ['<@(openssl_sources)', '<@(openssl_sources_darwin64-x86_64-cc)'],
             }, 'target_arch=="x64" and OS=="win"', {
               'defines': [
                 '<@(openssl_defines_asm)',
@@ -162,12 +166,6 @@
         },
       }, {
         'cflags': ['-Wno-missing-field-initializers'],
-        'conditions': [
-          ['OS=="mac"', {
-            'defines': ['<@(openssl_default_defines_mac)'],
-          }, {
-          }],
-        ]
       }],
       ['is_clang==1 or gcc_version>=43', {
         'cflags': ['-Wno-old-style-declaration'],
