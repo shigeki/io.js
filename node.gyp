@@ -120,10 +120,14 @@
       }, {
         'use_openssl_def': 0,
       }],
+      [ 'use_openssl110=="true"', {
+        'openssl_target%': 'openssl110',
+      }, {
+        'openssl_target%': 'openssl',
+      }],
     ],
   },
-
-  'targets': [
+   'targets': [
     {
       'target_name': '<(node_core_target_name)',
       'type': '<(node_target_type)',
@@ -360,10 +364,9 @@
             }],
             [ 'node_shared_openssl=="false"', {
               'dependencies': [
-                './deps/openssl/openssl.gyp:openssl',
-
+                './deps/<(openssl_target)/openssl.gyp:openssl',
                 # For tests
-                './deps/openssl/openssl.gyp:openssl-cli',
+                './deps/<(openssl_target)/openssl.gyp:openssl-cli',
               ],
               # Do not let unused OpenSSL symbols to slip away
               'conditions': [
@@ -379,7 +382,7 @@
                     ['OS in "linux freebsd" and node_shared=="false"', {
                       'ldflags': [
                         '-Wl,--whole-archive,'
-                            '<(PRODUCT_DIR)/obj.target/deps/openssl/'
+                            '<(PRODUCT_DIR)/obj.target/deps/<(openssl_target)/'
                             '<(OPENSSL_PRODUCT)',
                         '-Wl,--no-whole-archive',
                       ],
@@ -611,8 +614,8 @@
             {
               'action_name': 'mkssldef',
               'inputs': [
-                'deps/openssl/openssl/util/libeay.num',
-                'deps/openssl/openssl/util/ssleay.num',
+                'deps/<(openssl_target)/openssl/util/libeay.num',
+                'deps/<(openssl_target)/openssl/util/ssleay.num',
               ],
               'outputs': ['<(SHARED_INTERMEDIATE_DIR)/openssl.def'],
               'action': [
@@ -914,9 +917,17 @@
           ],
           'conditions': [
             [ 'node_shared_openssl=="false"', {
-              'dependencies': [
-                'deps/openssl/openssl.gyp:openssl'
-              ]
+              'conditions': [
+                 [ 'use_openssl110=="false"', {
+                   'dependencies': [
+                     'deps/<(openssl_target)/openssl.gyp:openssl'
+                    ],
+                 }, {
+                   'dependencies': [
+                     'deps/<(openssl_target)/openssl.gyp:openssl'
+                    ],
+                 }],
+               ],
             }],
             [ 'node_shared_http_parser=="false"', {
               'dependencies': [
