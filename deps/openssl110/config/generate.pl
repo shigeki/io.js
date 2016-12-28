@@ -14,10 +14,8 @@ foreach my $obj (@{$unified_info{sources}->{libcrypto}}) {
     my $src = ${$unified_info{sources}->{$obj}}[0];
     # .S files should be proprocessed into .s
     if ($unified_info{generate}->{$src}) {
-       $src =~ s/\.S$/\.s/;
         push(@generated_srcs, $src);
     } else {
-       $src =~ s/\.S$/\.s/;
         push(@libcrypto_srcs, $src);
     }
 }
