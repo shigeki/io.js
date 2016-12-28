@@ -64,6 +64,18 @@
               'sources': ['<@(openssl_sources)', '<@(openssl_sources_darwin-i386-cc)'],
             }, 'target_arch=="ia32" and OS=="win"', {
             }, 'target_arch=="ia32" and OS=="linux"', {
+             'include_dirs': ['config/archs/linux-elf/'],
+             'includes': ['config/archs/linux-elf/openssl.gypi'],
+              # Linux or others
+              'defines': [
+                'OPENSSL_CPUID_OBJ',
+                'ENGINESDIR="/dev/null"',
+                'OPENSSLDIR="/etc/ssl"',
+                '<@(openssl_defines_linux-elf)',
+              ],
+              'cflags' : ['<@(openssl_cflags_linux-elf)'],
+              'libraries': ['<@(openssl_ex_libs_linux-elf)'],
+              'sources': ['<@(openssl_sources)', '<@(openssl_sources_linux-elf)'],
             }, 'target_arch=="ia32"', {
               # ia32 others
             }, 'target_arch=="x64" and OS=="mac"', {
@@ -129,6 +141,11 @@
              'libraries': ['<@(openssl_ex_libs_darwin-i386-cc)'],
            }, 'target_arch=="ia32" and OS=="win"', {
            }, 'target_arch=="ia32" and OS=="linux"', {
+             'includes': ['config/archs/linux-elf/openssl.gypi'],
+             'cflags': ['<@(openssl_cflags_linux-elf)'],
+             'defines': ['<@(openssl_defines_linux-elf)'],
+             'sources': ['<@(openssl_cli_srcs_linux-elf)'],
+             'libraries': ['<@(openssl_ex_libs_linux-elf)'],
            }, 'target_arch=="x64" and OS=="mac"', {
              'includes': ['config/archs/darwin64-x86_64-cc/openssl.gypi'],
              'cflags': ['<@(openssl_cflags_darwin64-x86_64-cc)'],
