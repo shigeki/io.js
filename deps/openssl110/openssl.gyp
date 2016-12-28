@@ -48,26 +48,24 @@
                 '<@(openssl_defines_linux-armv4)',
               ],
               'cflags' : ['<@(openssl_cflags_linux-armv4)'],
+              'libraries': ['<@(openssl_ex_libs_linux-armv4)'],
               'sources': ['<@(openssl_sources)', '<@(openssl_sources_linux-armv4)'],
             }, 'target_arch=="ia32" and OS=="mac"', {
+             'include_dirs': ['config/archs/darwin-i386-cc/'],
+             'includes': ['config/archs/darwin-i386-cc/openssl.gypi'],
               'defines': [
-                '<@(openssl_defines_asm)',
-                '<@(openssl_defines_ia32_mac)',
+                'OPENSSL_CPUID_OBJ',
+                'ENGINESDIR="/dev/null"',
+                'OPENSSLDIR="/etc/ssl"',
+                '<@(openssl_defines_darwin-i386-cc)',
               ],
-              'sources': ['<@(openssl_sources_ia32_mac_gas)'],
+              'cflags' : ['<@(openssl_cflags_darwin-i386-cc)'],
+              'libraries': ['<@(openssl_ex_libs_darwin-i386-cc)'],
+              'sources': ['<@(openssl_sources)', '<@(openssl_sources_darwin-i386-cc)'],
             }, 'target_arch=="ia32" and OS=="win"', {
-              'defines': [
-                '<@(openssl_defines_asm)',
-                '<@(openssl_defines_ia32_win)',
-              ],
-              'sources': ['<@(openssl_sources_ia32_win_masm)'],
+            }, 'target_arch=="ia32" and OS=="linux"', {
             }, 'target_arch=="ia32"', {
-              # Linux or others
-              'defines': [
-                '<@(openssl_defines_asm)',
-                '<@(openssl_defines_ia32_elf)',
-              ],
-              'sources': ['<@(openssl_sources_ia32_elf_gas)'],
+              # ia32 others
             }, 'target_arch=="x64" and OS=="mac"', {
              'include_dirs': ['config/archs/darwin64-x86_64-cc/'],
              'includes': ['config/archs/darwin64-x86_64-cc/openssl.gypi'],
@@ -77,13 +75,10 @@
                 'OPENSSLDIR="/etc/ssl"',
                 '<@(openssl_defines_darwin64-x86_64-cc)',
               ],
+              'cflags' : ['<@(openssl_cflags_darwin64-x86_64-cc)'],
+              'libraries': ['<@(openssl_ex_libs_darwin64-x86_64-cc)'],
               'sources': ['<@(openssl_sources)', '<@(openssl_sources_darwin64-x86_64-cc)'],
             }, 'target_arch=="x64" and OS=="win"', {
-              'defines': [
-                '<@(openssl_defines_asm)',
-                '<@(openssl_defines_x64_win)',
-              ],
-              'sources': ['<@(openssl_sources_x64_win_masm)'],
             }, 'target_arch=="x64" and OS=="linux"', {
              'include_dirs': ['config/archs/linux-x86_64/'],
              'includes': ['config/archs/linux-x86_64/openssl.gypi'],
@@ -98,27 +93,11 @@
               'libraries': ['<@(openssl_ex_libs_linux-x86_64)'],
               'sources': ['<@(openssl_sources)', '<@(openssl_sources_linux-x86_64)'],
             }, 'target_arch=="arm64" and OS=="linux"', {
-              'defines': ['<@(openssl_defines_arm64)',],
-              'sources': ['<@(openssl_sources_arm64_linux64_gas)'],
             }, {
               # Other architectures don't use assembly.
-              'defines': ['OPENSSL_NO_ASM'],
-              'sources': ['<@(openssl_sources_no_asm)'],
             }],
           ],
         }], # end of conditions of openssl_no_asm
-        ['OS=="win"', {
-          'defines' : ['<@(openssl_defines_all_win)'],
-        }, {
-        }],
-        ['target_arch=="ia32" and OS=="win"', {
-          'msvs_settings': {
-            'MASM': {
-              # Use /safeseh, see commit: 01fa5ee
-              'UseSafeExceptionHandlers': 'true',
-            },
-          },
-        }],
       ],
       'direct_dependent_settings': {
         'include_dirs': [
@@ -143,6 +122,11 @@
              'sources': ['<@(openssl_cli_srcs_linux-armv4)'],
              'libraries': ['<@(openssl_ex_libs_linux-armv4)'],
            }, 'target_arch=="ia32" and OS=="mac"', {
+             'includes': ['config/archs/darwin-i386-cc/openssl.gypi'],
+             'cflags': ['<@(openssl_cflags_darwin-i386-cc)'],
+             'defines': ['<@(openssl_defines_darwin-i386-cc)'],
+             'sources': ['<@(openssl_cli_srcs_darwin-i386-cc)'],
+             'libraries': ['<@(openssl_ex_libs_darwin-i386-cc)'],
            }, 'target_arch=="ia32" and OS=="win"', {
            }, 'target_arch=="ia32" and OS=="linux"', {
            }, 'target_arch=="x64" and OS=="mac"', {
