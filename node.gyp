@@ -20,6 +20,7 @@
     'node_v8_options%': '',
     'node_enable_v8_vtunejit%': 'false',
     'node_core_target_name%': 'node',
+    'openssl_no_asm%': 0,
     'library_files': [
       'lib/internal/bootstrap_node.js',
       'lib/_debug_agent.js',
@@ -363,10 +364,20 @@
               'defines': [ 'NODE_FIPS_MODE' ],
             }],
             [ 'node_shared_openssl=="false"', {
-              'dependencies': [
-                './deps/<(openssl_target)/openssl.gyp:openssl',
-                # For tests
-                './deps/<(openssl_target)/openssl.gyp:openssl-cli',
+              'conditions': [
+                ['use_openssl110=="true"' and 'openssl_no_asm==1', {
+                  'dependencies': [
+                    './deps/<(openssl_target)/openssl_noasm.gyp:openssl',
+                    # For tests
+                    './deps/<(openssl_target)/openssl_noasm.gyp:openssl-cli',
+                  ],
+                },  {
+                  'dependencies': [
+                    './deps/<(openssl_target)/openssl.gyp:openssl',
+                    # For tests
+                    './deps/<(openssl_target)/openssl.gyp:openssl-cli',
+                  ],
+                }],
               ],
               # Do not let unused OpenSSL symbols to slip away
               'conditions': [

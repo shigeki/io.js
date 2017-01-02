@@ -1,8 +1,10 @@
 #! /usr/bin/env perl
-use lib "./archs/$ARGV[0]";
+use lib "./$ARGV[0]/$ARGV[1]";
 use configdata;
 
-$arch = $ARGV[0];
+$pdir = $ARGV[0];
+$arch = $ARGV[1];
+
 my @libssl_srcs = ();
 foreach my $obj (@{$unified_info{sources}->{libssl}}) {
     push(@libssl_srcs, ${$unified_info{sources}->{$obj}}[0]);
@@ -26,13 +28,13 @@ foreach my $obj (@{$unified_info{sources}->{'apps/openssl'}}) {
 }
 
 my $configdir = "../config";
-my $archdir = "$configdir/archs/$arch";
+my $archdir = "$configdir/$pdir/$arch";
 unless (-d $archdir) {
     mkdir($archdir);
 }
 
 my $asmdir = "$archdir/asm";
-unless (-d $asmdir) {
+unless (-d $asmdir || $pdir == 'archs') {
     mkdir($asmdir);
 }
 
@@ -41,7 +43,7 @@ foreach my $src (@generated_srcs) {
     system("$cmd 2>$configdir/cms.err 1>$configdir/cms.out");
 }
 
-open(GYPI, "> archs/$arch/openssl.gypi");
+open(GYPI, "> $pdir/$arch/openssl.gypi");
 
 print GYPI "{
   'variables': {
@@ -59,7 +61,7 @@ print GYPI "    ],\n";
 
 print GYPI "    'openssl_sources_$arch': [\n";
 foreach my $src (@generated_srcs) {
-    print GYPI "      'config/archs/$arch/asm/$src',\n";
+    print GYPI "      'config/$pdir/$arch/asm/$src',\n";
 }
 print GYPI "    ],\n";
 

@@ -17,7 +17,7 @@ our %config = (
   bn_ll => "1",
   build_file => "Makefile",
   build_file_templates => [ "Configurations/unix-Makefile.tmpl", "Configurations/common.tmpl" ],
-  build_infos => [ "./build.info", "crypto/build.info", "ssl/build.info", "engines/build.info", "apps/build.info", "test/build.info", "util/build.info", "tools/build.info", "fuzz/build.info", "crypto/objects/build.info", "crypto/md4/build.info", "crypto/md5/build.info", "crypto/sha/build.info", "crypto/mdc2/build.info", "crypto/hmac/build.info", "crypto/ripemd/build.info", "crypto/whrlpool/build.info", "crypto/poly1305/build.info", "crypto/blake2/build.info", "crypto/des/build.info", "crypto/aes/build.info", "crypto/rc2/build.info", "crypto/rc4/build.info", "crypto/idea/build.info", "crypto/bf/build.info", "crypto/cast/build.info", "crypto/camellia/build.info", "crypto/seed/build.info", "crypto/chacha/build.info", "crypto/modes/build.info", "crypto/bn/build.info", "crypto/ec/build.info", "crypto/rsa/build.info", "crypto/dsa/build.info", "crypto/dh/build.info", "crypto/dso/build.info", "crypto/engine/build.info", "crypto/buffer/build.info", "crypto/bio/build.info", "crypto/stack/build.info", "crypto/lhash/build.info", "crypto/rand/build.info", "crypto/err/build.info", "crypto/evp/build.info", "crypto/asn1/build.info", "crypto/pem/build.info", "crypto/x509/build.info", "crypto/x509v3/build.info", "crypto/conf/build.info", "crypto/txt_db/build.info", "crypto/pkcs7/build.info", "crypto/pkcs12/build.info", "crypto/comp/build.info", "crypto/ocsp/build.info", "crypto/ui/build.info", "crypto/cms/build.info", "crypto/ts/build.info", "crypto/srp/build.info", "crypto/cmac/build.info", "crypto/ct/build.info", "crypto/async/build.info", "crypto/kdf/build.info", "engines/afalg/build.info" ],
+  build_infos => [ "./build.info", "crypto/build.info", "ssl/build.info", "engines/build.info", "apps/build.info", "test/build.info", "util/build.info", "tools/build.info", "fuzz/build.info", "crypto/objects/build.info", "crypto/md4/build.info", "crypto/md5/build.info", "crypto/sha/build.info", "crypto/mdc2/build.info", "crypto/hmac/build.info", "crypto/ripemd/build.info", "crypto/whrlpool/build.info", "crypto/poly1305/build.info", "crypto/blake2/build.info", "crypto/des/build.info", "crypto/aes/build.info", "crypto/rc2/build.info", "crypto/rc4/build.info", "crypto/idea/build.info", "crypto/bf/build.info", "crypto/cast/build.info", "crypto/camellia/build.info", "crypto/seed/build.info", "crypto/chacha/build.info", "crypto/modes/build.info", "crypto/bn/build.info", "crypto/ec/build.info", "crypto/rsa/build.info", "crypto/dsa/build.info", "crypto/dh/build.info", "crypto/dso/build.info", "crypto/engine/build.info", "crypto/buffer/build.info", "crypto/bio/build.info", "crypto/stack/build.info", "crypto/lhash/build.info", "crypto/rand/build.info", "crypto/err/build.info", "crypto/evp/build.info", "crypto/asn1/build.info", "crypto/pem/build.info", "crypto/x509/build.info", "crypto/x509v3/build.info", "crypto/conf/build.info", "crypto/txt_db/build.info", "crypto/pkcs7/build.info", "crypto/pkcs12/build.info", "crypto/comp/build.info", "crypto/ocsp/build.info", "crypto/ui/build.info", "crypto/cms/build.info", "crypto/ts/build.info", "crypto/srp/build.info", "crypto/cmac/build.info", "crypto/ct/build.info", "crypto/async/build.info", "crypto/kdf/build.info" ],
   build_type => "release",
   builddir => ".",
   cc => "gcc",
@@ -27,7 +27,7 @@ our %config = (
   defines => [ "DSO_DLFCN", "HAVE_DLFCN_H", "NDEBUG", "OPENSSL_NO_DYNAMIC_ENGINE", "OPENSSL_PIC", "OPENSSL_BN_ASM_PART_WORDS", "OPENSSL_IA32_SSE2", "OPENSSL_BN_ASM_MONT", "OPENSSL_BN_ASM_GF2m", "SHA1_ASM", "SHA256_ASM", "SHA512_ASM", "RC4_ASM", "MD5_ASM", "RMD160_ASM", "AES_ASM", "VPAES_ASM", "WHIRLPOOL_ASM", "GHASH_ASM", "ECP_NISTZ256_ASM", "POLY1305_ASM" ],
   dirs => [ "crypto", "ssl", "engines", "apps", "test", "util", "tools", "fuzz" ],
   dynamic_engines => "0",
-  engdirs => [ "afalg" ],
+  engdirs => [  ],
   ex_libs => "",
   export_var_as_fn => "0",
   fips => "0",
@@ -39,7 +39,7 @@ our %config = (
   minor => "1.0",
   openssl_algorithm_defines => [ "OPENSSL_NO_MD2", "OPENSSL_NO_RC5" ],
   openssl_api_defines => [  ],
-  openssl_other_defines => [ "OPENSSL_NO_ASAN", "OPENSSL_NO_CRYPTO_MDEBUG", "OPENSSL_NO_CRYPTO_MDEBUG_BACKTRACE", "OPENSSL_NO_EC_NISTP_64_GCC_128", "OPENSSL_NO_EGD", "OPENSSL_NO_FUZZ_AFL", "OPENSSL_NO_FUZZ_LIBFUZZER", "OPENSSL_NO_HEARTBEATS", "OPENSSL_NO_MSAN", "OPENSSL_NO_SCTP", "OPENSSL_NO_SSL_TRACE", "OPENSSL_NO_SSL3", "OPENSSL_NO_SSL3_METHOD", "OPENSSL_NO_UBSAN", "OPENSSL_NO_UNIT_TEST", "OPENSSL_NO_WEAK_SSL_CIPHERS" ],
+  openssl_other_defines => [ "OPENSSL_NO_ASAN", "OPENSSL_NO_CRYPTO_MDEBUG", "OPENSSL_NO_CRYPTO_MDEBUG_BACKTRACE", "OPENSSL_NO_EC_NISTP_64_GCC_128", "OPENSSL_NO_EGD", "OPENSSL_NO_FUZZ_AFL", "OPENSSL_NO_FUZZ_LIBFUZZER", "OPENSSL_NO_HEARTBEATS", "OPENSSL_NO_MSAN", "OPENSSL_NO_SCTP", "OPENSSL_NO_SSL_TRACE", "OPENSSL_NO_SSL3", "OPENSSL_NO_SSL3_METHOD", "OPENSSL_NO_UBSAN", "OPENSSL_NO_UNIT_TEST", "OPENSSL_NO_WEAK_SSL_CIPHERS", "OPENSSL_NO_AFALGENG" ],
   openssl_sys_defines => [  ],
   openssl_thread_defines => [  ],
   openssldir => "",
@@ -234,6 +234,7 @@ our @disablables = (
 );
 
 our %disabled = (
+  "afalgeng" => "too-old-kernel",
   "asan" => "default",
   "crypto-mdebug" => "default",
   "crypto-mdebug-backtrace" => "default",
@@ -6001,14 +6002,6 @@ our %unified_info = (
                 [
                     "crypto/x86cpuid.s",
                 ],
-            "engines/afalg/e_afalg.o" =>
-                [
-                    "engines/afalg/e_afalg.c",
-                ],
-            "engines/afalg/e_afalg_err.o" =>
-                [
-                    "engines/afalg/e_afalg_err.c",
-                ],
             "engines/e_capi.o" =>
                 [
                     "engines/e_capi.c",
@@ -6728,8 +6721,6 @@ our %unified_info = (
                     "crypto/x509v3/v3_utl.o",
                     "crypto/x509v3/v3err.o",
                     "crypto/x86cpuid.o",
-                    "engines/afalg/e_afalg.o",
-                    "engines/afalg/e_afalg_err.o",
                     "engines/e_capi.o",
                     "engines/e_padlock-x86.o",
                     "engines/e_padlock.o",

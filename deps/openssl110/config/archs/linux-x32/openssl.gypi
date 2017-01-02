@@ -633,8 +633,6 @@
       'openssl/crypto/x509v3/v3_tlsf.c',
       'openssl/crypto/x509v3/v3_utl.c',
       'openssl/crypto/x509v3/v3err.c',
-      'openssl/engines/afalg/e_afalg.c',
-      'openssl/engines/afalg/e_afalg_err.c',
       'openssl/engines/e_capi.c',
       'openssl/engines/e_padlock.c',
     ],

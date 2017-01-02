@@ -39,9 +39,22 @@ $(ARCHS):
 	done
 	cp $(OPSSL_SRC)/crypto/buildinf.h ../config/archs/$@/
 	cp $(OPSSL_SRC)/configdata.pm ./archs/$@/
-	./generate.pl $@
+	./generate.pl archs $@
 	cd ../openssl; make clean > /dev/null; make distclean > /dev/null
 	cd ../openssl; find crypto \( -name \*.S \) -exec rm "{}" \;
+	cd ../openssl; $(PERL) $(CONFIGURE) $(COPT) no-asm $@ > /dev/null; \
+	$(MAKE) build_generated crypto/buildinf.h > /dev/null
+	if [ ! -d ./noasm_archs/$@ ]; then mkdir ./noasm_archs/$@ ; fi
+	$(PERL) -p -e $(CPUIDFIX) $(SRC_CFG) > ./noasm_archs/$@/$(CFG)
+	@for c in $(INT_CFGS); do \
+	    mv $(INT_CFG_DIR)/$$c ./noasm_archs/$@/$$c; \
+	done
+	cp $(OPSSL_SRC)/crypto/buildinf.h ../config/noasm_archs/$@/
+	cp $(OPSSL_SRC)/configdata.pm ./noasm_archs/$@/
+	./generate.pl noasm_archs $@
+	cd ../openssl; make clean > /dev/null; make distclean > /dev/null
+	cd ../openssl; find crypto \( -name \*.S \) -exec rm "{}" \;
+
 replace:
 	cp ./$(CFG).tmpl $(SRC_CFG)
 	@for c in $(INT_CFGS); do \
