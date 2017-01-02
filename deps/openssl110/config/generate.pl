@@ -70,21 +70,51 @@ foreach my $define (@{$config{defines}}) {
     print GYPI "      '$define',\n";
 }
 print GYPI "    ],\n";
-
 print GYPI "    'openssl_cflags_$arch': [\n";
 print GYPI "      '$target{cflags}',\n";
 print GYPI "    ],\n";
-
 print GYPI "    'openssl_ex_libs_$arch': [\n";
 print GYPI "      '$target{ex_libs}',\n";
 print GYPI "    ],\n";
-
-print GYPI "    'openssl_cli_srcs_$arch': [\n";
-foreach my $src (@apps_openssl_srcs) {
-    print GYPI "      'openssl/$src',\n";
-}
-print GYPI "    ],\n";
-print GYPI "  }
-}\n";
+print GYPI "  },\n";
+print GYPI "  'include_dirs': ['config/archs/$arch/'],\n";
+print GYPI "  'defines': ['<@(openssl_defines_$arch)'],\n";
+print GYPI "  'cflags' : ['<@(openssl_cflags_$arch)'],\n";
+print GYPI "  'libraries': ['<@(openssl_ex_libs_$arch)'],\n";
+print GYPI "  'sources': ['<@(openssl_sources)', '<@(openssl_sources_$arch)'],\n";
+print GYPI "}\n";
 
 close(GYPI);
+
+
+open(CLGYPI, "> $pdir/$arch/openssl-cl.gypi");
+
+print CLGYPI "{
+  'variables': {\n";
+print CLGYPI "    'openssl_defines_$arch': [\n";
+foreach my $define (@{$config{defines}}) {
+    print CLGYPI "      '$define',\n";
+}
+print CLGYPI "    ],\n";
+
+print CLGYPI "    'openssl_cflags_$arch': [\n";
+print CLGYPI "      '$target{cflags}',\n";
+print CLGYPI "    ],\n";
+
+print CLGYPI "    'openssl_ex_libs_$arch': [\n";
+print CLGYPI "      '$target{ex_libs}',\n";
+print CLGYPI "    ],\n";
+
+print CLGYPI "    'openssl_cli_srcs_$arch': [\n";
+foreach my $src (@apps_openssl_srcs) {
+    print CLGYPI "      'openssl/$src',\n";
+}
+print CLGYPI "    ],\n";
+print CLGYPI "  },\n";
+print CLGYPI "  'defines': ['<@(openssl_defines_$arch)'],\n";
+print CLGYPI "  'cflags' : ['<@(openssl_cflags_$arch)'],\n";
+print CLGYPI "  'libraries': ['<@(openssl_ex_libs_$arch)'],\n";
+print CLGYPI "  'sources': ['<@(openssl_cli_srcs_$arch)'],\n";
+print CLGYPI "}\n";
+
+close(CLGYPI);

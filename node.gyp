@@ -20,7 +20,6 @@
     'node_v8_options%': '',
     'node_enable_v8_vtunejit%': 'false',
     'node_core_target_name%': 'node',
-    'openssl_no_asm%': 0,
     'library_files': [
       'lib/internal/bootstrap_node.js',
       'lib/_debug_agent.js',
@@ -128,7 +127,8 @@
       }],
     ],
   },
-   'targets': [
+
+  'targets': [
     {
       'target_name': '<(node_core_target_name)',
       'type': '<(node_target_type)',
@@ -364,20 +364,10 @@
               'defines': [ 'NODE_FIPS_MODE' ],
             }],
             [ 'node_shared_openssl=="false"', {
-              'conditions': [
-                ['use_openssl110=="true"' and 'openssl_no_asm==1', {
-                  'dependencies': [
-                    './deps/<(openssl_target)/openssl_noasm.gyp:openssl',
-                    # For tests
-                    './deps/<(openssl_target)/openssl_noasm.gyp:openssl-cli',
-                  ],
-                },  {
-                  'dependencies': [
-                    './deps/<(openssl_target)/openssl.gyp:openssl',
-                    # For tests
-                    './deps/<(openssl_target)/openssl.gyp:openssl-cli',
-                  ],
-                }],
+              'dependencies': [
+                './deps/<(openssl_target)/openssl.gyp:openssl',
+                # For tests
+                './deps/<(openssl_target)/openssl.gyp:openssl-cli',
               ],
               # Do not let unused OpenSSL symbols to slip away
               'conditions': [
@@ -928,17 +918,9 @@
           ],
           'conditions': [
             [ 'node_shared_openssl=="false"', {
-              'conditions': [
-                 [ 'use_openssl110=="false"', {
-                   'dependencies': [
-                     'deps/<(openssl_target)/openssl.gyp:openssl'
-                    ],
-                 }, {
-                   'dependencies': [
-                     'deps/<(openssl_target)/openssl.gyp:openssl'
-                    ],
-                 }],
-               ],
+              'dependencies': [
+                'deps/<(openssl_target)/openssl.gyp:openssl'
+              ]
             }],
             [ 'node_shared_http_parser=="false"', {
               'dependencies': [
@@ -980,6 +962,16 @@
             }, {
               'type': 'executable',
             }],
+            ['target_arch=="ppc64"', {
+              'ldflags': [
+                '-Wl,-blibpath:/usr/lib:/lib:/opt/freeware/lib/pthread/ppc64'
+              ],
+            }],
+            ['target_arch=="ppc"', {
+              'ldflags': [
+                '-Wl,-blibpath:/usr/lib:/lib:/opt/freeware/lib/pthread'
+              ],
+            }]
           ],
           'dependencies': ['<(node_core_target_name)', 'node_exp'],
 
