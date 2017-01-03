@@ -1,8 +1,8 @@
 #! /usr/bin/env perl
-use lib "./$ARGV[0]/$ARGV[1]";
+use lib "./archs/$ARGV[1]/$ARGV[0]/";
 use configdata;
 
-$pdir = $ARGV[0];
+$conf_opt = $ARGV[0];
 $arch = $ARGV[1];
 
 my @libssl_srcs = ();
@@ -27,23 +27,12 @@ foreach my $obj (@{$unified_info{sources}->{'apps/openssl'}}) {
     push(@apps_openssl_srcs, ${$unified_info{sources}->{$obj}}[0]);
 }
 
-my $configdir = "../config";
-my $archdir = "$configdir/$pdir/$arch";
-unless (-d $archdir) {
-    mkdir($archdir);
-}
-
-my $asmdir = "$archdir/asm";
-unless (-d $asmdir || $pdir == 'archs') {
-    mkdir($asmdir);
-}
-
 foreach my $src (@generated_srcs) {
-    $cmd = "cd ../openssl; CC=gcc ASM=nasm make $src; cp --parents $src $asmdir; cd ../config";
+    $cmd = "cd ../openssl; CC=gcc ASM=nasm make $src; cp --parents $src ../config/archs/$arch/$conf_opt; cd ../config";
     system("$cmd 2>$configdir/cms.err 1>$configdir/cms.out");
 }
 
-open(GYPI, "> $pdir/$arch/openssl.gypi");
+open(GYPI, "> ../config/archs/$arch/$conf_opt/openssl.gypi");
 
 print GYPI "{
   'variables': {
@@ -61,7 +50,7 @@ print GYPI "    ],\n";
 
 print GYPI "    'openssl_sources_$arch': [\n";
 foreach my $src (@generated_srcs) {
-    print GYPI "      'config/$pdir/$arch/asm/$src',\n";
+    print GYPI "      './config/archs/$arch/$conf_opt/$src',\n";
 }
 print GYPI "    ],\n";
 
@@ -77,7 +66,6 @@ print GYPI "    'openssl_ex_libs_$arch': [\n";
 print GYPI "      '$target{ex_libs}',\n";
 print GYPI "    ],\n";
 print GYPI "  },\n";
-print GYPI "  'include_dirs': ['config/archs/$arch/'],\n";
 print GYPI "  'defines': ['<@(openssl_defines_$arch)'],\n";
 print GYPI "  'cflags' : ['<@(openssl_cflags_$arch)'],\n";
 print GYPI "  'libraries': ['<@(openssl_ex_libs_$arch)'],\n";
@@ -86,9 +74,7 @@ print GYPI "}\n";
 
 close(GYPI);
 
-
-open(CLGYPI, "> $pdir/$arch/openssl-cl.gypi");
-
+open(CLGYPI, "> ../config/archs/$arch/$conf_opt/openssl-cl.gypi");
 print CLGYPI "{
   'variables': {\n";
 print CLGYPI "    'openssl_defines_$arch': [\n";
