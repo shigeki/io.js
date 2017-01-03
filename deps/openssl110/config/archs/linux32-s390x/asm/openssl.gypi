@@ -40,7 +40,6 @@
       'openssl/ssl/t1_reneg.c',
       'openssl/ssl/t1_trce.c',
       'openssl/ssl/tls_srp.c',
-      'openssl/crypto/aes/aes-s390x.S',
       'openssl/crypto/aes/aes_cfb.c',
       'openssl/crypto/aes/aes_ecb.c',
       'openssl/crypto/aes/aes_ige.c',
@@ -648,6 +647,7 @@
       'openssl/engines/e_padlock.c',
     ],
     'openssl_sources_linux32-s390x': [
+      './config/archs/linux32-s390x/asm/crypto/aes/aes-s390x.S',
       './config/archs/linux32-s390x/asm/crypto/bn/s390x-gf2m.s',
       './config/archs/linux32-s390x/asm/crypto/bn/s390x-mont.S',
     ],

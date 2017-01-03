@@ -1093,6 +1093,11 @@ our %unified_info = (
                     "crypto/aes/asm/aes-ppc.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
+            "crypto/aes/aes-s390x.S" =>
+                [
+                    "crypto/aes/asm/aes-s390x.pl",
+                    "\$(PERLASM_SCHEME)",
+                ],
             "crypto/aes/aes-sparcv9.S" =>
                 [
                     "crypto/aes/asm/aes-sparcv9.pl",
