@@ -1643,9 +1643,9 @@ our %unified_info = (
                     "crypto/rc4/asm/rc4-parisc.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
-            "crypto/rc4/rc4-s390x.S" =>
+            "crypto/rc4/rc4-s390x.s" =>
                 [
-                    "crypto/rc4/asm/poly1305-s390x.pl",
+                    "crypto/rc4/asm/rc4-s390x.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
             "crypto/rc4/rc4-x86_64.s" =>
