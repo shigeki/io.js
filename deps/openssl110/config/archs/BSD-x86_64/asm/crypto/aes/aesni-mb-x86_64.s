@@ -2,18 +2,18 @@
 
 
 
-.globl	_aesni_multi_cbc_encrypt
-
-.p2align	5
-_aesni_multi_cbc_encrypt:
+.globl	aesni_multi_cbc_encrypt
+.type	aesni_multi_cbc_encrypt,@function
+.align	32
+aesni_multi_cbc_encrypt:
 	cmpl	$2,%edx
-	jb	L$enc_non_avx
-	movl	_OPENSSL_ia32cap_P+4(%rip),%ecx
+	jb	.Lenc_non_avx
+	movl	OPENSSL_ia32cap_P+4(%rip),%ecx
 	testl	$268435456,%ecx
 	jnz	_avx_cbc_enc_shortcut
-	jmp	L$enc_non_avx
-.p2align	4
-L$enc_non_avx:
+	jmp	.Lenc_non_avx
+.align	16
+.Lenc_non_avx:
 	movq	%rsp,%rax
 	pushq	%rbx
 	pushq	%rbp
@@ -31,12 +31,12 @@ L$enc_non_avx:
 	andq	$-64,%rsp
 	movq	%rax,16(%rsp)
 
-L$enc4x_body:
+.Lenc4x_body:
 	movdqu	(%rsi),%xmm12
 	leaq	120(%rsi),%rsi
 	leaq	80(%rdi),%rdi
 
-L$enc4x_loop_grande:
+.Lenc4x_loop_grande:
 	movl	%edx,24(%rsp)
 	xorl	%edx,%edx
 	movl	-64(%rdi),%ecx
@@ -76,7 +76,7 @@ L$enc4x_loop_grande:
 	movl	%ecx,44(%rsp)
 	cmovleq	%rsp,%r11
 	testl	%edx,%edx
-	jz	L$enc4x_done
+	jz	.Lenc4x_done
 
 	movups	16-120(%rsi),%xmm1
 	pxor	%xmm12,%xmm2
@@ -95,10 +95,10 @@ L$enc4x_loop_grande:
 	pxor	%xmm9,%xmm5
 	movdqa	32(%rsp),%xmm10
 	xorq	%rbx,%rbx
-	jmp	L$oop_enc4x
+	jmp	.Loop_enc4x
 
-.p2align	5
-L$oop_enc4x:
+.align	32
+.Loop_enc4x:
 	addq	$16,%rbx
 	leaq	16(%rsp),%rbp
 	movl	$1,%ecx
@@ -175,7 +175,7 @@ L$oop_enc4x:
 .byte	102,15,56,220,232
 	movups	160-120(%rsi),%xmm0
 
-	jb	L$enc4x_tail
+	jb	.Lenc4x_tail
 
 .byte	102,15,56,220,209
 .byte	102,15,56,220,217
@@ -189,7 +189,7 @@ L$oop_enc4x:
 .byte	102,15,56,220,232
 	movups	192-120(%rsi),%xmm0
 
-	je	L$enc4x_tail
+	je	.Lenc4x_tail
 
 .byte	102,15,56,220,209
 .byte	102,15,56,220,217
@@ -202,10 +202,10 @@ L$oop_enc4x:
 .byte	102,15,56,220,224
 .byte	102,15,56,220,232
 	movups	224-120(%rsi),%xmm0
-	jmp	L$enc4x_tail
+	jmp	.Lenc4x_tail
 
-.p2align	5
-L$enc4x_tail:
+.align	32
+.Lenc4x_tail:
 .byte	102,15,56,220,209
 .byte	102,15,56,220,217
 .byte	102,15,56,220,225
@@ -236,7 +236,7 @@ L$enc4x_tail:
 	pxor	%xmm9,%xmm5
 
 	decl	%edx
-	jnz	L$oop_enc4x
+	jnz	.Loop_enc4x
 
 	movq	16(%rsp),%rax
 	movl	24(%rsp),%edx
@@ -252,9 +252,9 @@ L$enc4x_tail:
 
 	leaq	160(%rdi),%rdi
 	decl	%edx
-	jnz	L$enc4x_loop_grande
+	jnz	.Lenc4x_loop_grande
 
-L$enc4x_done:
+.Lenc4x_done:
 	movq	-48(%rax),%r15
 	movq	-40(%rax),%r14
 	movq	-32(%rax),%r13
@@ -262,22 +262,22 @@ L$enc4x_done:
 	movq	-16(%rax),%rbp
 	movq	-8(%rax),%rbx
 	leaq	(%rax),%rsp
-L$enc4x_epilogue:
+.Lenc4x_epilogue:
 	.byte	0xf3,0xc3
+.size	aesni_multi_cbc_encrypt,.-aesni_multi_cbc_encrypt
 
-
-.globl	_aesni_multi_cbc_decrypt
-
-.p2align	5
-_aesni_multi_cbc_decrypt:
+.globl	aesni_multi_cbc_decrypt
+.type	aesni_multi_cbc_decrypt,@function
+.align	32
+aesni_multi_cbc_decrypt:
 	cmpl	$2,%edx
-	jb	L$dec_non_avx
-	movl	_OPENSSL_ia32cap_P+4(%rip),%ecx
+	jb	.Ldec_non_avx
+	movl	OPENSSL_ia32cap_P+4(%rip),%ecx
 	testl	$268435456,%ecx
 	jnz	_avx_cbc_dec_shortcut
-	jmp	L$dec_non_avx
-.p2align	4
-L$dec_non_avx:
+	jmp	.Ldec_non_avx
+.align	16
+.Ldec_non_avx:
 	movq	%rsp,%rax
 	pushq	%rbx
 	pushq	%rbp
@@ -295,12 +295,12 @@ L$dec_non_avx:
 	andq	$-64,%rsp
 	movq	%rax,16(%rsp)
 
-L$dec4x_body:
+.Ldec4x_body:
 	movdqu	(%rsi),%xmm12
 	leaq	120(%rsi),%rsi
 	leaq	80(%rdi),%rdi
 
-L$dec4x_loop_grande:
+.Ldec4x_loop_grande:
 	movl	%edx,24(%rsp)
 	xorl	%edx,%edx
 	movl	-64(%rdi),%ecx
@@ -340,7 +340,7 @@ L$dec4x_loop_grande:
 	movl	%ecx,44(%rsp)
 	cmovleq	%rsp,%r11
 	testl	%edx,%edx
-	jz	L$dec4x_done
+	jz	.Ldec4x_done
 
 	movups	16-120(%rsi),%xmm1
 	movups	32-120(%rsi),%xmm0
@@ -355,10 +355,10 @@ L$dec4x_loop_grande:
 	pxor	%xmm12,%xmm5
 	movdqa	32(%rsp),%xmm10
 	xorq	%rbx,%rbx
-	jmp	L$oop_dec4x
+	jmp	.Loop_dec4x
 
-.p2align	5
-L$oop_dec4x:
+.align	32
+.Loop_dec4x:
 	addq	$16,%rbx
 	leaq	16(%rsp),%rbp
 	movl	$1,%ecx
@@ -435,7 +435,7 @@ L$oop_dec4x:
 .byte	102,15,56,222,232
 	movups	160-120(%rsi),%xmm0
 
-	jb	L$dec4x_tail
+	jb	.Ldec4x_tail
 
 .byte	102,15,56,222,209
 .byte	102,15,56,222,217
@@ -449,7 +449,7 @@ L$oop_dec4x:
 .byte	102,15,56,222,232
 	movups	192-120(%rsi),%xmm0
 
-	je	L$dec4x_tail
+	je	.Ldec4x_tail
 
 .byte	102,15,56,222,209
 .byte	102,15,56,222,217
@@ -462,10 +462,10 @@ L$oop_dec4x:
 .byte	102,15,56,222,224
 .byte	102,15,56,222,232
 	movups	224-120(%rsi),%xmm0
-	jmp	L$dec4x_tail
+	jmp	.Ldec4x_tail
 
-.p2align	5
-L$dec4x_tail:
+.align	32
+.Ldec4x_tail:
 .byte	102,15,56,222,209
 .byte	102,15,56,222,217
 .byte	102,15,56,222,225
@@ -500,16 +500,16 @@ L$dec4x_tail:
 	pxor	%xmm12,%xmm5
 
 	decl	%edx
-	jnz	L$oop_dec4x
+	jnz	.Loop_dec4x
 
 	movq	16(%rsp),%rax
 	movl	24(%rsp),%edx
 
 	leaq	160(%rdi),%rdi
 	decl	%edx
-	jnz	L$dec4x_loop_grande
+	jnz	.Ldec4x_loop_grande
 
-L$dec4x_done:
+.Ldec4x_done:
 	movq	-48(%rax),%r15
 	movq	-40(%rax),%r14
 	movq	-32(%rax),%r13
@@ -517,11 +517,11 @@ L$dec4x_done:
 	movq	-16(%rax),%rbp
 	movq	-8(%rax),%rbx
 	leaq	(%rax),%rsp
-L$dec4x_epilogue:
+.Ldec4x_epilogue:
 	.byte	0xf3,0xc3
-
-
-.p2align	5
+.size	aesni_multi_cbc_decrypt,.-aesni_multi_cbc_decrypt
+.type	aesni_multi_cbc_encrypt_avx,@function
+.align	32
 aesni_multi_cbc_encrypt_avx:
 _avx_cbc_enc_shortcut:
 	movq	%rsp,%rax
@@ -543,14 +543,14 @@ _avx_cbc_enc_shortcut:
 	andq	$-128,%rsp
 	movq	%rax,16(%rsp)
 
-L$enc8x_body:
+.Lenc8x_body:
 	vzeroupper
 	vmovdqu	(%rsi),%xmm15
 	leaq	120(%rsi),%rsi
 	leaq	160(%rdi),%rdi
 	shrl	$1,%edx
 
-L$enc8x_loop_grande:
+.Lenc8x_loop_grande:
 
 	xorl	%edx,%edx
 	movl	-144(%rdi),%ecx
@@ -642,7 +642,7 @@ L$enc8x_loop_grande:
 	subq	%r15,%rbp
 	movq	%rbp,120(%rsp)
 	testl	%edx,%edx
-	jz	L$enc8x_done
+	jz	.Lenc8x_done
 
 	vmovups	16-120(%rsi),%xmm1
 	vmovups	32-120(%rsi),%xmm0
@@ -666,10 +666,10 @@ L$enc8x_loop_grande:
 	vpxor	%xmm11,%xmm7,%xmm7
 	vpxor	%xmm12,%xmm8,%xmm8
 	vpxor	%xmm13,%xmm9,%xmm9
-	jmp	L$oop_enc8x
+	jmp	.Loop_enc8x
 
-.p2align	5
-L$oop_enc8x:
+.align	32
+.Loop_enc8x:
 	vaesenc	%xmm1,%xmm2,%xmm2
 	cmpl	32+0(%rsp),%ecx
 	vaesenc	%xmm1,%xmm3,%xmm3
@@ -835,7 +835,7 @@ L$oop_enc8x:
 	prefetcht0	15(%r14)
 	prefetcht0	15(%r15)
 	cmpl	$11,%eax
-	jb	L$enc8x_tail
+	jb	.Lenc8x_tail
 
 	vaesenc	%xmm1,%xmm2,%xmm2
 	vaesenc	%xmm1,%xmm3,%xmm3
@@ -856,7 +856,7 @@ L$oop_enc8x:
 	vaesenc	%xmm0,%xmm8,%xmm8
 	vaesenc	%xmm0,%xmm9,%xmm9
 	vmovups	192-120(%rsi),%xmm0
-	je	L$enc8x_tail
+	je	.Lenc8x_tail
 
 	vaesenc	%xmm1,%xmm2,%xmm2
 	vaesenc	%xmm1,%xmm3,%xmm3
@@ -878,7 +878,7 @@ L$oop_enc8x:
 	vaesenc	%xmm0,%xmm9,%xmm9
 	vmovups	224-120(%rsi),%xmm0
 
-L$enc8x_tail:
+.Lenc8x_tail:
 	vaesenc	%xmm1,%xmm2,%xmm2
 	vpxor	%xmm15,%xmm15,%xmm15
 	vaesenc	%xmm1,%xmm3,%xmm3
@@ -936,7 +936,7 @@ L$enc8x_tail:
 	vpxor	%xmm13,%xmm9,%xmm9
 
 	decl	%edx
-	jnz	L$oop_enc8x
+	jnz	.Loop_enc8x
 
 	movq	16(%rsp),%rax
 
@@ -944,7 +944,7 @@ L$enc8x_tail:
 
 
 
-L$enc8x_done:
+.Lenc8x_done:
 	vzeroupper
 	movq	-48(%rax),%r15
 	movq	-40(%rax),%r14
@@ -953,12 +953,12 @@ L$enc8x_done:
 	movq	-16(%rax),%rbp
 	movq	-8(%rax),%rbx
 	leaq	(%rax),%rsp
-L$enc8x_epilogue:
+.Lenc8x_epilogue:
 	.byte	0xf3,0xc3
+.size	aesni_multi_cbc_encrypt_avx,.-aesni_multi_cbc_encrypt_avx
 
-
-
-.p2align	5
+.type	aesni_multi_cbc_decrypt_avx,@function
+.align	32
 aesni_multi_cbc_decrypt_avx:
 _avx_cbc_dec_shortcut:
 	movq	%rsp,%rax
@@ -982,14 +982,14 @@ _avx_cbc_dec_shortcut:
 	subq	$192,%rsp
 	movq	%rax,16(%rsp)
 
-L$dec8x_body:
+.Ldec8x_body:
 	vzeroupper
 	vmovdqu	(%rsi),%xmm15
 	leaq	120(%rsi),%rsi
 	leaq	160(%rdi),%rdi
 	shrl	$1,%edx
 
-L$dec8x_loop_grande:
+.Ldec8x_loop_grande:
 
 	xorl	%edx,%edx
 	movl	-144(%rdi),%ecx
@@ -1089,7 +1089,7 @@ L$dec8x_loop_grande:
 	movq	%rbp,120(%rsp)
 	vmovdqu	%xmm9,304(%rsp)
 	testl	%edx,%edx
-	jz	L$dec8x_done
+	jz	.Ldec8x_done
 
 	vmovups	16-120(%rsi),%xmm1
 	vmovups	32-120(%rsi),%xmm0
@@ -1122,10 +1122,10 @@ L$dec8x_loop_grande:
 	vpxor	%xmm15,%xmm9,%xmm9
 	xorq	$0x80,%rbp
 	movl	$1,%ecx
-	jmp	L$oop_dec8x
+	jmp	.Loop_dec8x
 
-.p2align	5
-L$oop_dec8x:
+.align	32
+.Loop_dec8x:
 	vaesdec	%xmm1,%xmm2,%xmm2
 	cmpl	32+0(%rsp),%ecx
 	vaesdec	%xmm1,%xmm3,%xmm3
@@ -1291,7 +1291,7 @@ L$oop_dec8x:
 	prefetcht0	15(%r14)
 	prefetcht0	15(%r15)
 	cmpl	$11,%eax
-	jb	L$dec8x_tail
+	jb	.Ldec8x_tail
 
 	vaesdec	%xmm1,%xmm2,%xmm2
 	vaesdec	%xmm1,%xmm3,%xmm3
@@ -1312,7 +1312,7 @@ L$oop_dec8x:
 	vaesdec	%xmm0,%xmm8,%xmm8
 	vaesdec	%xmm0,%xmm9,%xmm9
 	vmovups	192-120(%rsi),%xmm0
-	je	L$dec8x_tail
+	je	.Ldec8x_tail
 
 	vaesdec	%xmm1,%xmm2,%xmm2
 	vaesdec	%xmm1,%xmm3,%xmm3
@@ -1334,7 +1334,7 @@ L$oop_dec8x:
 	vaesdec	%xmm0,%xmm9,%xmm9
 	vmovups	224-120(%rsi),%xmm0
 
-L$dec8x_tail:
+.Ldec8x_tail:
 	vaesdec	%xmm1,%xmm2,%xmm2
 	vpxor	%xmm15,%xmm15,%xmm15
 	vaesdec	%xmm1,%xmm3,%xmm3
@@ -1413,7 +1413,7 @@ L$dec8x_tail:
 
 	xorq	$128,%rbp
 	decl	%edx
-	jnz	L$oop_dec8x
+	jnz	.Loop_dec8x
 
 	movq	16(%rsp),%rax
 
@@ -1421,7 +1421,7 @@ L$dec8x_tail:
 
 
 
-L$dec8x_done:
+.Ldec8x_done:
 	vzeroupper
 	movq	-48(%rax),%r15
 	movq	-40(%rax),%r14
@@ -1430,6 +1430,6 @@ L$dec8x_done:
 	movq	-16(%rax),%rbp
 	movq	-8(%rax),%rbx
 	leaq	(%rax),%rsp
-L$dec8x_epilogue:
+.Ldec8x_epilogue:
 	.byte	0xf3,0xc3
-
+.size	aesni_multi_cbc_decrypt_avx,.-aesni_multi_cbc_decrypt_avx

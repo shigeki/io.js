@@ -1,17 +1,17 @@
 .text	
 
 
-.globl	_RC4
-
-.p2align	4
-_RC4:	orq	%rsi,%rsi
-	jne	L$entry
+.globl	RC4
+.type	RC4,@function
+.align	16
+RC4:	orq	%rsi,%rsi
+	jne	.Lentry
 	.byte	0xf3,0xc3
-L$entry:
+.Lentry:
 	pushq	%rbx
 	pushq	%r12
 	pushq	%r13
-L$prologue:
+.Lprologue:
 	movq	%rsi,%r11
 	movq	%rdx,%r12
 	movq	%rcx,%r13
@@ -22,22 +22,22 @@ L$prologue:
 	movb	-8(%rdi),%r10b
 	movb	-4(%rdi),%cl
 	cmpl	$-1,256(%rdi)
-	je	L$RC4_CHAR
-	movl	_OPENSSL_ia32cap_P(%rip),%r8d
+	je	.LRC4_CHAR
+	movl	OPENSSL_ia32cap_P(%rip),%r8d
 	xorq	%rbx,%rbx
 	incb	%r10b
 	subq	%r10,%rbx
 	subq	%r12,%r13
 	movl	(%rdi,%r10,4),%eax
 	testq	$-16,%r11
-	jz	L$loop1
+	jz	.Lloop1
 	btl	$30,%r8d
-	jc	L$intel
+	jc	.Lintel
 	andq	$7,%rbx
 	leaq	1(%r10),%rsi
-	jz	L$oop8
+	jz	.Loop8
 	subq	%rbx,%r11
-L$oop8_warmup:
+.Loop8_warmup:
 	addb	%al,%cl
 	movl	(%rdi,%rcx,4),%edx
 	movl	%eax,(%rdi,%rcx,4)
@@ -50,12 +50,12 @@ L$oop8_warmup:
 	movb	%dl,(%r12,%r13,1)
 	leaq	1(%r12),%r12
 	decq	%rbx
-	jnz	L$oop8_warmup
+	jnz	.Loop8_warmup
 
 	leaq	1(%r10),%rsi
-	jmp	L$oop8
-.p2align	4
-L$oop8:
+	jmp	.Loop8
+.align	16
+.Loop8:
 	addb	%al,%cl
 	movl	(%rdi,%rcx,4),%edx
 	movl	%eax,(%rdi,%rcx,4)
@@ -130,19 +130,19 @@ L$oop8:
 	leaq	8(%r12),%r12
 
 	testq	$-8,%r11
-	jnz	L$oop8
+	jnz	.Loop8
 	cmpq	$0,%r11
-	jne	L$loop1
-	jmp	L$exit
+	jne	.Lloop1
+	jmp	.Lexit
 
-.p2align	4
-L$intel:
+.align	16
+.Lintel:
 	testq	$-32,%r11
-	jz	L$loop1
+	jz	.Lloop1
 	andq	$15,%rbx
-	jz	L$oop16_is_hot
+	jz	.Loop16_is_hot
 	subq	%rbx,%r11
-L$oop16_warmup:
+.Loop16_warmup:
 	addb	%al,%cl
 	movl	(%rdi,%rcx,4),%edx
 	movl	%eax,(%rdi,%rcx,4)
@@ -155,13 +155,13 @@ L$oop16_warmup:
 	movb	%dl,(%r12,%r13,1)
 	leaq	1(%r12),%r12
 	decq	%rbx
-	jnz	L$oop16_warmup
+	jnz	.Loop16_warmup
 
 	movq	%rcx,%rbx
 	xorq	%rcx,%rcx
 	movb	%bl,%cl
 
-L$oop16_is_hot:
+.Loop16_is_hot:
 	leaq	(%rdi,%r10,4),%rsi
 	addb	%al,%cl
 	movl	(%rdi,%rcx,4),%edx
@@ -173,9 +173,9 @@ L$oop16_is_hot:
 	movl	%edx,0(%rsi)
 	addb	%bl,%cl
 	pinsrw	$0,(%rdi,%rax,4),%xmm0
-	jmp	L$oop16_enter
-.p2align	4
-L$oop16:
+	jmp	.Loop16_enter
+.align	16
+.Loop16:
 	addb	%al,%cl
 	movl	(%rdi,%rcx,4),%edx
 	pxor	%xmm0,%xmm2
@@ -191,7 +191,7 @@ L$oop16:
 	pinsrw	$0,(%rdi,%rax,4),%xmm0
 	movdqu	%xmm2,(%r12,%r13,1)
 	leaq	16(%r12),%r12
-L$oop16_enter:
+.Loop16_enter:
 	movl	(%rdi,%rcx,4),%edx
 	pxor	%xmm1,%xmm1
 	movl	%ebx,(%rdi,%rcx,4)
@@ -320,7 +320,7 @@ L$oop16_enter:
 	subq	$16,%r11
 	movb	%bl,%cl
 	testq	$-16,%r11
-	jnz	L$oop16
+	jnz	.Loop16
 
 	psllq	$8,%xmm1
 	pxor	%xmm0,%xmm2
@@ -329,11 +329,11 @@ L$oop16_enter:
 	leaq	16(%r12),%r12
 
 	cmpq	$0,%r11
-	jne	L$loop1
-	jmp	L$exit
+	jne	.Lloop1
+	jmp	.Lexit
 
-.p2align	4
-L$loop1:
+.align	16
+.Lloop1:
 	addb	%al,%cl
 	movl	(%rdi,%rcx,4),%edx
 	movl	%eax,(%rdi,%rcx,4)
@@ -346,18 +346,18 @@ L$loop1:
 	movb	%dl,(%r12,%r13,1)
 	leaq	1(%r12),%r12
 	decq	%r11
-	jnz	L$loop1
-	jmp	L$exit
+	jnz	.Lloop1
+	jmp	.Lexit
 
-.p2align	4
-L$RC4_CHAR:
+.align	16
+.LRC4_CHAR:
 	addb	$1,%r10b
 	movzbl	(%rdi,%r10,1),%eax
 	testq	$-8,%r11
-	jz	L$cloop1
-	jmp	L$cloop8
-.p2align	4
-L$cloop8:
+	jz	.Lcloop1
+	jmp	.Lcloop8
+.align	16
+.Lcloop8:
 	movl	(%r12),%r8d
 	movl	4(%r12),%r9d
 	addb	%al,%cl
@@ -368,9 +368,9 @@ L$cloop8:
 	movb	%al,(%rdi,%rcx,1)
 	cmpq	%rsi,%rcx
 	movb	%dl,(%rdi,%r10,1)
-	jne	L$cmov0
+	jne	.Lcmov0
 	movq	%rax,%rbx
-L$cmov0:
+.Lcmov0:
 	addb	%al,%dl
 	xorb	(%rdi,%rdx,1),%r8b
 	rorl	$8,%r8d
@@ -382,9 +382,9 @@ L$cmov0:
 	movb	%bl,(%rdi,%rcx,1)
 	cmpq	%r10,%rcx
 	movb	%dl,(%rdi,%rsi,1)
-	jne	L$cmov1
+	jne	.Lcmov1
 	movq	%rbx,%rax
-L$cmov1:
+.Lcmov1:
 	addb	%bl,%dl
 	xorb	(%rdi,%rdx,1),%r8b
 	rorl	$8,%r8d
@@ -396,9 +396,9 @@ L$cmov1:
 	movb	%al,(%rdi,%rcx,1)
 	cmpq	%rsi,%rcx
 	movb	%dl,(%rdi,%r10,1)
-	jne	L$cmov2
+	jne	.Lcmov2
 	movq	%rax,%rbx
-L$cmov2:
+.Lcmov2:
 	addb	%al,%dl
 	xorb	(%rdi,%rdx,1),%r8b
 	rorl	$8,%r8d
@@ -410,9 +410,9 @@ L$cmov2:
 	movb	%bl,(%rdi,%rcx,1)
 	cmpq	%r10,%rcx
 	movb	%dl,(%rdi,%rsi,1)
-	jne	L$cmov3
+	jne	.Lcmov3
 	movq	%rbx,%rax
-L$cmov3:
+.Lcmov3:
 	addb	%bl,%dl
 	xorb	(%rdi,%rdx,1),%r8b
 	rorl	$8,%r8d
@@ -424,9 +424,9 @@ L$cmov3:
 	movb	%al,(%rdi,%rcx,1)
 	cmpq	%rsi,%rcx
 	movb	%dl,(%rdi,%r10,1)
-	jne	L$cmov4
+	jne	.Lcmov4
 	movq	%rax,%rbx
-L$cmov4:
+.Lcmov4:
 	addb	%al,%dl
 	xorb	(%rdi,%rdx,1),%r9b
 	rorl	$8,%r9d
@@ -438,9 +438,9 @@ L$cmov4:
 	movb	%bl,(%rdi,%rcx,1)
 	cmpq	%r10,%rcx
 	movb	%dl,(%rdi,%rsi,1)
-	jne	L$cmov5
+	jne	.Lcmov5
 	movq	%rbx,%rax
-L$cmov5:
+.Lcmov5:
 	addb	%bl,%dl
 	xorb	(%rdi,%rdx,1),%r9b
 	rorl	$8,%r9d
@@ -452,9 +452,9 @@ L$cmov5:
 	movb	%al,(%rdi,%rcx,1)
 	cmpq	%rsi,%rcx
 	movb	%dl,(%rdi,%r10,1)
-	jne	L$cmov6
+	jne	.Lcmov6
 	movq	%rax,%rbx
-L$cmov6:
+.Lcmov6:
 	addb	%al,%dl
 	xorb	(%rdi,%rdx,1),%r9b
 	rorl	$8,%r9d
@@ -466,9 +466,9 @@ L$cmov6:
 	movb	%bl,(%rdi,%rcx,1)
 	cmpq	%r10,%rcx
 	movb	%dl,(%rdi,%rsi,1)
-	jne	L$cmov7
+	jne	.Lcmov7
 	movq	%rbx,%rax
-L$cmov7:
+.Lcmov7:
 	addb	%bl,%dl
 	xorb	(%rdi,%rdx,1),%r9b
 	rorl	$8,%r9d
@@ -479,12 +479,12 @@ L$cmov7:
 	leaq	8(%r13),%r13
 
 	testq	$-8,%r11
-	jnz	L$cloop8
+	jnz	.Lcloop8
 	cmpq	$0,%r11
-	jne	L$cloop1
-	jmp	L$exit
-.p2align	4
-L$cloop1:
+	jne	.Lcloop1
+	jmp	.Lexit
+.align	16
+.Lcloop1:
 	addb	%al,%cl
 	movzbl	%cl,%ecx
 	movzbl	(%rdi,%rcx,1),%edx
@@ -501,11 +501,11 @@ L$cloop1:
 	movb	%dl,(%r13)
 	leaq	1(%r13),%r13
 	subq	$1,%r11
-	jnz	L$cloop1
-	jmp	L$exit
+	jnz	.Lcloop1
+	jmp	.Lexit
 
-.p2align	4
-L$exit:
+.align	16
+.Lexit:
 	subb	$1,%r10b
 	movl	%r10d,-8(%rdi)
 	movl	%ecx,-4(%rdi)
@@ -514,13 +514,13 @@ L$exit:
 	movq	8(%rsp),%r12
 	movq	16(%rsp),%rbx
 	addq	$24,%rsp
-L$epilogue:
+.Lepilogue:
 	.byte	0xf3,0xc3
-
-.globl	_RC4_set_key
-
-.p2align	4
-_RC4_set_key:
+.size	RC4,.-RC4
+.globl	RC4_set_key
+.type	RC4_set_key,@function
+.align	16
+RC4_set_key:
 	leaq	8(%rdi),%rdi
 	leaq	(%rdx,%rsi,1),%rdx
 	negq	%rsi
@@ -530,21 +530,21 @@ _RC4_set_key:
 	xorq	%r10,%r10
 	xorq	%r11,%r11
 
-	movl	_OPENSSL_ia32cap_P(%rip),%r8d
+	movl	OPENSSL_ia32cap_P(%rip),%r8d
 	btl	$20,%r8d
-	jc	L$c1stloop
-	jmp	L$w1stloop
+	jc	.Lc1stloop
+	jmp	.Lw1stloop
 
-.p2align	4
-L$w1stloop:
+.align	16
+.Lw1stloop:
 	movl	%eax,(%rdi,%rax,4)
 	addb	$1,%al
-	jnc	L$w1stloop
+	jnc	.Lw1stloop
 
 	xorq	%r9,%r9
 	xorq	%r8,%r8
-.p2align	4
-L$w2ndloop:
+.align	16
+.Lw2ndloop:
 	movl	(%rdi,%r9,4),%r10d
 	addb	(%rdx,%rsi,1),%r8b
 	addb	%r10b,%r8b
@@ -554,62 +554,62 @@ L$w2ndloop:
 	movl	%r10d,(%rdi,%r8,4)
 	movl	%r11d,(%rdi,%r9,4)
 	addb	$1,%r9b
-	jnc	L$w2ndloop
-	jmp	L$exit_key
+	jnc	.Lw2ndloop
+	jmp	.Lexit_key
 
-.p2align	4
-L$c1stloop:
+.align	16
+.Lc1stloop:
 	movb	%al,(%rdi,%rax,1)
 	addb	$1,%al
-	jnc	L$c1stloop
+	jnc	.Lc1stloop
 
 	xorq	%r9,%r9
 	xorq	%r8,%r8
-.p2align	4
-L$c2ndloop:
+.align	16
+.Lc2ndloop:
 	movb	(%rdi,%r9,1),%r10b
 	addb	(%rdx,%rsi,1),%r8b
 	addb	%r10b,%r8b
 	addq	$1,%rsi
 	movb	(%rdi,%r8,1),%r11b
-	jnz	L$cnowrap
+	jnz	.Lcnowrap
 	movq	%rcx,%rsi
-L$cnowrap:
+.Lcnowrap:
 	movb	%r10b,(%rdi,%r8,1)
 	movb	%r11b,(%rdi,%r9,1)
 	addb	$1,%r9b
-	jnc	L$c2ndloop
+	jnc	.Lc2ndloop
 	movl	$-1,256(%rdi)
 
-.p2align	4
-L$exit_key:
+.align	16
+.Lexit_key:
 	xorl	%eax,%eax
 	movl	%eax,-8(%rdi)
 	movl	%eax,-4(%rdi)
 	.byte	0xf3,0xc3
+.size	RC4_set_key,.-RC4_set_key
 
-
-.globl	_RC4_options
-
-.p2align	4
-_RC4_options:
-	leaq	L$opts(%rip),%rax
-	movl	_OPENSSL_ia32cap_P(%rip),%edx
+.globl	RC4_options
+.type	RC4_options,@function
+.align	16
+RC4_options:
+	leaq	.Lopts(%rip),%rax
+	movl	OPENSSL_ia32cap_P(%rip),%edx
 	btl	$20,%edx
-	jc	L$8xchar
+	jc	.L8xchar
 	btl	$30,%edx
-	jnc	L$done
+	jnc	.Ldone
 	addq	$25,%rax
 	.byte	0xf3,0xc3
-L$8xchar:
+.L8xchar:
 	addq	$12,%rax
-L$done:
+.Ldone:
 	.byte	0xf3,0xc3
-.p2align	6
-L$opts:
+.align	64
+.Lopts:
 .byte	114,99,52,40,56,120,44,105,110,116,41,0
 .byte	114,99,52,40,56,120,44,99,104,97,114,41,0
 .byte	114,99,52,40,49,54,120,44,105,110,116,41,0
 .byte	82,67,52,32,102,111,114,32,120,56,54,95,54,52,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
-.p2align	6
-
+.align	64
+.size	RC4_options,.-RC4_options

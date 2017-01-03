@@ -2,27 +2,27 @@
 
 
 
-.globl	_poly1305_init
-.private_extern	_poly1305_init
-.globl	_poly1305_blocks
-.private_extern	_poly1305_blocks
-.globl	_poly1305_emit
-.private_extern	_poly1305_emit
+.globl	poly1305_init
+.hidden	poly1305_init
+.globl	poly1305_blocks
+.hidden	poly1305_blocks
+.globl	poly1305_emit
+.hidden	poly1305_emit
 
-
-.p2align	5
-_poly1305_init:
+.type	poly1305_init,@function
+.align	32
+poly1305_init:
 	xorq	%rax,%rax
 	movq	%rax,0(%rdi)
 	movq	%rax,8(%rdi)
 	movq	%rax,16(%rdi)
 
 	cmpq	$0,%rsi
-	je	L$no_key
+	je	.Lno_key
 
-	leaq	_poly1305_blocks(%rip),%r10
-	leaq	_poly1305_emit(%rip),%r11
-	movq	_OPENSSL_ia32cap_P+4(%rip),%r9
+	leaq	poly1305_blocks(%rip),%r10
+	leaq	poly1305_emit(%rip),%r11
+	movq	OPENSSL_ia32cap_P+4(%rip),%r9
 	leaq	poly1305_blocks_avx(%rip),%rax
 	leaq	poly1305_emit_avx(%rip),%rcx
 	btq	$28,%r9
@@ -40,16 +40,16 @@ _poly1305_init:
 	movq	%r10,0(%rdx)
 	movq	%r11,8(%rdx)
 	movl	$1,%eax
-L$no_key:
+.Lno_key:
 	.byte	0xf3,0xc3
+.size	poly1305_init,.-poly1305_init
 
-
-
-.p2align	5
-_poly1305_blocks:
-L$blocks:
+.type	poly1305_blocks,@function
+.align	32
+poly1305_blocks:
+.Lblocks:
 	shrq	$4,%rdx
-	jz	L$no_data
+	jz	.Lno_data
 
 	pushq	%rbx
 	pushq	%rbp
@@ -57,7 +57,7 @@ L$blocks:
 	pushq	%r13
 	pushq	%r14
 	pushq	%r15
-L$blocks_body:
+.Lblocks_body:
 
 	movq	%rdx,%r15
 
@@ -72,10 +72,10 @@ L$blocks_body:
 	shrq	$2,%r13
 	movq	%r12,%rax
 	addq	%r12,%r13
-	jmp	L$oop
+	jmp	.Loop
 
-.p2align	5
-L$oop:
+.align	32
+.Loop:
 	addq	0(%rsi),%r14
 	adcq	8(%rsi),%rbx
 	leaq	16(%rsi),%rsi
@@ -120,7 +120,7 @@ L$oop:
 	adcq	$0,%rbp
 	movq	%r12,%rax
 	decq	%r15
-	jnz	L$oop
+	jnz	.Loop
 
 	movq	%r14,0(%rdi)
 	movq	%rbx,8(%rdi)
@@ -133,15 +133,15 @@ L$oop:
 	movq	32(%rsp),%rbp
 	movq	40(%rsp),%rbx
 	leaq	48(%rsp),%rsp
-L$no_data:
-L$blocks_epilogue:
+.Lno_data:
+.Lblocks_epilogue:
 	.byte	0xf3,0xc3
+.size	poly1305_blocks,.-poly1305_blocks
 
-
-
-.p2align	5
-_poly1305_emit:
-L$emit:
+.type	poly1305_emit,@function
+.align	32
+poly1305_emit:
+.Lemit:
 	movq	0(%rdi),%r8
 	movq	8(%rdi),%r9
 	movq	16(%rdi),%r10
@@ -161,9 +161,9 @@ L$emit:
 	movq	%rcx,8(%rsi)
 
 	.byte	0xf3,0xc3
-
-
-.p2align	5
+.size	poly1305_emit,.-poly1305_emit
+.type	__poly1305_block,@function
+.align	32
 __poly1305_block:
 	mulq	%r14
 	movq	%rax,%r9
@@ -204,10 +204,10 @@ __poly1305_block:
 	adcq	$0,%rbx
 	adcq	$0,%rbp
 	.byte	0xf3,0xc3
+.size	__poly1305_block,.-__poly1305_block
 
-
-
-.p2align	5
+.type	__poly1305_init_avx,@function
+.align	32
 __poly1305_init_avx:
 	movq	%r11,%r14
 	movq	%r12,%rbx
@@ -366,28 +366,28 @@ __poly1305_init_avx:
 
 	leaq	-48-64(%rdi),%rdi
 	.byte	0xf3,0xc3
+.size	__poly1305_init_avx,.-__poly1305_init_avx
 
-
-
-.p2align	5
+.type	poly1305_blocks_avx,@function
+.align	32
 poly1305_blocks_avx:
 	movl	20(%rdi),%r8d
 	cmpq	$128,%rdx
-	jae	L$blocks_avx
+	jae	.Lblocks_avx
 	testl	%r8d,%r8d
-	jz	L$blocks
+	jz	.Lblocks
 
-L$blocks_avx:
+.Lblocks_avx:
 	andq	$-16,%rdx
-	jz	L$no_data_avx
+	jz	.Lno_data_avx
 
 	vzeroupper
 
 	testl	%r8d,%r8d
-	jz	L$base2_64_avx
+	jz	.Lbase2_64_avx
 
 	testq	$31,%rdx
-	jz	L$even_avx
+	jz	.Leven_avx
 
 	pushq	%rbx
 	pushq	%rbp
@@ -395,7 +395,7 @@ L$blocks_avx:
 	pushq	%r13
 	pushq	%r14
 	pushq	%r15
-L$blocks_avx_body:
+.Lblocks_avx_body:
 
 	movq	%rdx,%r15
 
@@ -450,7 +450,7 @@ L$blocks_avx_body:
 	call	__poly1305_block
 
 	testq	%rcx,%rcx
-	jz	L$store_base2_64_avx
+	jz	.Lstore_base2_64_avx
 
 
 	movq	%r14,%rax
@@ -471,31 +471,31 @@ L$blocks_avx_body:
 	orq	%r12,%rbp
 
 	subq	$16,%r15
-	jz	L$store_base2_26_avx
+	jz	.Lstore_base2_26_avx
 
 	vmovd	%eax,%xmm0
 	vmovd	%edx,%xmm1
 	vmovd	%r14d,%xmm2
 	vmovd	%ebx,%xmm3
 	vmovd	%ebp,%xmm4
-	jmp	L$proceed_avx
+	jmp	.Lproceed_avx
 
-.p2align	5
-L$store_base2_64_avx:
+.align	32
+.Lstore_base2_64_avx:
 	movq	%r14,0(%rdi)
 	movq	%rbx,8(%rdi)
 	movq	%rbp,16(%rdi)
-	jmp	L$done_avx
+	jmp	.Ldone_avx
 
-.p2align	4
-L$store_base2_26_avx:
+.align	16
+.Lstore_base2_26_avx:
 	movl	%eax,0(%rdi)
 	movl	%edx,4(%rdi)
 	movl	%r14d,8(%rdi)
 	movl	%ebx,12(%rdi)
 	movl	%ebp,16(%rdi)
-.p2align	4
-L$done_avx:
+.align	16
+.Ldone_avx:
 	movq	0(%rsp),%r15
 	movq	8(%rsp),%r14
 	movq	16(%rsp),%r13
@@ -503,19 +503,19 @@ L$done_avx:
 	movq	32(%rsp),%rbp
 	movq	40(%rsp),%rbx
 	leaq	48(%rsp),%rsp
-L$no_data_avx:
-L$blocks_avx_epilogue:
+.Lno_data_avx:
+.Lblocks_avx_epilogue:
 	.byte	0xf3,0xc3
 
-.p2align	5
-L$base2_64_avx:
+.align	32
+.Lbase2_64_avx:
 	pushq	%rbx
 	pushq	%rbp
 	pushq	%r12
 	pushq	%r13
 	pushq	%r14
 	pushq	%r15
-L$base2_64_avx_body:
+.Lbase2_64_avx_body:
 
 	movq	%rdx,%r15
 
@@ -532,7 +532,7 @@ L$base2_64_avx_body:
 	addq	%r12,%r13
 
 	testq	$31,%rdx
-	jz	L$init_avx
+	jz	.Linit_avx
 
 	addq	0(%rsi),%r14
 	adcq	8(%rsi),%rbx
@@ -542,7 +542,7 @@ L$base2_64_avx_body:
 
 	call	__poly1305_block
 
-L$init_avx:
+.Linit_avx:
 
 	movq	%r14,%rax
 	movq	%r14,%rdx
@@ -570,7 +570,7 @@ L$init_avx:
 
 	call	__poly1305_init_avx
 
-L$proceed_avx:
+.Lproceed_avx:
 	movq	%r15,%rdx
 
 	movq	0(%rsp),%r15
@@ -581,18 +581,18 @@ L$proceed_avx:
 	movq	40(%rsp),%rbx
 	leaq	48(%rsp),%rax
 	leaq	48(%rsp),%rsp
-L$base2_64_avx_epilogue:
-	jmp	L$do_avx
+.Lbase2_64_avx_epilogue:
+	jmp	.Ldo_avx
 
-.p2align	5
-L$even_avx:
+.align	32
+.Leven_avx:
 	vmovd	0(%rdi),%xmm0
 	vmovd	4(%rdi),%xmm1
 	vmovd	8(%rdi),%xmm2
 	vmovd	12(%rdi),%xmm3
 	vmovd	16(%rdi),%xmm4
 
-L$do_avx:
+.Ldo_avx:
 	leaq	-88(%rsp),%r11
 	subq	$0x178,%rsp
 	subq	$64,%rdx
@@ -601,7 +601,7 @@ L$do_avx:
 
 	vmovdqu	48(%rdi),%xmm14
 	leaq	112(%rdi),%rdi
-	leaq	L$const(%rip),%rcx
+	leaq	.Lconst(%rip),%rcx
 
 
 
@@ -625,7 +625,7 @@ L$do_avx:
 	vpand	%xmm15,%xmm8,%xmm8
 	vpor	32(%rcx),%xmm9,%xmm9
 
-	jbe	L$skip_loop_avx
+	jbe	.Lskip_loop_avx
 
 
 	vmovdqu	-48(%rdi),%xmm11
@@ -674,10 +674,10 @@ L$do_avx:
 	vmovdqa	%xmm13,-16(%r11)
 	vmovdqa	%xmm12,128(%rsp)
 
-	jmp	L$oop_avx
+	jmp	.Loop_avx
 
-.p2align	5
-L$oop_avx:
+.align	32
+.Loop_avx:
 
 
 
@@ -917,15 +917,15 @@ L$oop_avx:
 	vpand	%xmm15,%xmm3,%xmm3
 	vpaddq	%xmm13,%xmm4,%xmm4
 
-	ja	L$oop_avx
+	ja	.Loop_avx
 
-L$skip_loop_avx:
+.Lskip_loop_avx:
 
 
 
 	vpshufd	$0x10,%xmm14,%xmm14
 	addq	$32,%rdx
-	jnz	L$ong_tail_avx
+	jnz	.Long_tail_avx
 
 	vpaddq	%xmm2,%xmm7,%xmm7
 	vpaddq	%xmm0,%xmm5,%xmm5
@@ -933,7 +933,7 @@ L$skip_loop_avx:
 	vpaddq	%xmm3,%xmm8,%xmm8
 	vpaddq	%xmm4,%xmm9,%xmm9
 
-L$ong_tail_avx:
+.Long_tail_avx:
 	vmovdqa	%xmm2,32(%r11)
 	vmovdqa	%xmm0,0(%r11)
 	vmovdqa	%xmm1,16(%r11)
@@ -1004,7 +1004,7 @@ L$ong_tail_avx:
 	vpmuludq	%xmm6,%xmm3,%xmm3
 	vpaddq	%xmm3,%xmm10,%xmm10
 
-	jz	L$short_tail_avx
+	jz	.Lshort_tail_avx
 
 	vmovdqu	0(%rsi),%xmm0
 	vmovdqu	16(%rsi),%xmm1
@@ -1098,7 +1098,7 @@ L$ong_tail_avx:
 	vpmuludq	%xmm1,%xmm8,%xmm8
 	vpaddq	%xmm8,%xmm10,%xmm10
 
-L$short_tail_avx:
+.Lshort_tail_avx:
 
 
 
@@ -1155,13 +1155,13 @@ L$short_tail_avx:
 	leaq	88(%r11),%rsp
 	vzeroupper
 	.byte	0xf3,0xc3
+.size	poly1305_blocks_avx,.-poly1305_blocks_avx
 
-
-
-.p2align	5
+.type	poly1305_emit_avx,@function
+.align	32
 poly1305_emit_avx:
 	cmpl	$0,20(%rdi)
-	je	L$emit
+	je	.Lemit
 
 	movl	0(%rdi),%eax
 	movl	4(%rdi),%ecx
@@ -1210,27 +1210,27 @@ poly1305_emit_avx:
 	movq	%rcx,8(%rsi)
 
 	.byte	0xf3,0xc3
-
-
-.p2align	5
+.size	poly1305_emit_avx,.-poly1305_emit_avx
+.type	poly1305_blocks_avx2,@function
+.align	32
 poly1305_blocks_avx2:
 	movl	20(%rdi),%r8d
 	cmpq	$128,%rdx
-	jae	L$blocks_avx2
+	jae	.Lblocks_avx2
 	testl	%r8d,%r8d
-	jz	L$blocks
+	jz	.Lblocks
 
-L$blocks_avx2:
+.Lblocks_avx2:
 	andq	$-16,%rdx
-	jz	L$no_data_avx2
+	jz	.Lno_data_avx2
 
 	vzeroupper
 
 	testl	%r8d,%r8d
-	jz	L$base2_64_avx2
+	jz	.Lbase2_64_avx2
 
 	testq	$63,%rdx
-	jz	L$even_avx2
+	jz	.Leven_avx2
 
 	pushq	%rbx
 	pushq	%rbp
@@ -1238,7 +1238,7 @@ L$blocks_avx2:
 	pushq	%r13
 	pushq	%r14
 	pushq	%r15
-L$blocks_avx2_body:
+.Lblocks_avx2_body:
 
 	movq	%rdx,%r15
 
@@ -1285,7 +1285,7 @@ L$blocks_avx2_body:
 	shrq	$2,%r13
 	addq	%r12,%r13
 
-L$base2_26_pre_avx2:
+.Lbase2_26_pre_avx2:
 	addq	0(%rsi),%r14
 	adcq	8(%rsi),%rbx
 	leaq	16(%rsi),%rsi
@@ -1296,10 +1296,10 @@ L$base2_26_pre_avx2:
 	movq	%r12,%rax
 
 	testq	$63,%r15
-	jnz	L$base2_26_pre_avx2
+	jnz	.Lbase2_26_pre_avx2
 
 	testq	%rcx,%rcx
-	jz	L$store_base2_64_avx2
+	jz	.Lstore_base2_64_avx2
 
 
 	movq	%r14,%rax
@@ -1320,31 +1320,31 @@ L$base2_26_pre_avx2:
 	orq	%r12,%rbp
 
 	testq	%r15,%r15
-	jz	L$store_base2_26_avx2
+	jz	.Lstore_base2_26_avx2
 
 	vmovd	%eax,%xmm0
 	vmovd	%edx,%xmm1
 	vmovd	%r14d,%xmm2
 	vmovd	%ebx,%xmm3
 	vmovd	%ebp,%xmm4
-	jmp	L$proceed_avx2
+	jmp	.Lproceed_avx2
 
-.p2align	5
-L$store_base2_64_avx2:
+.align	32
+.Lstore_base2_64_avx2:
 	movq	%r14,0(%rdi)
 	movq	%rbx,8(%rdi)
 	movq	%rbp,16(%rdi)
-	jmp	L$done_avx2
+	jmp	.Ldone_avx2
 
-.p2align	4
-L$store_base2_26_avx2:
+.align	16
+.Lstore_base2_26_avx2:
 	movl	%eax,0(%rdi)
 	movl	%edx,4(%rdi)
 	movl	%r14d,8(%rdi)
 	movl	%ebx,12(%rdi)
 	movl	%ebp,16(%rdi)
-.p2align	4
-L$done_avx2:
+.align	16
+.Ldone_avx2:
 	movq	0(%rsp),%r15
 	movq	8(%rsp),%r14
 	movq	16(%rsp),%r13
@@ -1352,19 +1352,19 @@ L$done_avx2:
 	movq	32(%rsp),%rbp
 	movq	40(%rsp),%rbx
 	leaq	48(%rsp),%rsp
-L$no_data_avx2:
-L$blocks_avx2_epilogue:
+.Lno_data_avx2:
+.Lblocks_avx2_epilogue:
 	.byte	0xf3,0xc3
 
-.p2align	5
-L$base2_64_avx2:
+.align	32
+.Lbase2_64_avx2:
 	pushq	%rbx
 	pushq	%rbp
 	pushq	%r12
 	pushq	%r13
 	pushq	%r14
 	pushq	%r15
-L$base2_64_avx2_body:
+.Lbase2_64_avx2_body:
 
 	movq	%rdx,%r15
 
@@ -1381,9 +1381,9 @@ L$base2_64_avx2_body:
 	addq	%r12,%r13
 
 	testq	$63,%rdx
-	jz	L$init_avx2
+	jz	.Linit_avx2
 
-L$base2_64_pre_avx2:
+.Lbase2_64_pre_avx2:
 	addq	0(%rsi),%r14
 	adcq	8(%rsi),%rbx
 	leaq	16(%rsi),%rsi
@@ -1394,9 +1394,9 @@ L$base2_64_pre_avx2:
 	movq	%r12,%rax
 
 	testq	$63,%r15
-	jnz	L$base2_64_pre_avx2
+	jnz	.Lbase2_64_pre_avx2
 
-L$init_avx2:
+.Linit_avx2:
 
 	movq	%r14,%rax
 	movq	%r14,%rdx
@@ -1424,7 +1424,7 @@ L$init_avx2:
 
 	call	__poly1305_init_avx
 
-L$proceed_avx2:
+.Lproceed_avx2:
 	movq	%r15,%rdx
 
 	movq	0(%rsp),%r15
@@ -1435,22 +1435,22 @@ L$proceed_avx2:
 	movq	40(%rsp),%rbx
 	leaq	48(%rsp),%rax
 	leaq	48(%rsp),%rsp
-L$base2_64_avx2_epilogue:
-	jmp	L$do_avx2
+.Lbase2_64_avx2_epilogue:
+	jmp	.Ldo_avx2
 
-.p2align	5
-L$even_avx2:
+.align	32
+.Leven_avx2:
 	vmovd	0(%rdi),%xmm0
 	vmovd	4(%rdi),%xmm1
 	vmovd	8(%rdi),%xmm2
 	vmovd	12(%rdi),%xmm3
 	vmovd	16(%rdi),%xmm4
 
-L$do_avx2:
+.Ldo_avx2:
 	leaq	-8(%rsp),%r11
 	subq	$0x128,%rsp
 	leaq	48+64(%rdi),%rdi
-	leaq	L$const(%rip),%rcx
+	leaq	.Lconst(%rip),%rcx
 
 
 	vmovdqu	-64(%rdi),%xmm9
@@ -1519,11 +1519,11 @@ L$do_avx2:
 	leaq	144(%rsp),%rax
 	vpaddq	%ymm2,%ymm9,%ymm2
 	subq	$64,%rdx
-	jz	L$tail_avx2
-	jmp	L$oop_avx2
+	jz	.Ltail_avx2
+	jmp	.Loop_avx2
 
-.p2align	5
-L$oop_avx2:
+.align	32
+.Loop_avx2:
 
 
 
@@ -1671,10 +1671,10 @@ L$oop_avx2:
 	vpor	32(%rcx),%ymm6,%ymm6
 
 	subq	$64,%rdx
-	jnz	L$oop_avx2
+	jnz	.Loop_avx2
 
 .byte	0x66,0x90
-L$tail_avx2:
+.Ltail_avx2:
 
 
 
@@ -1813,16 +1813,16 @@ L$tail_avx2:
 	leaq	8(%r11),%rsp
 	vzeroupper
 	.byte	0xf3,0xc3
-
-.p2align	6
-L$const:
-L$mask24:
+.size	poly1305_blocks_avx2,.-poly1305_blocks_avx2
+.align	64
+.Lconst:
+.Lmask24:
 .long	0x0ffffff,0,0x0ffffff,0,0x0ffffff,0,0x0ffffff,0
-L$129:
+.L129:
 .long	16777216,0,16777216,0,16777216,0,16777216,0
-L$mask26:
+.Lmask26:
 .long	0x3ffffff,0,0x3ffffff,0,0x3ffffff,0,0x3ffffff,0
-L$five:
+.Lfive:
 .long	5,0,5,0,5,0,5,0
 .byte	80,111,108,121,49,51,48,53,32,102,111,114,32,120,56,54,95,54,52,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
-.p2align	4
+.align	16

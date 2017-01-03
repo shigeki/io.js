@@ -2,11 +2,11 @@
 
 
 
-.globl	_sha1_multi_block
-
-.p2align	5
-_sha1_multi_block:
-	movq	_OPENSSL_ia32cap_P+4(%rip),%rcx
+.globl	sha1_multi_block
+.type	sha1_multi_block,@function
+.align	32
+sha1_multi_block:
+	movq	OPENSSL_ia32cap_P+4(%rip),%rcx
 	btq	$61,%rcx
 	jc	_shaext_shortcut
 	testl	$268435456,%ecx
@@ -17,11 +17,11 @@ _sha1_multi_block:
 	subq	$288,%rsp
 	andq	$-256,%rsp
 	movq	%rax,272(%rsp)
-L$body:
+.Lbody:
 	leaq	K_XX_XX(%rip),%rbp
 	leaq	256(%rsp),%rbx
 
-L$oop_grande:
+.Loop_grande:
 	movl	%edx,280(%rsp)
 	xorl	%edx,%edx
 	movq	0(%rsi),%r8
@@ -53,7 +53,7 @@ L$oop_grande:
 	movl	%ecx,12(%rbx)
 	cmovleq	%rbp,%r11
 	testl	%edx,%edx
-	jz	L$done
+	jz	.Ldone
 
 	movdqu	0(%rdi),%xmm10
 	leaq	128(%rsp),%rax
@@ -63,10 +63,10 @@ L$oop_grande:
 	movdqu	128(%rdi),%xmm14
 	movdqa	96(%rbp),%xmm5
 	movdqa	-32(%rbp),%xmm15
-	jmp	L$oop
+	jmp	.Loop
 
-.p2align	5
-L$oop:
+.align	32
+.Loop:
 	movd	(%r8),%xmm0
 	leaq	64(%r8),%r8
 	movd	(%r9),%xmm2
@@ -2536,24 +2536,24 @@ L$oop:
 	movdqa	96(%rbp),%xmm5
 	movdqa	-32(%rbp),%xmm15
 	decl	%edx
-	jnz	L$oop
+	jnz	.Loop
 
 	movl	280(%rsp),%edx
 	leaq	16(%rdi),%rdi
 	leaq	64(%rsi),%rsi
 	decl	%edx
-	jnz	L$oop_grande
+	jnz	.Loop_grande
 
-L$done:
+.Ldone:
 	movq	272(%rsp),%rax
 	movq	-16(%rax),%rbp
 	movq	-8(%rax),%rbx
 	leaq	(%rax),%rsp
-L$epilogue:
+.Lepilogue:
 	.byte	0xf3,0xc3
-
-
-.p2align	5
+.size	sha1_multi_block,.-sha1_multi_block
+.type	sha1_multi_block_shaext,@function
+.align	32
 sha1_multi_block_shaext:
 _shaext_shortcut:
 	movq	%rsp,%rax
@@ -2564,11 +2564,11 @@ _shaext_shortcut:
 	andq	$-256,%rsp
 	leaq	64(%rdi),%rdi
 	movq	%rax,272(%rsp)
-L$body_shaext:
+.Lbody_shaext:
 	leaq	256(%rsp),%rbx
 	movdqa	K_XX_XX+128(%rip),%xmm3
 
-L$oop_grande_shaext:
+.Loop_grande_shaext:
 	movl	%edx,280(%rsp)
 	xorl	%edx,%edx
 	movq	0(%rsi),%r8
@@ -2586,7 +2586,7 @@ L$oop_grande_shaext:
 	movl	%ecx,4(%rbx)
 	cmovleq	%rsp,%r9
 	testl	%edx,%edx
-	jz	L$done_shaext
+	jz	.Ldone_shaext
 
 	movq	0-64(%rdi),%xmm0
 	movq	32-64(%rdi),%xmm4
@@ -2605,10 +2605,10 @@ L$oop_grande_shaext:
 	pshufd	$127,%xmm7,%xmm9
 	pshufd	$27,%xmm0,%xmm0
 	pshufd	$27,%xmm8,%xmm8
-	jmp	L$oop_shaext
+	jmp	.Loop_shaext
 
-.p2align	5
-L$oop_shaext:
+.align	32
+.Loop_shaext:
 	movdqu	0(%r8),%xmm4
 	movdqu	0(%r9),%xmm11
 	movdqu	16(%r8),%xmm5
@@ -2886,7 +2886,7 @@ L$oop_shaext:
 
 	movq	%xmm6,(%rbx)
 	decl	%edx
-	jnz	L$oop_shaext
+	jnz	.Loop_shaext
 
 	movl	280(%rsp),%edx
 
@@ -2909,40 +2909,40 @@ L$oop_shaext:
 	leaq	8(%rdi),%rdi
 	leaq	32(%rsi),%rsi
 	decl	%edx
-	jnz	L$oop_grande_shaext
+	jnz	.Loop_grande_shaext
 
-L$done_shaext:
+.Ldone_shaext:
 
 	movq	-16(%rax),%rbp
 	movq	-8(%rax),%rbx
 	leaq	(%rax),%rsp
-L$epilogue_shaext:
+.Lepilogue_shaext:
 	.byte	0xf3,0xc3
-
-
-.p2align	5
+.size	sha1_multi_block_shaext,.-sha1_multi_block_shaext
+.type	sha1_multi_block_avx,@function
+.align	32
 sha1_multi_block_avx:
 _avx_shortcut:
 	shrq	$32,%rcx
 	cmpl	$2,%edx
-	jb	L$avx
+	jb	.Lavx
 	testl	$32,%ecx
 	jnz	_avx2_shortcut
-	jmp	L$avx
-.p2align	5
-L$avx:
+	jmp	.Lavx
+.align	32
+.Lavx:
 	movq	%rsp,%rax
 	pushq	%rbx
 	pushq	%rbp
 	subq	$288,%rsp
 	andq	$-256,%rsp
 	movq	%rax,272(%rsp)
-L$body_avx:
+.Lbody_avx:
 	leaq	K_XX_XX(%rip),%rbp
 	leaq	256(%rsp),%rbx
 
 	vzeroupper
-L$oop_grande_avx:
+.Loop_grande_avx:
 	movl	%edx,280(%rsp)
 	xorl	%edx,%edx
 	movq	0(%rsi),%r8
@@ -2974,7 +2974,7 @@ L$oop_grande_avx:
 	movl	%ecx,12(%rbx)
 	cmovleq	%rbp,%r11
 	testl	%edx,%edx
-	jz	L$done_avx
+	jz	.Ldone_avx
 
 	vmovdqu	0(%rdi),%xmm10
 	leaq	128(%rsp),%rax
@@ -2983,10 +2983,10 @@ L$oop_grande_avx:
 	vmovdqu	96(%rdi),%xmm13
 	vmovdqu	128(%rdi),%xmm14
 	vmovdqu	96(%rbp),%xmm5
-	jmp	L$oop_avx
+	jmp	.Loop_avx
 
-.p2align	5
-L$oop_avx:
+.align	32
+.Loop_avx:
 	vmovdqa	-32(%rbp),%xmm15
 	vmovd	(%r8),%xmm0
 	leaq	64(%r8),%r8
@@ -4976,25 +4976,25 @@ L$oop_avx:
 	vmovdqu	%xmm6,(%rbx)
 	vmovdqu	96(%rbp),%xmm5
 	decl	%edx
-	jnz	L$oop_avx
+	jnz	.Loop_avx
 
 	movl	280(%rsp),%edx
 	leaq	16(%rdi),%rdi
 	leaq	64(%rsi),%rsi
 	decl	%edx
-	jnz	L$oop_grande_avx
+	jnz	.Loop_grande_avx
 
-L$done_avx:
+.Ldone_avx:
 	movq	272(%rsp),%rax
 	vzeroupper
 	movq	-16(%rax),%rbp
 	movq	-8(%rax),%rbx
 	leaq	(%rax),%rsp
-L$epilogue_avx:
+.Lepilogue_avx:
 	.byte	0xf3,0xc3
-
-
-.p2align	5
+.size	sha1_multi_block_avx,.-sha1_multi_block_avx
+.type	sha1_multi_block_avx2,@function
+.align	32
 sha1_multi_block_avx2:
 _avx2_shortcut:
 	movq	%rsp,%rax
@@ -5007,12 +5007,12 @@ _avx2_shortcut:
 	subq	$576,%rsp
 	andq	$-256,%rsp
 	movq	%rax,544(%rsp)
-L$body_avx2:
+.Lbody_avx2:
 	leaq	K_XX_XX(%rip),%rbp
 	shrl	$1,%edx
 
 	vzeroupper
-L$oop_grande_avx2:
+.Loop_grande_avx2:
 	movl	%edx,552(%rsp)
 	xorl	%edx,%edx
 	leaq	512(%rsp),%rbx
@@ -5080,10 +5080,10 @@ L$oop_grande_avx2:
 	vmovdqu	96(%rdi),%ymm3
 	vmovdqu	128(%rdi),%ymm4
 	vmovdqu	96(%rbp),%ymm9
-	jmp	L$oop_avx2
+	jmp	.Loop_avx2
 
-.p2align	5
-L$oop_avx2:
+.align	32
+.Loop_avx2:
 	vmovdqa	-32(%rbp),%ymm15
 	vmovd	(%r12),%xmm10
 	leaq	64(%r12),%r12
@@ -7183,7 +7183,7 @@ L$oop_avx2:
 	leaq	256+128(%rsp),%rbx
 	vmovdqu	96(%rbp),%ymm9
 	decl	%edx
-	jnz	L$oop_avx2
+	jnz	.Loop_avx2
 
 
 
@@ -7191,7 +7191,7 @@ L$oop_avx2:
 
 
 
-L$done_avx2:
+.Ldone_avx2:
 	movq	544(%rsp),%rax
 	vzeroupper
 	movq	-48(%rax),%r15
@@ -7201,11 +7201,11 @@ L$done_avx2:
 	movq	-16(%rax),%rbp
 	movq	-8(%rax),%rbx
 	leaq	(%rax),%rsp
-L$epilogue_avx2:
+.Lepilogue_avx2:
 	.byte	0xf3,0xc3
+.size	sha1_multi_block_avx2,.-sha1_multi_block_avx2
 
-
-.p2align	8
+.align	256
 .long	0x5a827999,0x5a827999,0x5a827999,0x5a827999
 .long	0x5a827999,0x5a827999,0x5a827999,0x5a827999
 K_XX_XX:

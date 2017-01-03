@@ -1,7 +1,7 @@
 .text	
 
-
-.p2align	5
+.type	_aesni_ctr32_ghash_6x,@function
+.align	32
 _aesni_ctr32_ghash_6x:
 	vmovdqu	32(%r11),%xmm2
 	subq	$6,%rdx
@@ -14,18 +14,18 @@ _aesni_ctr32_ghash_6x:
 	vpaddb	%xmm2,%xmm13,%xmm14
 	vpxor	%xmm15,%xmm1,%xmm9
 	vmovdqu	%xmm4,16+8(%rsp)
-	jmp	L$oop6x
+	jmp	.Loop6x
 
-.p2align	5
-L$oop6x:
+.align	32
+.Loop6x:
 	addl	$100663296,%ebx
-	jc	L$handle_ctr32
+	jc	.Lhandle_ctr32
 	vmovdqu	0-32(%r9),%xmm3
 	vpaddb	%xmm2,%xmm14,%xmm1
 	vpxor	%xmm15,%xmm10,%xmm10
 	vpxor	%xmm15,%xmm11,%xmm11
 
-L$resume_ctr32:
+.Lresume_ctr32:
 	vmovdqu	%xmm1,(%r8)
 	vpclmulqdq	$0x10,%xmm3,%xmm7,%xmm5
 	vpxor	%xmm15,%xmm12,%xmm12
@@ -208,7 +208,7 @@ L$resume_ctr32:
 	vaesenc	%xmm1,%xmm14,%xmm14
 	vmovups	160-128(%rcx),%xmm1
 	cmpl	$11,%ebp
-	jb	L$enc_tail
+	jb	.Lenc_tail
 
 	vaesenc	%xmm15,%xmm9,%xmm9
 	vaesenc	%xmm15,%xmm10,%xmm10
@@ -225,7 +225,7 @@ L$resume_ctr32:
 	vmovups	176-128(%rcx),%xmm15
 	vaesenc	%xmm1,%xmm14,%xmm14
 	vmovups	192-128(%rcx),%xmm1
-	je	L$enc_tail
+	je	.Lenc_tail
 
 	vaesenc	%xmm15,%xmm9,%xmm9
 	vaesenc	%xmm15,%xmm10,%xmm10
@@ -242,10 +242,10 @@ L$resume_ctr32:
 	vmovups	208-128(%rcx),%xmm15
 	vaesenc	%xmm1,%xmm14,%xmm14
 	vmovups	224-128(%rcx),%xmm1
-	jmp	L$enc_tail
+	jmp	.Lenc_tail
 
-.p2align	5
-L$handle_ctr32:
+.align	32
+.Lhandle_ctr32:
 	vmovdqu	(%r11),%xmm0
 	vpshufb	%xmm0,%xmm1,%xmm6
 	vmovdqu	48(%r11),%xmm5
@@ -264,10 +264,10 @@ L$handle_ctr32:
 	vpshufb	%xmm0,%xmm13,%xmm13
 	vpshufb	%xmm0,%xmm14,%xmm14
 	vpshufb	%xmm0,%xmm1,%xmm1
-	jmp	L$resume_ctr32
+	jmp	.Lresume_ctr32
 
-.p2align	5
-L$enc_tail:
+.align	32
+.Lenc_tail:
 	vaesenc	%xmm15,%xmm9,%xmm9
 	vmovdqu	%xmm7,16+8(%rsp)
 	vpalignr	$8,%xmm4,%xmm4,%xmm8
@@ -305,7 +305,7 @@ L$enc_tail:
 
 	addq	$0x60,%r10
 	subq	$0x6,%rdx
-	jc	L$6x_done
+	jc	.L6x_done
 
 	vmovups	%xmm9,-96(%rsi)
 	vpxor	%xmm15,%xmm1,%xmm9
@@ -320,24 +320,24 @@ L$enc_tail:
 	vmovups	%xmm14,-16(%rsi)
 	vmovdqa	%xmm3,%xmm14
 	vmovdqu	32+8(%rsp),%xmm7
-	jmp	L$oop6x
+	jmp	.Loop6x
 
-L$6x_done:
+.L6x_done:
 	vpxor	16+8(%rsp),%xmm8,%xmm8
 	vpxor	%xmm4,%xmm8,%xmm8
 
 	.byte	0xf3,0xc3
-
-.globl	_aesni_gcm_decrypt
-
-.p2align	5
-_aesni_gcm_decrypt:
+.size	_aesni_ctr32_ghash_6x,.-_aesni_ctr32_ghash_6x
+.globl	aesni_gcm_decrypt
+.type	aesni_gcm_decrypt,@function
+.align	32
+aesni_gcm_decrypt:
 	xorq	%r10,%r10
 
 
 
 	cmpq	$0x60,%rdx
-	jb	L$gcm_dec_abort
+	jb	.Lgcm_dec_abort
 
 	leaq	(%rsp),%rax
 	pushq	%rbx
@@ -351,7 +351,7 @@ _aesni_gcm_decrypt:
 	vmovdqu	(%r8),%xmm1
 	addq	$-128,%rsp
 	movl	12(%r8),%ebx
-	leaq	L$bswap_mask(%rip),%r11
+	leaq	.Lbswap_mask(%rip),%r11
 	leaq	-128(%rcx),%r14
 	movq	$0xf80,%r15
 	vmovdqu	(%r9),%xmm8
@@ -365,11 +365,11 @@ _aesni_gcm_decrypt:
 	andq	%r15,%r14
 	andq	%rsp,%r15
 	subq	%r14,%r15
-	jc	L$dec_no_key_aliasing
+	jc	.Ldec_no_key_aliasing
 	cmpq	$768,%r15
-	jnc	L$dec_no_key_aliasing
+	jnc	.Ldec_no_key_aliasing
 	subq	%r15,%rsp
-L$dec_no_key_aliasing:
+.Ldec_no_key_aliasing:
 
 	vmovdqu	80(%rdi),%xmm7
 	leaq	(%rdi),%r14
@@ -421,12 +421,12 @@ L$dec_no_key_aliasing:
 	movq	-16(%rax),%rbp
 	movq	-8(%rax),%rbx
 	leaq	(%rax),%rsp
-L$gcm_dec_abort:
+.Lgcm_dec_abort:
 	movq	%r10,%rax
 	.byte	0xf3,0xc3
-
-
-.p2align	5
+.size	aesni_gcm_decrypt,.-aesni_gcm_decrypt
+.type	_aesni_ctr32_6x,@function
+.align	32
 _aesni_ctr32_6x:
 	vmovdqu	0-128(%rcx),%xmm4
 	vmovdqu	32(%r11),%xmm2
@@ -435,7 +435,7 @@ _aesni_ctr32_6x:
 	leaq	32-128(%rcx),%r12
 	vpxor	%xmm4,%xmm1,%xmm9
 	addl	$100663296,%ebx
-	jc	L$handle_ctr32_2
+	jc	.Lhandle_ctr32_2
 	vpaddb	%xmm2,%xmm1,%xmm10
 	vpaddb	%xmm2,%xmm10,%xmm11
 	vpxor	%xmm4,%xmm10,%xmm10
@@ -447,10 +447,10 @@ _aesni_ctr32_6x:
 	vpxor	%xmm4,%xmm13,%xmm13
 	vpaddb	%xmm2,%xmm14,%xmm1
 	vpxor	%xmm4,%xmm14,%xmm14
-	jmp	L$oop_ctr32
+	jmp	.Loop_ctr32
 
-.p2align	4
-L$oop_ctr32:
+.align	16
+.Loop_ctr32:
 	vaesenc	%xmm15,%xmm9,%xmm9
 	vaesenc	%xmm15,%xmm10,%xmm10
 	vaesenc	%xmm15,%xmm11,%xmm11
@@ -460,7 +460,7 @@ L$oop_ctr32:
 	vmovups	(%r12),%xmm15
 	leaq	16(%r12),%r12
 	decl	%r13d
-	jnz	L$oop_ctr32
+	jnz	.Loop_ctr32
 
 	vmovdqu	(%r12),%xmm3
 	vaesenc	%xmm15,%xmm9,%xmm9
@@ -492,8 +492,8 @@ L$oop_ctr32:
 	leaq	96(%rsi),%rsi
 
 	.byte	0xf3,0xc3
-.p2align	5
-L$handle_ctr32_2:
+.align	32
+.Lhandle_ctr32_2:
 	vpshufb	%xmm0,%xmm1,%xmm6
 	vmovdqu	48(%r11),%xmm5
 	vpaddd	64(%r11),%xmm6,%xmm10
@@ -513,20 +513,20 @@ L$handle_ctr32_2:
 	vpxor	%xmm4,%xmm13,%xmm13
 	vpshufb	%xmm0,%xmm1,%xmm1
 	vpxor	%xmm4,%xmm14,%xmm14
-	jmp	L$oop_ctr32
+	jmp	.Loop_ctr32
+.size	_aesni_ctr32_6x,.-_aesni_ctr32_6x
 
-
-.globl	_aesni_gcm_encrypt
-
-.p2align	5
-_aesni_gcm_encrypt:
+.globl	aesni_gcm_encrypt
+.type	aesni_gcm_encrypt,@function
+.align	32
+aesni_gcm_encrypt:
 	xorq	%r10,%r10
 
 
 
 
 	cmpq	$288,%rdx
-	jb	L$gcm_enc_abort
+	jb	.Lgcm_enc_abort
 
 	leaq	(%rsp),%rax
 	pushq	%rbx
@@ -540,7 +540,7 @@ _aesni_gcm_encrypt:
 	vmovdqu	(%r8),%xmm1
 	addq	$-128,%rsp
 	movl	12(%r8),%ebx
-	leaq	L$bswap_mask(%rip),%r11
+	leaq	.Lbswap_mask(%rip),%r11
 	leaq	-128(%rcx),%r14
 	movq	$0xf80,%r15
 	leaq	128(%rcx),%rcx
@@ -551,11 +551,11 @@ _aesni_gcm_encrypt:
 	andq	%r15,%r14
 	andq	%rsp,%r15
 	subq	%r14,%r15
-	jc	L$enc_no_key_aliasing
+	jc	.Lenc_no_key_aliasing
 	cmpq	$768,%r15
-	jnc	L$enc_no_key_aliasing
+	jnc	.Lenc_no_key_aliasing
 	subq	%r15,%rsp
-L$enc_no_key_aliasing:
+.Lenc_no_key_aliasing:
 
 	leaq	(%rsi),%r14
 
@@ -775,20 +775,20 @@ L$enc_no_key_aliasing:
 	movq	-16(%rax),%rbp
 	movq	-8(%rax),%rbx
 	leaq	(%rax),%rsp
-L$gcm_enc_abort:
+.Lgcm_enc_abort:
 	movq	%r10,%rax
 	.byte	0xf3,0xc3
-
-.p2align	6
-L$bswap_mask:
+.size	aesni_gcm_encrypt,.-aesni_gcm_encrypt
+.align	64
+.Lbswap_mask:
 .byte	15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0
-L$poly:
+.Lpoly:
 .byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0xc2
-L$one_msb:
+.Lone_msb:
 .byte	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1
-L$two_lsb:
+.Ltwo_lsb:
 .byte	2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-L$one_lsb:
+.Lone_lsb:
 .byte	1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 .byte	65,69,83,45,78,73,32,71,67,77,32,109,111,100,117,108,101,32,102,111,114,32,120,56,54,95,54,52,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
-.p2align	6
+.align	64

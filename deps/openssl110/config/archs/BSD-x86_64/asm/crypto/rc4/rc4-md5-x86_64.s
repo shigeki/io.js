@@ -1,11 +1,11 @@
 .text	
-.p2align	4
+.align	16
 
-.globl	_rc4_md5_enc
-
-_rc4_md5_enc:
+.globl	rc4_md5_enc
+.type	rc4_md5_enc,@function
+rc4_md5_enc:
 	cmpq	$0,%r9
-	je	L$abort
+	je	.Labort
 	pushq	%rbx
 	pushq	%rbp
 	pushq	%r12
@@ -13,7 +13,7 @@ _rc4_md5_enc:
 	pushq	%r14
 	pushq	%r15
 	subq	$40,%rsp
-L$body:
+.Lbody:
 	movq	%rcx,%r11
 	movq	%r9,%r12
 	movq	%rsi,%r13
@@ -40,10 +40,10 @@ L$body:
 	movl	4(%r11),%r9d
 	movl	8(%r11),%r10d
 	movl	12(%r11),%r11d
-	jmp	L$oop
+	jmp	.Loop
 
-.p2align	4
-L$oop:
+.align	16
+.Loop:
 	movl	%r8d,0(%rsp)
 	movl	%r9d,4(%rsp)
 	movl	%r10d,8(%rsp)
@@ -1234,7 +1234,7 @@ L$oop:
 	leaq	64(%r15),%r15
 	leaq	64(%r13),%r13
 	cmpq	16(%rsp),%r15
-	jb	L$oop
+	jb	.Loop
 
 	movq	24(%rsp),%r12
 	subb	%al,%cl
@@ -1253,7 +1253,7 @@ L$oop:
 	movq	72(%rsp),%rbp
 	movq	80(%rsp),%rbx
 	leaq	88(%rsp),%rsp
-L$epilogue:
-L$abort:
+.Lepilogue:
+.Labort:
 	.byte	0xf3,0xc3
-
+.size	rc4_md5_enc,.-rc4_md5_enc
