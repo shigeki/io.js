@@ -23,8 +23,9 @@
             '__BYTE_ORDER=__BIG_ENDIAN',
             '__FLOAT_WORD_ORDER=__BIG_ENDIAN'],
         }],
+      ],
       'conditions': [
-        ['openssl_no_asm==0', {
+        ['openssl_no_asm==0 or target_arch!="s390x" or OS!="win"', {
           'includes': ['./openssl_asm.gypi'],
         }, {
           'includes': ['./openssl_no_asm.gypi'],
