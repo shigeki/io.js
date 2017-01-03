@@ -15,6 +15,12 @@
         'OPENSSLDIR="/etc/ssl"',
       ],
       'conditions': [
+        # avx2 needs gas version >= 2.2.3, we only support asm in newer version
+        ['gas_version<"2.23"', {
+          openssl_no_asm=0,
+        }],
+      ],
+      'conditions': [
         [ 'OS=="aix"', {
           # AIX is missing /usr/include/endian.h
           'defines': [
