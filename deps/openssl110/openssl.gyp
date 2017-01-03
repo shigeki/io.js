@@ -25,7 +25,7 @@
         }],
       ],
       'conditions': [
-        ['openssl_no_asm==0 or target_arch!="s390x" or OS!="win"', {
+        ['openssl_no_asm==0 and target_arch!="s390x" and OS!="win"', {
           'includes': ['./openssl_asm.gypi'],
         }, {
           'includes': ['./openssl_no_asm.gypi'],
@@ -47,7 +47,7 @@
         'openssl/include/'
       ],
       'conditions': [
-        ['openssl_no_asm==0 or target_arch!="s390x" or OS!="win"', {
+        ['openssl_no_asm==0 and target_arch!="s390x" and OS!="win"', {
           'includes': ['./openssl-cl_asm.gypi'],
         }, {
           'includes': ['./openssl-cl_no_asm.gypi'],
