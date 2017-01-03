@@ -1595,6 +1595,11 @@ our %unified_info = (
                     "crypto/poly1305/asm/poly1305-ppcfp.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
+            "crypto/poly1305/poly1305-s390x.S" =>
+                [
+                    "crypto/poly1305/asm/poly1305-s390x.pl",
+                    "\$(PERLASM_SCHEME)",
+                ],
             "crypto/poly1305/poly1305-sparcv9.S" =>
                 [
                     "crypto/poly1305/asm/poly1305-sparcv9.pl",
@@ -1634,6 +1639,11 @@ our %unified_info = (
             "crypto/rc4/rc4-parisc.s" =>
                 [
                     "crypto/rc4/asm/rc4-parisc.pl",
+                    "\$(PERLASM_SCHEME)",
+                ],
+            "crypto/rc4/rc4-s390x.S" =>
+                [
+                    "crypto/rc4/asm/poly1305-s390x.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
             "crypto/rc4/rc4-x86_64.s" =>
@@ -1697,6 +1707,11 @@ our %unified_info = (
                     "crypto/sha/asm/sha1-ppc.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
+            "crypto/sha/sha1-s390x.S" =>
+                [
+                    "crypto/sha/asm/sha1-s390x.pl",
+                    "\$(PERLASM_SCHEME)",
+                ],
             "crypto/sha/sha1-sparcv9.S" =>
                 [
                     "crypto/sha/asm/sha1-sparcv9.pl",
@@ -1751,6 +1766,11 @@ our %unified_info = (
                     "crypto/sha/asm/sha512-ppc.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
+            "crypto/sha/sha256-s390x.S" =>
+                [
+                    "crypto/sha/asm/sha512-s390x.pl",
+                    "\$(PERLASM_SCHEME)",
+                ],
             "crypto/sha/sha256-sparcv9.S" =>
                 [
                     "crypto/sha/asm/sha512-sparcv9.pl",
@@ -1803,6 +1823,11 @@ our %unified_info = (
             "crypto/sha/sha512-ppc.s" =>
                 [
                     "crypto/sha/asm/sha512-ppc.pl",
+                    "\$(PERLASM_SCHEME)",
+                ],
+            "crypto/sha/sha512-s390x.S" =>
+                [
+                    "crypto/sha/asm/sha512-s390x.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
             "crypto/sha/sha512-sparcv9.S" =>
