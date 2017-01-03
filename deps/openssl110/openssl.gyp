@@ -34,32 +34,46 @@
         ['openssl_no_asm==0', {
           'defines': ['OPENSSL_CPUID_OBJ'],
           'conditions': [
-            ['target_arch=="arm" and OS=="linux"', {
+            ['target_arch=="ppc" and OS=="aix"', {
+              'includes': ['config/archs/aix-gcc/asm/openssl.gypi'],
+            }, ['target_arch=="ppc" and OS=="linux"', {
+              'includes': ['config/archs/linux-pcc/asm/openssl.gypi'],
+            }, ['target_arch=="ppc64" and OS=="aix"', {
+              'includes': ['config/archs/aix64-gcc/asm/openssl.gypi'],
+            }, ['target_arch=="ppc64" and OS=="linux"', {
+              'includes': ['config/archs/linux-ppc64/asm/openssl.gypi'],
+            }, ['target_arch=="s390" and OS=="linux"', {
+              'includes': ['config/archs/linux32-s390x/asm/openssl.gypi'],
+            }, ['target_arch=="s390x" and OS=="linux"', {
+              'includes': ['config/archs/linux64-s390x/asm/openssl.gypi'],
+            }, ['target_arch=="arm" and OS=="linux"', {
               'includes': ['config/archs/linux-armv4/asm/openssl.gypi'],
-            }, 'target_arch=="ia32" and OS=="mac"', {
-              'includes': ['config/archs/darwin-i386-cc/asm/openssl.gypi'],
-              'include_dirs': ['config/archs/darwin-i386-cc/asm'],
-            }, 'target_arch=="ia32" and OS=="win"', {
+            }, 'target_arch=="arm64" and OS=="linux"', {
+              'includes': ['config/archs/linux-aarch64/asm/openssl.gypi'],
             }, 'target_arch=="ia32" and OS=="linux"', {
               'includes': ['config/archs/linux-elf/asm/openssl.gypi'],
-              'include_dirs': ['config/archs/linux-elf/asm'],
+            }, 'target_arch=="ia32" and OS=="mac"', {
+              'includes': ['config/archs/darwin-i386-cc/asm/openssl.gypi'],
+            }, 'target_arch=="ia32" and OS=="solaris"', {
+              'includes': ['config/archs/solaris-x86-gcc/asm/openssl.gypi'],
+            }, 'target_arch=="ia32" and OS=="win"', {
+              'includes': ['config/archs/VC-WIN32/asm/openssl.gypi'],
             }, 'target_arch=="ia32"', {
-              # ia32 others
+              # noasm linux-elf for other ia32 platforms
+              'includes': ['config/archs/linux-elf/no-asm/openssl.gypi'],
+            }, 'target_arch=="x64" and OS=="freebsd"', {
+              'includes': ['config/archs/BSD-x86_64/asm/openssl.gypi'],
             }, 'target_arch=="x64" and OS=="mac"', {
               'includes': ['config/archs/darwin64-x86_64-cc/asm/openssl.gypi'],
-              'include_dirs': ['config/archs/darwin64-x86_64-cc/asm'],
+            }, 'target_arch=="x64" and OS=="solaris"', {
+              'includes': ['config/archs/solaris64-x86_64-gcc/asm/openssl.gypi'],
             }, 'target_arch=="x64" and OS=="win"', {
+              'includes': ['config/archs/VC-WIN64A/asm/openssl.gypi'],
             }, 'target_arch=="x64" and OS=="linux"', {
               'includes': ['config/archs/linux-x86_64/asm/openssl.gypi'],
-#              'include_dirs': [
-#                'config/archs/linux-x86_64/asm',
-#                'config/archs/linux-x86_64/asm/include',
-#                'config/archs/linux-x86_64/asm/crypto',
-#                'config/archs/linux-x86_64/asm/crypto/include/internal',
-#              ],
-            }, 'target_arch=="arm64" and OS=="linux"', {
             }, {
-              # Other architectures don't use assembly.
+              # Other architectures don't use assembly
+              'includes': ['config/archs/linux-x86_64/no-asm/openssl.gypi'],
             }],
           ],
         }, {
@@ -113,20 +127,46 @@
       'conditions': [
         ['openssl_no_asm==0', {
           'conditions': [
-            ['target_arch=="arm" and OS=="linux"', {
+            ['target_arch=="ppc" and OS=="aix"', {
+              'includes': ['config/archs/aix-gcc/asm/openssl-cl.gypi'],
+            }, ['target_arch=="ppc" and OS=="linux"', {
+              'includes': ['config/archs/linux-pcc/asm/openssl-cl.gypi'],
+            }, ['target_arch=="ppc64" and OS=="aix"', {
+              'includes': ['config/archs/aix64-gcc/asm/openssl-cl.gypi'],
+            }, ['target_arch=="ppc64" and OS=="linux"', {
+              'includes': ['config/archs/linux-ppc64/asm/openssl-cl.gypi'],
+            }, ['target_arch=="s390" and OS=="linux"', {
+              'includes': ['config/archs/linux32-s390x/asm/openssl-cl.gypi'],
+            }, ['target_arch=="s390x" and OS=="linux"', {
+              'includes': ['config/archs/linux64-s390x/asm/openssl-cl.gypi'],
+            }, ['target_arch=="arm" and OS=="linux"', {
               'includes': ['config/archs/linux-armv4/asm/openssl-cl.gypi'],
-            }, 'target_arch=="ia32" and OS=="mac"', {
-              'includes': ['config/archs/darwin-i386-cc/asm/openssl-cl.gypi'],
-            }, 'target_arch=="ia32" and OS=="win"', {
+            }, 'target_arch=="arm64" and OS=="linux"', {
+              'includes': ['config/archs/linux-aarch64/asm/openssl-cl.gypi'],
             }, 'target_arch=="ia32" and OS=="linux"', {
               'includes': ['config/archs/linux-elf/asm/openssl-cl.gypi'],
+            }, 'target_arch=="ia32" and OS=="mac"', {
+              'includes': ['config/archs/darwin-i386-cc/asm/openssl-cl.gypi'],
+            }, 'target_arch=="ia32" and OS=="solaris"', {
+              'includes': ['config/archs/solaris-x86-gcc/asm/openssl-cl.gypi'],
+            }, 'target_arch=="ia32" and OS=="win"', {
+              'includes': ['config/archs/VC-WIN32/asm/openssl-cl.gypi'],
+            }, 'target_arch=="ia32"', {
+              # noasm linux-elf for other ia32 platforms
+              'includes': ['config/archs/linux-elf/no-asm/openssl-cl.gypi'],
+            }, 'target_arch=="x64" and OS=="freebsd"', {
+              'includes': ['config/archs/BSD-x86_64/asm/openssl-cl.gypi'],
             }, 'target_arch=="x64" and OS=="mac"', {
               'includes': ['config/archs/darwin64-x86_64-cc/asm/openssl-cl.gypi'],
+            }, 'target_arch=="x64" and OS=="solaris"', {
+              'includes': ['config/archs/solaris64-x86_64-gcc/asm/openssl-cl.gypi'],
             }, 'target_arch=="x64" and OS=="win"', {
+              'includes': ['config/archs/VC-WIN64A/asm/openssl-cl.gypi'],
             }, 'target_arch=="x64" and OS=="linux"', {
               'includes': ['config/archs/linux-x86_64/asm/openssl-cl.gypi'],
-            }, 'target_arch=="arm64" and OS=="linux"', {
-            }, { # other archs
+            }, {
+              # Other architectures don't use assembly
+              'includes': ['config/archs/linux-x86_64/no-asm/openssl-cl.gypi'],
             }],
           ],
         }, {
