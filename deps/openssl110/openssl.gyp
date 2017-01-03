@@ -46,7 +46,7 @@
         'openssl/include/'
       ],
       'conditions': [
-        ['openssl_no_asm==0', {
+        ['openssl_no_asm==0 or target_arch!="s390x" or OS!="win"', {
           'includes': ['./openssl-cl_asm.gypi'],
         }, {
           'includes': ['./openssl-cl_no_asm.gypi'],

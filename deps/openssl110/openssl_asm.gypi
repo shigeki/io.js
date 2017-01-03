@@ -9,12 +9,10 @@
       'includes': ['config/archs/aix64-gcc/asm/openssl.gypi'],
     }, 'target_arch=="ppc64" and OS=="linux"', {
       'includes': ['config/archs/linux-ppc64/asm/openssl.gypi'],
-    }, 'target_arch=="s390" and OS=="linux"', {
-      # we do not support asm for now
-      'includes': ['config/archs/linux32-s390x/no-asm/openssl.gypi'],
     }, 'target_arch=="s390x" and OS=="linux"', {
-      # we do not support asm for now
-      'includes': ['config/archs/linux64-s390x/no-asm/openssl.gypi'],
+      'includes': ['config/archs/linux32-s390x/asm/openssl.gypi'],
+    }, 'target_arch=="s390x" and OS=="linux"', {
+      'includes': ['config/archs/linux64-s390x/asm/openssl.gypi'],
     }, 'target_arch=="arm" and OS=="linux"', {
       'includes': ['config/archs/linux-armv4/asm/openssl.gypi'],
     }, 'target_arch=="arm64" and OS=="linux"', {
@@ -28,8 +26,7 @@
     }, 'target_arch=="ia32" and OS=="win"', {
       # 'includes': ['config/archs/VC-WIN32/asm/openssl.gypi'],
     }, 'target_arch=="ia32"', {
-      # noasm linux-elf for other ia32 platforms
-      'includes': ['config/archs/linux-elf/no-asm/openssl.gypi'],
+      'includes': ['config/archs/linux-elf/asm/openssl.gypi'],
     }, 'target_arch=="x64" and OS=="freebsd"', {
       'includes': ['config/archs/BSD-x86_64/asm/openssl.gypi'],
     }, 'target_arch=="x64" and OS=="mac"', {
@@ -42,7 +39,7 @@
       'includes': ['config/archs/linux-x86_64/asm/openssl.gypi'],
     }, {
       # Other architectures don't use assembly
-      'includes': ['config/archs/linux-x86_64/no-asm/openssl.gypi'],
+      'includes': ['config/archs/linux-x86_64/asm/openssl.gypi'],
     }],
   ],
 }
