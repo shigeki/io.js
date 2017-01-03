@@ -29,7 +29,7 @@ foreach my $obj (@{$unified_info{sources}->{'apps/openssl'}}) {
 
 foreach my $src (@generated_srcs) {
     $cmd = "cd ../openssl; CC=gcc ASM=nasm make $src; cp --parents $src ../config/archs/$arch/$conf_opt; cd ../config";
-    system("$cmd >& /dev/null 2>&1");
+    system("$cmd");
 }
 
 open(GYPI, "> ../config/archs/$arch/$conf_opt/openssl.gypi");
