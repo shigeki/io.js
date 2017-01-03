@@ -1403,6 +1403,11 @@ our %unified_info = (
                     "crypto/chacha/asm/chacha-ppc.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
+            "crypto/chacha/chacha-s390x.S" =>
+                [
+                    "crypto/chacha/asm/chacha-s390x.pl",
+                    "\$(PERLASM_SCHEME)",
+                ],
             "crypto/chacha/chacha-x86.s" =>
                 [
                     "crypto/chacha/asm/chacha-x86.pl",

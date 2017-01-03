@@ -190,7 +190,6 @@
       'openssl/crypto/cast/c_enc.c',
       'openssl/crypto/cast/c_ofb64.c',
       'openssl/crypto/cast/c_skey.c',
-      'openssl/crypto/chacha/chacha-s390x.S',
       'openssl/crypto/cmac/cm_ameth.c',
       'openssl/crypto/cmac/cm_pmeth.c',
       'openssl/crypto/cmac/cmac.c',
@@ -649,6 +648,7 @@
       './config/archs/linux64-s390x/asm/crypto/aes/aes-s390x.S',
       './config/archs/linux64-s390x/asm/crypto/bn/s390x-gf2m.s',
       './config/archs/linux64-s390x/asm/crypto/bn/s390x-mont.S',
+      './config/archs/linux64-s390x/asm/crypto/chacha/chacha-s390x.S',
     ],
     'openssl_defines_linux64-s390x': [
       'DSO_DLFCN',
