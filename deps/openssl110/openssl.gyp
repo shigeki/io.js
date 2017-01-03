@@ -11,7 +11,6 @@
         'openssl/crypto/modes/',
       ],
       'defines': [
-        'OPENSSL_CPUID_OBJ',
         'ENGINESDIR="/dev/null"',
         'OPENSSLDIR="/etc/ssl"',
       ],
@@ -33,6 +32,7 @@
         }],],
       'conditions': [
         ['openssl_no_asm==0', {
+          'defines': ['OPENSSL_CPUID_OBJ'],
           'conditions': [
             ['target_arch=="arm" and OS=="linux"', {
               'includes': ['config/archs/linux-armv4/asm/openssl.gypi'],
@@ -63,6 +63,7 @@
             }],
           ],
         }, {
+          'defines': ['OPENSSL_NO_ASM'],
           'conditions': [
             ['target_arch=="arm" and OS=="linux"', {
               'includes': ['config/archs/linux-armv4/no-asm/openssl.gypi'],
@@ -81,7 +82,12 @@
             }, 'target_arch=="x64" and OS=="win"', {
             }, 'target_arch=="x64" and OS=="linux"', {
               'includes': ['config/archs/linux-x86_64/no-asm/openssl.gypi'],
-              'include_dirs': ['config/archs/linux-x86_64/no-asm'],
+              'include_dirs': [
+                'config/archs/linux-x86_64/no-asm',
+                'config/archs/linux-x86_64/no-asm/include',
+                'config/archs/linux-x86_64/no-asm/crypto',
+                'config/archs/linux-x86_64/no-asm/crypto/include/internal',
+              ],
             }, 'target_arch=="arm64" and OS=="linux"', {
             }, {
               # Other architectures don't use assembly.

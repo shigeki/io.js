@@ -95,45 +95,45 @@
 #endif
 
 #if defined(OPENSSL_LINUX) && defined(__i386__)
-# include "./noasm_archs/linux-elf/no-asm/include/openssl/opensslconf.h"
+# include "./archs/linux-elf/no-asm/include/openssl/opensslconf.h"
 #elif defined(OPENSSL_LINUX) && defined(__ILP32__)
-# include "./noasm_archs/linux-x32/no-asm/include/openssl/opensslconf.h"
+# include "./archs/linux-x32/no-asm/include/openssl/opensslconf.h"
 #elif defined(OPENSSL_LINUX) && defined(__x86_64__)
-# include "./noasm_archs/linux-x86_64/no-asm/include/openssl/opensslconf.h"
+# include "./archs/linux-x86_64/no-asm/include/openssl/opensslconf.h"
 #elif defined(OPENSSL_LINUX) && defined(__arm__)
-# include "./noasm_archs/linux-armv4/no-asm/include/openssl/opensslconf.h"
+# include "./archs/linux-armv4/no-asm/include/openssl/opensslconf.h"
 #elif defined(OPENSSL_LINUX) && defined(__aarch64__)
-# include "./noasm_archs/linux-aarch64/no-asm/include/openssl/opensslconf.h"
+# include "./archs/linux-aarch64/no-asm/include/openssl/opensslconf.h"
 #elif defined(__APPLE__) && defined(__MACH__) && defined(__i386__)
-# include "./noasm_archs/darwin-i386-cc/no-asm/include/openssl/opensslconf.h"
+# include "./archs/darwin-i386-cc/no-asm/include/openssl/opensslconf.h"
 #elif defined(__APPLE__) && defined(__MACH__) && defined(__x86_64__)
-# include "./noasm_archs/darwin64-x86_64-cc/no-asm/include/openssl/opensslconf.h"
+# include "./archs/darwin64-x86_64-cc/no-asm/include/openssl/opensslconf.h"
 #elif defined(_WIN32) && defined(_M_IX86)
-# include "./noasm_archs/VC-WIN32/no-asm/include/openssl/opensslconf.h"
+# include "./archs/VC-WIN32/no-asm/include/openssl/opensslconf.h"
 #elif defined(_WIN32) && defined(_M_X64)
-# include "./noasm_archs/VC-WIN64A/no-asm/include/openssl/opensslconf.h"
+# include "./archs/VC-WIN64A/no-asm/include/openssl/opensslconf.h"
 #elif (defined(__FreeBSD__) || defined(__OpenBSD__)) && defined(__i386__)
-# include "./noasm_archs/BSD-x86/no-asm/include/openssl/opensslconf.h"
+# include "./archs/BSD-x86/no-asm/include/openssl/opensslconf.h"
 #elif (defined(__FreeBSD__) || defined(__OpenBSD__)) && defined(__x86_64__)
-# include "./noasm_archs/BSD-x86_64/no-asm/include/openssl/opensslconf.h"
+# include "./archs/BSD-x86_64/no-asm/include/openssl/opensslconf.h"
 #elif defined(__sun) && defined(__i386__)
-# include "./noasm_archs/solaris-x86-gcc/no-asm/include/openssl/opensslconf.h"
+# include "./archs/solaris-x86-gcc/no-asm/include/openssl/opensslconf.h"
 #elif defined(__sun) && defined(__x86_64__)
-# include "./noasm_archs/solaris64-x86_64-gcc/no-asm/include/openssl/opensslconf.h"
+# include "./archs/solaris64-x86_64-gcc/no-asm/include/openssl/opensslconf.h"
 #elif defined(OPENSSL_LINUX) && defined(__PPC64__)
-# include "./noasm_archs/linux-ppc64/no-asm/include/openssl/opensslconf.h"
+# include "./archs/linux-ppc64/no-asm/include/openssl/opensslconf.h"
 #elif defined(OPENSSL_LINUX) && !defined(__PPC64__) && defined(__ppc__)
-# include "./noasm_archs/linux-ppc/no-asm/include/openssl/opensslconf.h"
+# include "./archs/linux-ppc/no-asm/include/openssl/opensslconf.h"
 #elif defined(_AIX) && defined(_ARCH_PPC64)
-# include "./noasm_archs/aix64-gcc/no-asm/include/openssl/opensslconf.h"
+# include "./archs/aix64-gcc/no-asm/include/openssl/opensslconf.h"
 #elif defined(_AIX) && !defined(_ARCH_PPC64) && defined(_ARCH_PPC)
-# include "./noasm_archs/aix-gcc/no-asm/include/openssl/opensslconf.h"
+# include "./archs/aix-gcc/no-asm/include/openssl/opensslconf.h"
 #elif defined(OPENSSL_LINUX) && defined(__s390x__)
-# include "./noasm_archs/linux64-s390x/no-asm/include/openssl/opensslconf.h"
+# include "./archs/linux64-s390x/no-asm/include/openssl/opensslconf.h"
 #elif defined(OPENSSL_LINUX) && defined(__s390__)
-# include "./noasm_archs/linux32-s390x/no-asm/include/openssl/opensslconf.h"
+# include "./archs/linux32-s390x/no-asm/include/openssl/opensslconf.h"
 #else
-# include "./noasm_archs/linux-elf/no-asm/include/openssl/opensslconf.h"
+# include "./archs/linux-elf/no-asm/include/openssl/opensslconf.h"
 #endif
 
 /* GOST is not included in all platform */
