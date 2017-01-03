@@ -1534,7 +1534,7 @@ our %unified_info = (
                 ],
             "crypto/modes/ghash-s390x.S" =>
                 [
-                    "crypto/modes/ghash-s390x.pl",
+                    "crypto/modes/asm/ghash-s390x.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
             "crypto/modes/ghash-sparcv9.S" =>
