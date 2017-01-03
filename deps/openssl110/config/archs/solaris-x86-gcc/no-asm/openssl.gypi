@@ -659,6 +659,12 @@
       '-lresolv -lsocket -lnsl -ldl',
     ],
   },
+  'include_dirs': [
+    '.',
+    './include',
+    './crypto',
+    './crypto/include/internal',
+  ],
   'defines': ['<@(openssl_defines_solaris-x86-gcc)'],
   'cflags' : ['<@(openssl_cflags_solaris-x86-gcc)'],
   'libraries': ['<@(openssl_ex_libs_solaris-x86-gcc)'],

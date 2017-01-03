@@ -51,12 +51,12 @@
             }, 'target_arch=="x64" and OS=="win"', {
             }, 'target_arch=="x64" and OS=="linux"', {
               'includes': ['config/archs/linux-x86_64/asm/openssl.gypi'],
-              'include_dirs': [
-                'config/archs/linux-x86_64/asm',
-                'config/archs/linux-x86_64/asm/include',
-                'config/archs/linux-x86_64/asm/crypto',
-                'config/archs/linux-x86_64/asm/crypto/include/internal',
-              ],
+#              'include_dirs': [
+#                'config/archs/linux-x86_64/asm',
+#                'config/archs/linux-x86_64/asm/include',
+#                'config/archs/linux-x86_64/asm/crypto',
+#                'config/archs/linux-x86_64/asm/crypto/include/internal',
+#              ],
             }, 'target_arch=="arm64" and OS=="linux"', {
             }, {
               # Other architectures don't use assembly.

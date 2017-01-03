@@ -687,6 +687,12 @@
       '',
     ],
   },
+  'include_dirs': [
+    '.',
+    './include',
+    './crypto',
+    './crypto/include/internal',
+  ],
   'defines': ['<@(openssl_defines_BSD-x86)'],
   'cflags' : ['<@(openssl_cflags_BSD-x86)'],
   'libraries': ['<@(openssl_ex_libs_BSD-x86)'],

@@ -680,6 +680,12 @@
       '',
     ],
   },
+  'include_dirs': [
+    '.',
+    './include',
+    './crypto',
+    './crypto/include/internal',
+  ],
   'defines': ['<@(openssl_defines_aix64-gcc)'],
   'cflags' : ['<@(openssl_cflags_aix64-gcc)'],
   'libraries': ['<@(openssl_ex_libs_aix64-gcc)'],

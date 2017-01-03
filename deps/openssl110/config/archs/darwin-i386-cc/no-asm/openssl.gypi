@@ -659,6 +659,12 @@
       '',
     ],
   },
+  'include_dirs': [
+    '.',
+    './include',
+    './crypto',
+    './crypto/include/internal',
+  ],
   'defines': ['<@(openssl_defines_darwin-i386-cc)'],
   'cflags' : ['<@(openssl_cflags_darwin-i386-cc)'],
   'libraries': ['<@(openssl_ex_libs_darwin-i386-cc)'],
