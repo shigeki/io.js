@@ -1,9 +1,9 @@
 .text	
 
-.globl	whirlpool_block
-.type	whirlpool_block,@function
-.align	16
-whirlpool_block:
+.globl	_whirlpool_block
+
+.p2align	4
+_whirlpool_block:
 	pushq	%rbx
 	pushq	%rbp
 	pushq	%r12
@@ -20,10 +20,10 @@ whirlpool_block:
 	movq	%rsi,8(%r10)
 	movq	%rdx,16(%r10)
 	movq	%r11,32(%r10)
-.Lprologue:
+L$prologue:
 
 	movq	%r10,%rbx
-	leaq	.Ltable(%rip),%rbp
+	leaq	L$table(%rip),%rbp
 
 	xorq	%rcx,%rcx
 	xorq	%rdx,%rdx
@@ -35,7 +35,7 @@ whirlpool_block:
 	movq	40(%rdi),%r13
 	movq	48(%rdi),%r14
 	movq	56(%rdi),%r15
-.Louterloop:
+L$outerloop:
 	movq	%r8,0(%rsp)
 	movq	%r9,8(%rsp)
 	movq	%r10,16(%rsp)
@@ -62,9 +62,9 @@ whirlpool_block:
 	movq	%r15,64+56(%rsp)
 	xorq	%rsi,%rsi
 	movq	%rsi,24(%rbx)
-	jmp	.Lround
-.align	16
-.Lround:
+	jmp	L$round
+.p2align	4
+L$round:
 	movq	4096(%rbp,%rsi,8),%r8
 	movl	0(%rsp),%eax
 	movl	4(%rsp),%ebx
@@ -530,7 +530,7 @@ whirlpool_block:
 	movq	24(%rbx),%rsi
 	addq	$1,%rsi
 	cmpq	$10,%rsi
-	je	.Lroundsdone
+	je	L$roundsdone
 
 	movq	%rsi,24(%rbx)
 	movq	%r8,64+0(%rsp)
@@ -541,9 +541,9 @@ whirlpool_block:
 	movq	%r13,64+40(%rsp)
 	movq	%r14,64+48(%rsp)
 	movq	%r15,64+56(%rsp)
-	jmp	.Lround
-.align	16
-.Lroundsdone:
+	jmp	L$round
+.p2align	4
+L$roundsdone:
 	movq	0(%rbx),%rdi
 	movq	8(%rbx),%rsi
 	movq	16(%rbx),%rax
@@ -573,11 +573,11 @@ whirlpool_block:
 	movq	%r15,56(%rdi)
 	leaq	64(%rsi),%rsi
 	subq	$1,%rax
-	jz	.Lalldone
+	jz	L$alldone
 	movq	%rsi,8(%rbx)
 	movq	%rax,16(%rbx)
-	jmp	.Louterloop
-.Lalldone:
+	jmp	L$outerloop
+L$alldone:
 	movq	32(%rbx),%rsi
 	movq	(%rsi),%r15
 	movq	8(%rsi),%r14
@@ -586,13 +586,13 @@ whirlpool_block:
 	movq	32(%rsi),%rbp
 	movq	40(%rsi),%rbx
 	leaq	48(%rsi),%rsp
-.Lepilogue:
+L$epilogue:
 	.byte	0xf3,0xc3
-.size	whirlpool_block,.-whirlpool_block
 
-.align	64
-.type	.Ltable,@object
-.Ltable:
+
+.p2align	6
+
+L$table:
 .byte	24,24,96,24,192,120,48,216,24,24,96,24,192,120,48,216
 .byte	35,35,140,35,5,175,70,38,35,35,140,35,5,175,70,38
 .byte	198,198,63,198,126,249,145,184,198,198,63,198,126,249,145,184

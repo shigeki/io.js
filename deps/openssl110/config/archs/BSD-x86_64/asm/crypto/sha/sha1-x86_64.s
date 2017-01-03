@@ -1,15 +1,15 @@
 .text	
 
 
-.globl	sha1_block_data_order
-.type	sha1_block_data_order,@function
-.align	16
-sha1_block_data_order:
-	movl	OPENSSL_ia32cap_P+0(%rip),%r9d
-	movl	OPENSSL_ia32cap_P+4(%rip),%r8d
-	movl	OPENSSL_ia32cap_P+8(%rip),%r10d
+.globl	_sha1_block_data_order
+
+.p2align	4
+_sha1_block_data_order:
+	movl	_OPENSSL_ia32cap_P+0(%rip),%r9d
+	movl	_OPENSSL_ia32cap_P+4(%rip),%r8d
+	movl	_OPENSSL_ia32cap_P+8(%rip),%r10d
 	testl	$512,%r8d
-	jz	.Lialu
+	jz	L$ialu
 	testl	$536870912,%r10d
 	jnz	_shaext_shortcut
 	andl	$296,%r10d
@@ -22,8 +22,8 @@ sha1_block_data_order:
 	je	_avx_shortcut
 	jmp	_ssse3_shortcut
 
-.align	16
-.Lialu:
+.p2align	4
+L$ialu:
 	movq	%rsp,%rax
 	pushq	%rbx
 	pushq	%rbp
@@ -36,17 +36,17 @@ sha1_block_data_order:
 	andq	$-64,%rsp
 	movq	%rdx,%r10
 	movq	%rax,64(%rsp)
-.Lprologue:
+L$prologue:
 
 	movl	0(%r8),%esi
 	movl	4(%r8),%edi
 	movl	8(%r8),%r11d
 	movl	12(%r8),%r12d
 	movl	16(%r8),%r13d
-	jmp	.Lloop
+	jmp	L$loop
 
-.align	16
-.Lloop:
+.p2align	4
+L$loop:
 	movl	0(%r9),%edx
 	bswapl	%edx
 	movl	4(%r9),%ebp
@@ -1227,7 +1227,7 @@ sha1_block_data_order:
 
 	subq	$1,%r10
 	leaq	64(%r9),%r9
-	jnz	.Lloop
+	jnz	L$loop
 
 	movq	64(%rsp),%rsi
 	movq	-40(%rsi),%r14
@@ -1236,11 +1236,11 @@ sha1_block_data_order:
 	movq	-16(%rsi),%rbp
 	movq	-8(%rsi),%rbx
 	leaq	(%rsi),%rsp
-.Lepilogue:
+L$epilogue:
 	.byte	0xf3,0xc3
-.size	sha1_block_data_order,.-sha1_block_data_order
-.type	sha1_block_data_order_shaext,@function
-.align	32
+
+
+.p2align	5
 sha1_block_data_order_shaext:
 _shaext_shortcut:
 	movdqu	(%rdi),%xmm0
@@ -1258,10 +1258,10 @@ _shaext_shortcut:
 .byte	102,15,56,0,243
 	movdqa	%xmm1,%xmm9
 .byte	102,15,56,0,251
-	jmp	.Loop_shaext
+	jmp	L$oop_shaext
 
-.align	16
-.Loop_shaext:
+.p2align	4
+L$oop_shaext:
 	decq	%rdx
 	leaq	64(%rsi),%r8
 	paddd	%xmm4,%xmm1
@@ -1398,16 +1398,16 @@ _shaext_shortcut:
 	paddd	%xmm8,%xmm0
 	movdqa	%xmm1,%xmm9
 
-	jnz	.Loop_shaext
+	jnz	L$oop_shaext
 
 	pshufd	$27,%xmm0,%xmm0
 	pshufd	$27,%xmm1,%xmm1
 	movdqu	%xmm0,(%rdi)
 	movd	%xmm1,16(%rdi)
 	.byte	0xf3,0xc3
-.size	sha1_block_data_order_shaext,.-sha1_block_data_order_shaext
-.type	sha1_block_data_order_ssse3,@function
-.align	16
+
+
+.p2align	4
 sha1_block_data_order_ssse3:
 _ssse3_shortcut:
 	movq	%rsp,%rax
@@ -1457,9 +1457,9 @@ _ssse3_shortcut:
 	psubd	%xmm9,%xmm1
 	movdqa	%xmm2,32(%rsp)
 	psubd	%xmm9,%xmm2
-	jmp	.Loop_ssse3
-.align	16
-.Loop_ssse3:
+	jmp	L$oop_ssse3
+.p2align	4
+L$oop_ssse3:
 	rorl	$2,%ebx
 	pshufd	$238,%xmm0,%xmm4
 	xorl	%edx,%esi
@@ -2333,7 +2333,7 @@ _ssse3_shortcut:
 	rorl	$7,%ebp
 	addl	%edx,%ecx
 	cmpq	%r10,%r9
-	je	.Ldone_ssse3
+	je	L$done_ssse3
 	movdqa	64(%r11),%xmm6
 	movdqa	-64(%r11),%xmm9
 	movdqu	0(%r9),%xmm0
@@ -2463,10 +2463,10 @@ _ssse3_shortcut:
 	xorl	%edx,%edi
 	movl	%ebp,16(%r8)
 	andl	%edi,%esi
-	jmp	.Loop_ssse3
+	jmp	L$oop_ssse3
 
-.align	16
-.Ldone_ssse3:
+.p2align	4
+L$done_ssse3:
 	addl	16(%rsp),%ebx
 	xorl	%ebp,%esi
 	movl	%ecx,%edi
@@ -2579,11 +2579,11 @@ _ssse3_shortcut:
 	movq	-16(%rsi),%rbp
 	movq	-8(%rsi),%rbx
 	leaq	(%rsi),%rsp
-.Lepilogue_ssse3:
+L$epilogue_ssse3:
 	.byte	0xf3,0xc3
-.size	sha1_block_data_order_ssse3,.-sha1_block_data_order_ssse3
-.type	sha1_block_data_order_avx,@function
-.align	16
+
+
+.p2align	4
 sha1_block_data_order_avx:
 _avx_shortcut:
 	movq	%rsp,%rax
@@ -2631,9 +2631,9 @@ _avx_shortcut:
 	vmovdqa	%xmm4,0(%rsp)
 	vmovdqa	%xmm5,16(%rsp)
 	vmovdqa	%xmm6,32(%rsp)
-	jmp	.Loop_avx
-.align	16
-.Loop_avx:
+	jmp	L$oop_avx
+.p2align	4
+L$oop_avx:
 	shrdl	$2,%ebx,%ebx
 	xorl	%edx,%esi
 	vpalignr	$8,%xmm0,%xmm1,%xmm4
@@ -3450,7 +3450,7 @@ _avx_shortcut:
 	shrdl	$7,%ebp,%ebp
 	addl	%edx,%ecx
 	cmpq	%r10,%r9
-	je	.Ldone_avx
+	je	L$done_avx
 	vmovdqa	64(%r11),%xmm6
 	vmovdqa	-64(%r11),%xmm11
 	vmovdqu	0(%r9),%xmm0
@@ -3577,10 +3577,10 @@ _avx_shortcut:
 	xorl	%edx,%edi
 	movl	%ebp,16(%r8)
 	andl	%edi,%esi
-	jmp	.Loop_avx
+	jmp	L$oop_avx
 
-.align	16
-.Ldone_avx:
+.p2align	4
+L$done_avx:
 	addl	16(%rsp),%ebx
 	xorl	%ebp,%esi
 	movl	%ecx,%edi
@@ -3695,11 +3695,11 @@ _avx_shortcut:
 	movq	-16(%rsi),%rbp
 	movq	-8(%rsi),%rbx
 	leaq	(%rsi),%rsp
-.Lepilogue_avx:
+L$epilogue_avx:
 	.byte	0xf3,0xc3
-.size	sha1_block_data_order_avx,.-sha1_block_data_order_avx
-.type	sha1_block_data_order_avx2,@function
-.align	16
+
+
+.p2align	4
 sha1_block_data_order_avx2:
 _avx2_shortcut:
 	movq	%rsp,%rax
@@ -3815,16 +3815,16 @@ _avx2_shortcut:
 	vpaddd	%ymm11,%ymm7,%ymm9
 	vmovdqu	%ymm9,224(%rsp)
 	leaq	128(%rsp),%r13
-	jmp	.Loop_avx2
-.align	32
-.Loop_avx2:
+	jmp	L$oop_avx2
+.p2align	5
+L$oop_avx2:
 	rorxl	$2,%ebp,%ebx
 	andnl	%edx,%ebp,%edi
 	andl	%ecx,%ebp
 	xorl	%edi,%ebp
-	jmp	.Lalign32_1
-.align	32
-.Lalign32_1:
+	jmp	L$align32_1
+.p2align	5
+L$align32_1:
 	vpalignr	$8,%ymm6,%ymm7,%ymm8
 	vpxor	%ymm4,%ymm0,%ymm0
 	addl	-128(%r13),%esi
@@ -4201,9 +4201,9 @@ _avx2_shortcut:
 	xorl	%esi,%ecx
 	addl	%r12d,%ebx
 	andl	%edi,%ecx
-	jmp	.Lalign32_2
-.align	32
-.Lalign32_2:
+	jmp	L$align32_2
+.p2align	5
+L$align32_2:
 	vpalignr	$8,%ymm6,%ymm7,%ymm8
 	vpxor	%ymm4,%ymm0,%ymm0
 	addl	-64(%r13),%ebp
@@ -4603,10 +4603,10 @@ _avx2_shortcut:
 
 
 	cmpq	%r10,%r9
-	je	.Ldone_avx2
+	je	L$done_avx2
 	vmovdqu	64(%r11),%ymm6
 	cmpq	%r10,%rdi
-	ja	.Last_avx2
+	ja	L$ast_avx2
 
 	vmovdqu	-64(%rdi),%xmm0
 	vmovdqu	-48(%rdi),%xmm1
@@ -4616,10 +4616,10 @@ _avx2_shortcut:
 	vinserti128	$1,16(%r13),%ymm1,%ymm1
 	vinserti128	$1,32(%r13),%ymm2,%ymm2
 	vinserti128	$1,48(%r13),%ymm3,%ymm3
-	jmp	.Last_avx2
+	jmp	L$ast_avx2
 
-.align	32
-.Last_avx2:
+.p2align	5
+L$ast_avx2:
 	leaq	128+16(%rsp),%r13
 	rorxl	$2,%ebp,%ebx
 	andnl	%edx,%ebp,%edi
@@ -4988,9 +4988,9 @@ _avx2_shortcut:
 	xorl	%eax,%edx
 	addl	%r12d,%ecx
 	andl	%edi,%edx
-	jmp	.Lalign32_3
-.align	32
-.Lalign32_3:
+	jmp	L$align32_3
+.p2align	5
+L$align32_3:
 	vmovdqu	%ymm6,64(%rsp)
 	vpaddd	%ymm11,%ymm3,%ymm7
 	addl	-28(%r13),%ebx
@@ -5365,9 +5365,9 @@ _avx2_shortcut:
 
 
 	cmpq	%r10,%r9
-	jbe	.Loop_avx2
+	jbe	L$oop_avx2
 
-.Ldone_avx2:
+L$done_avx2:
 	vzeroupper
 	leaq	(%r14),%rsi
 	movq	-40(%rsi),%r14
@@ -5376,10 +5376,10 @@ _avx2_shortcut:
 	movq	-16(%rsi),%rbp
 	movq	-8(%rsi),%rbx
 	leaq	(%rsi),%rsp
-.Lepilogue_avx2:
+L$epilogue_avx2:
 	.byte	0xf3,0xc3
-.size	sha1_block_data_order_avx2,.-sha1_block_data_order_avx2
-.align	64
+
+.p2align	6
 K_XX_XX:
 .long	0x5a827999,0x5a827999,0x5a827999,0x5a827999
 .long	0x5a827999,0x5a827999,0x5a827999,0x5a827999
@@ -5393,4 +5393,4 @@ K_XX_XX:
 .long	0x00010203,0x04050607,0x08090a0b,0x0c0d0e0f
 .byte	0xf,0xe,0xd,0xc,0xb,0xa,0x9,0x8,0x7,0x6,0x5,0x4,0x3,0x2,0x1,0x0
 .byte	83,72,65,49,32,98,108,111,99,107,32,116,114,97,110,115,102,111,114,109,32,102,111,114,32,120,56,54,95,54,52,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
-.align	64
+.p2align	6

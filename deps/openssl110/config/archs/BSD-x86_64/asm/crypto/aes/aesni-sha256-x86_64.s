@@ -1,14 +1,14 @@
 .text	
 
 
-.globl	aesni_cbc_sha256_enc
-.type	aesni_cbc_sha256_enc,@function
-.align	16
-aesni_cbc_sha256_enc:
-	leaq	OPENSSL_ia32cap_P(%rip),%r11
+.globl	_aesni_cbc_sha256_enc
+
+.p2align	4
+_aesni_cbc_sha256_enc:
+	leaq	_OPENSSL_ia32cap_P(%rip),%r11
 	movl	$1,%eax
 	cmpq	$0,%rdi
-	je	.Lprobe
+	je	L$probe
 	movl	0(%r11),%eax
 	movq	4(%r11),%r10
 	btq	$61,%r10
@@ -26,14 +26,14 @@ aesni_cbc_sha256_enc:
 	ud2
 	xorl	%eax,%eax
 	cmpq	$0,%rdi
-	je	.Lprobe
+	je	L$probe
 	ud2
-.Lprobe:
+L$probe:
 	.byte	0xf3,0xc3
-.size	aesni_cbc_sha256_enc,.-aesni_cbc_sha256_enc
 
-.align	64
-.type	K256,@object
+
+.p2align	6
+
 K256:
 .long	0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5
 .long	0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5
@@ -73,11 +73,11 @@ K256:
 .long	0,0,0,0,   0,0,0,0,   -1,-1,-1,-1
 .long	0,0,0,0,   0,0,0,0
 .byte	65,69,83,78,73,45,67,66,67,43,83,72,65,50,53,54,32,115,116,105,116,99,104,32,102,111,114,32,120,56,54,95,54,52,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
-.align	64
-.type	aesni_cbc_sha256_enc_xop,@function
-.align	64
+.p2align	6
+
+.p2align	6
 aesni_cbc_sha256_enc_xop:
-.Lxop_shortcut:
+L$xop_shortcut:
 	movq	8(%rsp),%r10
 	pushq	%rbx
 	pushq	%rbp
@@ -102,7 +102,7 @@ aesni_cbc_sha256_enc_xop:
 	movq	%r9,64+40(%rsp)
 	movq	%r10,64+48(%rsp)
 	movq	%r11,64+56(%rsp)
-.Lprologue_xop:
+L$prologue_xop:
 	vzeroall
 
 	movq	%rdi,%r12
@@ -127,9 +127,9 @@ aesni_cbc_sha256_enc_xop:
 	vmovdqa	16(%r13,%r14,8),%xmm13
 	vmovdqa	32(%r13,%r14,8),%xmm12
 	vmovdqu	0-128(%rdi),%xmm10
-	jmp	.Lloop_xop
-.align	16
-.Lloop_xop:
+	jmp	L$loop_xop
+.p2align	4
+L$loop_xop:
 	vmovdqa	K256+512(%rip),%xmm7
 	vmovdqu	0(%rsi,%r12,1),%xmm0
 	vmovdqu	16(%rsi,%r12,1),%xmm1
@@ -152,10 +152,10 @@ aesni_cbc_sha256_enc_xop:
 	xorl	%ecx,%esi
 	vmovdqa	%xmm7,48(%rsp)
 	movl	%r8d,%r13d
-	jmp	.Lxop_00_47
+	jmp	L$xop_00_47
 
-.align	16
-.Lxop_00_47:
+.p2align	4
+L$xop_00_47:
 	subq	$-32*4,%rbp
 	vmovdqu	(%r12),%xmm9
 	movq	%r12,64+0(%rsp)
@@ -718,7 +718,7 @@ aesni_cbc_sha256_enc_xop:
 	vmovdqu	%xmm8,(%r15,%r12,1)
 	leaq	16(%r12),%r12
 	cmpb	$0,131(%rbp)
-	jne	.Lxop_00_47
+	jne	L$xop_00_47
 	vmovdqu	(%r12),%xmm9
 	movq	%r12,64+0(%rsp)
 	rorl	$14,%r13d
@@ -1204,7 +1204,7 @@ aesni_cbc_sha256_enc_xop:
 	movl	%r10d,24(%r15)
 	movl	%r11d,28(%r15)
 
-	jb	.Lloop_xop
+	jb	L$loop_xop
 
 	movq	64+32(%rsp),%r8
 	movq	64+56(%rsp),%rsi
@@ -1217,13 +1217,13 @@ aesni_cbc_sha256_enc_xop:
 	movq	32(%rsi),%rbp
 	movq	40(%rsi),%rbx
 	leaq	48(%rsi),%rsp
-.Lepilogue_xop:
+L$epilogue_xop:
 	.byte	0xf3,0xc3
-.size	aesni_cbc_sha256_enc_xop,.-aesni_cbc_sha256_enc_xop
-.type	aesni_cbc_sha256_enc_avx,@function
-.align	64
+
+
+.p2align	6
 aesni_cbc_sha256_enc_avx:
-.Lavx_shortcut:
+L$avx_shortcut:
 	movq	8(%rsp),%r10
 	pushq	%rbx
 	pushq	%rbp
@@ -1248,7 +1248,7 @@ aesni_cbc_sha256_enc_avx:
 	movq	%r9,64+40(%rsp)
 	movq	%r10,64+48(%rsp)
 	movq	%r11,64+56(%rsp)
-.Lprologue_avx:
+L$prologue_avx:
 	vzeroall
 
 	movq	%rdi,%r12
@@ -1273,9 +1273,9 @@ aesni_cbc_sha256_enc_avx:
 	vmovdqa	16(%r13,%r14,8),%xmm13
 	vmovdqa	32(%r13,%r14,8),%xmm12
 	vmovdqu	0-128(%rdi),%xmm10
-	jmp	.Lloop_avx
-.align	16
-.Lloop_avx:
+	jmp	L$loop_avx
+.p2align	4
+L$loop_avx:
 	vmovdqa	K256+512(%rip),%xmm7
 	vmovdqu	0(%rsi,%r12,1),%xmm0
 	vmovdqu	16(%rsi,%r12,1),%xmm1
@@ -1298,10 +1298,10 @@ aesni_cbc_sha256_enc_avx:
 	xorl	%ecx,%esi
 	vmovdqa	%xmm7,48(%rsp)
 	movl	%r8d,%r13d
-	jmp	.Lavx_00_47
+	jmp	L$avx_00_47
 
-.align	16
-.Lavx_00_47:
+.p2align	4
+L$avx_00_47:
 	subq	$-32*4,%rbp
 	vmovdqu	(%r12),%xmm9
 	movq	%r12,64+0(%rsp)
@@ -1896,7 +1896,7 @@ aesni_cbc_sha256_enc_avx:
 	vmovdqu	%xmm8,(%r15,%r12,1)
 	leaq	16(%r12),%r12
 	cmpb	$0,131(%rbp)
-	jne	.Lavx_00_47
+	jne	L$avx_00_47
 	vmovdqu	(%r12),%xmm9
 	movq	%r12,64+0(%rsp)
 	shrdl	$14,%r13d,%r13d
@@ -2381,7 +2381,7 @@ aesni_cbc_sha256_enc_avx:
 	movl	%r9d,20(%r15)
 	movl	%r10d,24(%r15)
 	movl	%r11d,28(%r15)
-	jb	.Lloop_avx
+	jb	L$loop_avx
 
 	movq	64+32(%rsp),%r8
 	movq	64+56(%rsp),%rsi
@@ -2394,13 +2394,13 @@ aesni_cbc_sha256_enc_avx:
 	movq	32(%rsi),%rbp
 	movq	40(%rsi),%rbx
 	leaq	48(%rsi),%rsp
-.Lepilogue_avx:
+L$epilogue_avx:
 	.byte	0xf3,0xc3
-.size	aesni_cbc_sha256_enc_avx,.-aesni_cbc_sha256_enc_avx
-.type	aesni_cbc_sha256_enc_avx2,@function
-.align	64
+
+
+.p2align	6
 aesni_cbc_sha256_enc_avx2:
-.Lavx2_shortcut:
+L$avx2_shortcut:
 	movq	8(%rsp),%r10
 	pushq	%rbx
 	pushq	%rbp
@@ -2426,7 +2426,7 @@ aesni_cbc_sha256_enc_avx2:
 	movq	%r9,64+40(%rsp)
 	movq	%r10,64+48(%rsp)
 	movq	%r11,64+56(%rsp)
-.Lprologue_avx2:
+L$prologue_avx2:
 	vzeroall
 
 	movq	%rdi,%r13
@@ -2456,9 +2456,9 @@ aesni_cbc_sha256_enc_avx2:
 	movl	24(%r15),%r10d
 	movl	28(%r15),%r11d
 	vmovdqu	0-128(%rdi),%xmm10
-	jmp	.Loop_avx2
-.align	16
-.Loop_avx2:
+	jmp	L$oop_avx2
+.p2align	4
+L$oop_avx2:
 	vmovdqa	K256+512(%rip),%ymm7
 	vmovdqu	-64+0(%rsi,%r13,1),%xmm0
 	vmovdqu	-64+16(%rsi,%r13,1),%xmm1
@@ -2490,10 +2490,10 @@ aesni_cbc_sha256_enc_avx2:
 	vmovdqa	%ymm7,32(%rsp)
 	movl	%r9d,%r12d
 	subq	$-32*4,%rbp
-	jmp	.Lavx2_00_47
+	jmp	L$avx2_00_47
 
-.align	16
-.Lavx2_00_47:
+.p2align	4
+L$avx2_00_47:
 	vmovdqu	(%r13),%xmm9
 	vpinsrq	$0,%r13,%xmm15,%xmm15
 	leaq	-64(%rsp),%rsp
@@ -3058,7 +3058,7 @@ aesni_cbc_sha256_enc_avx2:
 	leaq	16(%r13),%r13
 	leaq	128(%rbp),%rbp
 	cmpb	$0,3(%rbp)
-	jne	.Lavx2_00_47
+	jne	L$avx2_00_47
 	vmovdqu	(%r13),%xmm9
 	vpinsrq	$0,%r13,%xmm15,%xmm15
 	addl	0+64(%rsp),%r11d
@@ -3511,15 +3511,15 @@ aesni_cbc_sha256_enc_avx2:
 	movl	%r11d,28(%r15)
 
 	cmpq	80(%rbp),%r13
-	je	.Ldone_avx2
+	je	L$done_avx2
 
 	xorl	%r14d,%r14d
 	movl	%ebx,%esi
 	movl	%r9d,%r12d
 	xorl	%ecx,%esi
-	jmp	.Lower_avx2
-.align	16
-.Lower_avx2:
+	jmp	L$ower_avx2
+.p2align	4
+L$ower_avx2:
 	vmovdqu	(%r13),%xmm9
 	vpinsrq	$0,%r13,%xmm15,%xmm15
 	addl	0+16(%rbp),%r11d
@@ -3951,7 +3951,7 @@ aesni_cbc_sha256_enc_avx2:
 	vmovdqu	%xmm8,(%r15,%r13,1)
 	leaq	16(%r13),%r13
 	cmpq	%rsp,%rbp
-	jae	.Lower_avx2
+	jae	L$ower_avx2
 
 	movq	552(%rsp),%r15
 	leaq	64(%r13),%r13
@@ -3981,10 +3981,10 @@ aesni_cbc_sha256_enc_avx2:
 	movl	%r10d,24(%r15)
 	movl	%r11d,28(%r15)
 
-	jbe	.Loop_avx2
+	jbe	L$oop_avx2
 	leaq	(%rsp),%rbp
 
-.Ldone_avx2:
+L$done_avx2:
 	leaq	(%rbp),%rsp
 	movq	64+32(%rsp),%r8
 	movq	64+56(%rsp),%rsi
@@ -3997,11 +3997,11 @@ aesni_cbc_sha256_enc_avx2:
 	movq	32(%rsi),%rbp
 	movq	40(%rsi),%rbx
 	leaq	48(%rsi),%rsp
-.Lepilogue_avx2:
+L$epilogue_avx2:
 	.byte	0xf3,0xc3
-.size	aesni_cbc_sha256_enc_avx2,.-aesni_cbc_sha256_enc_avx2
-.type	aesni_cbc_sha256_enc_shaext,@function
-.align	32
+
+
+.p2align	5
 aesni_cbc_sha256_enc_shaext:
 	movq	8(%rsp),%r10
 	leaq	K256+128(%rip),%rax
@@ -4022,10 +4022,10 @@ aesni_cbc_sha256_enc_shaext:
 .byte	102,15,58,15,202,8
 	punpcklqdq	%xmm0,%xmm2
 
-	jmp	.Loop_shaext
+	jmp	L$oop_shaext
 
-.align	16
-.Loop_shaext:
+.p2align	4
+L$oop_shaext:
 	movdqu	(%r10),%xmm10
 	movdqu	16(%r10),%xmm11
 	movdqu	32(%r10),%xmm12
@@ -4101,17 +4101,17 @@ aesni_cbc_sha256_enc_shaext:
 .byte	102,65,15,58,15,218,4
 	paddd	%xmm3,%xmm12
 	cmpl	$11,%r11d
-	jb	.Laesenclast1
+	jb	L$aesenclast1
 	movups	64(%rcx),%xmm4
 	aesenc	%xmm5,%xmm6
 	movups	80(%rcx),%xmm5
 	aesenc	%xmm4,%xmm6
-	je	.Laesenclast1
+	je	L$aesenclast1
 	movups	96(%rcx),%xmm4
 	aesenc	%xmm5,%xmm6
 	movups	112(%rcx),%xmm5
 	aesenc	%xmm4,%xmm6
-.Laesenclast1:
+L$aesenclast1:
 	aesenclast	%xmm5,%xmm6
 	movups	16-112(%rcx),%xmm4
 	nop
@@ -4178,17 +4178,17 @@ aesni_cbc_sha256_enc_shaext:
 	movups	48(%rcx),%xmm5
 	aesenc	%xmm4,%xmm6
 	cmpl	$11,%r11d
-	jb	.Laesenclast2
+	jb	L$aesenclast2
 	movups	64(%rcx),%xmm4
 	aesenc	%xmm5,%xmm6
 	movups	80(%rcx),%xmm5
 	aesenc	%xmm4,%xmm6
-	je	.Laesenclast2
+	je	L$aesenclast2
 	movups	96(%rcx),%xmm4
 	aesenc	%xmm5,%xmm6
 	movups	112(%rcx),%xmm5
 	aesenc	%xmm4,%xmm6
-.Laesenclast2:
+L$aesenclast2:
 	aesenclast	%xmm5,%xmm6
 	movups	16-112(%rcx),%xmm4
 	nop
@@ -4260,17 +4260,17 @@ aesni_cbc_sha256_enc_shaext:
 .byte	69,15,56,205,227
 .byte	69,15,56,204,234
 	cmpl	$11,%r11d
-	jb	.Laesenclast3
+	jb	L$aesenclast3
 	movups	64(%rcx),%xmm4
 	aesenc	%xmm5,%xmm6
 	movups	80(%rcx),%xmm5
 	aesenc	%xmm4,%xmm6
-	je	.Laesenclast3
+	je	L$aesenclast3
 	movups	96(%rcx),%xmm4
 	aesenc	%xmm5,%xmm6
 	movups	112(%rcx),%xmm5
 	aesenc	%xmm4,%xmm6
-.Laesenclast3:
+L$aesenclast3:
 	aesenclast	%xmm5,%xmm6
 	movups	16-112(%rcx),%xmm4
 	nop
@@ -4318,17 +4318,17 @@ aesni_cbc_sha256_enc_shaext:
 	movups	48(%rcx),%xmm5
 	aesenc	%xmm4,%xmm6
 	cmpl	$11,%r11d
-	jb	.Laesenclast4
+	jb	L$aesenclast4
 	movups	64(%rcx),%xmm4
 	aesenc	%xmm5,%xmm6
 	movups	80(%rcx),%xmm5
 	aesenc	%xmm4,%xmm6
-	je	.Laesenclast4
+	je	L$aesenclast4
 	movups	96(%rcx),%xmm4
 	aesenc	%xmm5,%xmm6
 	movups	112(%rcx),%xmm5
 	aesenc	%xmm4,%xmm6
-.Laesenclast4:
+L$aesenclast4:
 	aesenclast	%xmm5,%xmm6
 	movups	16-112(%rcx),%xmm4
 	nop
@@ -4339,7 +4339,7 @@ aesni_cbc_sha256_enc_shaext:
 	decq	%rdx
 	movups	%xmm6,48(%rsi,%rdi,1)
 	leaq	64(%rdi),%rdi
-	jnz	.Loop_shaext
+	jnz	L$oop_shaext
 
 	pshufd	$0xb1,%xmm2,%xmm2
 	pshufd	$0x1b,%xmm1,%xmm3
@@ -4351,4 +4351,4 @@ aesni_cbc_sha256_enc_shaext:
 	movdqu	%xmm1,(%r9)
 	movdqu	%xmm2,16(%r9)
 	.byte	0xf3,0xc3
-.size	aesni_cbc_sha256_enc_shaext,.-aesni_cbc_sha256_enc_shaext
+

@@ -1,15 +1,15 @@
 .text	
-.align	16
+.p2align	4
 
-.globl	md5_block_asm_data_order
-.type	md5_block_asm_data_order,@function
-md5_block_asm_data_order:
+.globl	_md5_block_asm_data_order
+
+_md5_block_asm_data_order:
 	pushq	%rbp
 	pushq	%rbx
 	pushq	%r12
 	pushq	%r14
 	pushq	%r15
-.Lprologue:
+L$prologue:
 
 
 
@@ -29,10 +29,10 @@ md5_block_asm_data_order:
 
 
 	cmpq	%rdi,%rsi
-	je	.Lend
+	je	L$end
 
 
-.Lloop:
+L$loop:
 	movl	%eax,%r8d
 	movl	%ebx,%r9d
 	movl	%ecx,%r14d
@@ -645,10 +645,10 @@ md5_block_asm_data_order:
 
 	addq	$64,%rsi
 	cmpq	%rdi,%rsi
-	jb	.Lloop
+	jb	L$loop
 
 
-.Lend:
+L$end:
 	movl	%eax,0(%rbp)
 	movl	%ebx,4(%rbp)
 	movl	%ecx,8(%rbp)
@@ -660,6 +660,6 @@ md5_block_asm_data_order:
 	movq	24(%rsp),%rbx
 	movq	32(%rsp),%rbp
 	addq	$40,%rsp
-.Lepilogue:
+L$epilogue:
 	.byte	0xf3,0xc3
-.size	md5_block_asm_data_order,.-md5_block_asm_data_order
+

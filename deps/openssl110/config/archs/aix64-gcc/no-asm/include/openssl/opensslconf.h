@@ -31,6 +31,9 @@ extern "C" {
 #ifndef OPENSSL_NO_RC5
 # define OPENSSL_NO_RC5
 #endif
+#ifndef OPENSSL_NO_AFALGENG
+# define OPENSSL_NO_AFALGENG
+#endif
 #ifndef OPENSSL_NO_ASAN
 # define OPENSSL_NO_ASAN
 #endif

@@ -1,35 +1,35 @@
 .text	
 
 
-.globl	Camellia_EncryptBlock
-.type	Camellia_EncryptBlock,@function
-.align	16
-Camellia_EncryptBlock:
+.globl	_Camellia_EncryptBlock
+
+.p2align	4
+_Camellia_EncryptBlock:
 	movl	$128,%eax
 	subl	%edi,%eax
 	movl	$3,%edi
 	adcl	$0,%edi
-	jmp	.Lenc_rounds
-.size	Camellia_EncryptBlock,.-Camellia_EncryptBlock
+	jmp	L$enc_rounds
 
-.globl	Camellia_EncryptBlock_Rounds
-.type	Camellia_EncryptBlock_Rounds,@function
-.align	16
-.Lenc_rounds:
-Camellia_EncryptBlock_Rounds:
+
+.globl	_Camellia_EncryptBlock_Rounds
+
+.p2align	4
+L$enc_rounds:
+_Camellia_EncryptBlock_Rounds:
 	pushq	%rbx
 	pushq	%rbp
 	pushq	%r13
 	pushq	%r14
 	pushq	%r15
-.Lenc_prologue:
+L$enc_prologue:
 
 
 	movq	%rcx,%r13
 	movq	%rdx,%r14
 
 	shll	$6,%edi
-	leaq	.LCamellia_SBOX(%rip),%rbp
+	leaq	L$Camellia_SBOX(%rip),%rbp
 	leaq	(%r14,%rdi,1),%r15
 
 	movl	0(%rsi),%r8d
@@ -58,19 +58,19 @@ Camellia_EncryptBlock_Rounds:
 	movq	24(%rsp),%rbp
 	movq	32(%rsp),%rbx
 	leaq	40(%rsp),%rsp
-.Lenc_epilogue:
+L$enc_epilogue:
 	.byte	0xf3,0xc3
-.size	Camellia_EncryptBlock_Rounds,.-Camellia_EncryptBlock_Rounds
 
-.type	_x86_64_Camellia_encrypt,@function
-.align	16
+
+
+.p2align	4
 _x86_64_Camellia_encrypt:
 	xorl	0(%r14),%r9d
 	xorl	4(%r14),%r8d
 	xorl	8(%r14),%r11d
 	xorl	12(%r14),%r10d
-.align	16
-.Leloop:
+.p2align	4
+L$eloop:
 	movl	16(%r14),%ebx
 	movl	20(%r14),%eax
 
@@ -240,7 +240,7 @@ _x86_64_Camellia_encrypt:
 	cmpq	%r15,%r14
 	movl	8(%r14),%edx
 	movl	12(%r14),%ecx
-	je	.Ledone
+	je	L$edone
 
 	andl	%r8d,%eax
 	orl	%r11d,%edx
@@ -252,10 +252,10 @@ _x86_64_Camellia_encrypt:
 	roll	$1,%ecx
 	xorl	%ebx,%r8d
 	xorl	%ecx,%r11d
-	jmp	.Leloop
+	jmp	L$eloop
 
-.align	16
-.Ledone:
+.p2align	4
+L$edone:
 	xorl	%r10d,%eax
 	xorl	%r11d,%ebx
 	xorl	%r8d,%ecx
@@ -267,38 +267,38 @@ _x86_64_Camellia_encrypt:
 	movl	%edx,%r11d
 
 .byte	0xf3,0xc3
-.size	_x86_64_Camellia_encrypt,.-_x86_64_Camellia_encrypt
 
 
-.globl	Camellia_DecryptBlock
-.type	Camellia_DecryptBlock,@function
-.align	16
-Camellia_DecryptBlock:
+
+.globl	_Camellia_DecryptBlock
+
+.p2align	4
+_Camellia_DecryptBlock:
 	movl	$128,%eax
 	subl	%edi,%eax
 	movl	$3,%edi
 	adcl	$0,%edi
-	jmp	.Ldec_rounds
-.size	Camellia_DecryptBlock,.-Camellia_DecryptBlock
+	jmp	L$dec_rounds
 
-.globl	Camellia_DecryptBlock_Rounds
-.type	Camellia_DecryptBlock_Rounds,@function
-.align	16
-.Ldec_rounds:
-Camellia_DecryptBlock_Rounds:
+
+.globl	_Camellia_DecryptBlock_Rounds
+
+.p2align	4
+L$dec_rounds:
+_Camellia_DecryptBlock_Rounds:
 	pushq	%rbx
 	pushq	%rbp
 	pushq	%r13
 	pushq	%r14
 	pushq	%r15
-.Ldec_prologue:
+L$dec_prologue:
 
 
 	movq	%rcx,%r13
 	movq	%rdx,%r15
 
 	shll	$6,%edi
-	leaq	.LCamellia_SBOX(%rip),%rbp
+	leaq	L$Camellia_SBOX(%rip),%rbp
 	leaq	(%r15,%rdi,1),%r14
 
 	movl	0(%rsi),%r8d
@@ -327,19 +327,19 @@ Camellia_DecryptBlock_Rounds:
 	movq	24(%rsp),%rbp
 	movq	32(%rsp),%rbx
 	leaq	40(%rsp),%rsp
-.Ldec_epilogue:
+L$dec_epilogue:
 	.byte	0xf3,0xc3
-.size	Camellia_DecryptBlock_Rounds,.-Camellia_DecryptBlock_Rounds
 
-.type	_x86_64_Camellia_decrypt,@function
-.align	16
+
+
+.p2align	4
 _x86_64_Camellia_decrypt:
 	xorl	0(%r14),%r9d
 	xorl	4(%r14),%r8d
 	xorl	8(%r14),%r11d
 	xorl	12(%r14),%r10d
-.align	16
-.Ldloop:
+.p2align	4
+L$dloop:
 	movl	-8(%r14),%ebx
 	movl	-4(%r14),%eax
 
@@ -509,7 +509,7 @@ _x86_64_Camellia_decrypt:
 	cmpq	%r15,%r14
 	movl	0(%r14),%edx
 	movl	4(%r14),%ecx
-	je	.Lddone
+	je	L$ddone
 
 	andl	%r8d,%eax
 	orl	%r11d,%edx
@@ -522,10 +522,10 @@ _x86_64_Camellia_decrypt:
 	xorl	%ebx,%r8d
 	xorl	%ecx,%r11d
 
-	jmp	.Ldloop
+	jmp	L$dloop
 
-.align	16
-.Lddone:
+.p2align	4
+L$ddone:
 	xorl	%r10d,%ecx
 	xorl	%r11d,%edx
 	xorl	%r8d,%eax
@@ -537,17 +537,17 @@ _x86_64_Camellia_decrypt:
 	movl	%ebx,%r11d
 
 .byte	0xf3,0xc3
-.size	_x86_64_Camellia_decrypt,.-_x86_64_Camellia_decrypt
-.globl	Camellia_Ekeygen
-.type	Camellia_Ekeygen,@function
-.align	16
-Camellia_Ekeygen:
+
+.globl	_Camellia_Ekeygen
+
+.p2align	4
+_Camellia_Ekeygen:
 	pushq	%rbx
 	pushq	%rbp
 	pushq	%r13
 	pushq	%r14
 	pushq	%r15
-.Lkey_prologue:
+L$key_prologue:
 
 	movl	%edi,%r15d
 	movq	%rdx,%r13
@@ -566,21 +566,21 @@ Camellia_Ekeygen:
 	movl	%r11d,8(%r13)
 	movl	%r10d,12(%r13)
 	cmpq	$128,%r15
-	je	.L1st128
+	je	L$1st128
 
 	movl	16(%rsi),%r8d
 	movl	20(%rsi),%r9d
 	cmpq	$192,%r15
-	je	.L1st192
+	je	L$1st192
 	movl	24(%rsi),%r10d
 	movl	28(%rsi),%r11d
-	jmp	.L1st256
-.L1st192:
+	jmp	L$1st256
+L$1st192:
 	movl	%r8d,%r10d
 	movl	%r9d,%r11d
 	notl	%r10d
 	notl	%r11d
-.L1st256:
+L$1st256:
 	bswapl	%r8d
 	bswapl	%r9d
 	bswapl	%r10d
@@ -594,9 +594,9 @@ Camellia_Ekeygen:
 	xorl	8(%r13),%r11d
 	xorl	12(%r13),%r10d
 
-.L1st128:
-	leaq	.LCamellia_SIGMA(%rip),%r14
-	leaq	.LCamellia_SBOX(%rip),%rbp
+L$1st128:
+	leaq	L$Camellia_SIGMA(%rip),%r14
+	leaq	L$Camellia_SBOX(%rip),%rbp
 
 	movl	0(%r14),%ebx
 	movl	4(%r14),%eax
@@ -713,7 +713,7 @@ Camellia_Ekeygen:
 	xorl	%ecx,%r9d
 	xorl	%edx,%r9d
 	cmpq	$128,%r15
-	jne	.L2nd256
+	jne	L$2nd256
 
 	leaq	128(%r13),%r13
 	shlq	$32,%r8
@@ -843,9 +843,9 @@ Camellia_Ekeygen:
 	movq	%r8,64(%r13)
 	movq	%r10,72(%r13)
 	movl	$3,%eax
-	jmp	.Ldone
-.align	16
-.L2nd256:
+	jmp	L$done
+.p2align	4
+L$2nd256:
 	movl	%r9d,48(%r13)
 	movl	%r8d,52(%r13)
 	movl	%r11d,56(%r13)
@@ -1072,23 +1072,23 @@ Camellia_Ekeygen:
 	movq	%r8,128(%r13)
 	movq	%r10,136(%r13)
 	movl	$4,%eax
-.Ldone:
+L$done:
 	movq	0(%rsp),%r15
 	movq	8(%rsp),%r14
 	movq	16(%rsp),%r13
 	movq	24(%rsp),%rbp
 	movq	32(%rsp),%rbx
 	leaq	40(%rsp),%rsp
-.Lkey_epilogue:
+L$key_epilogue:
 	.byte	0xf3,0xc3
-.size	Camellia_Ekeygen,.-Camellia_Ekeygen
-.align	64
-.LCamellia_SIGMA:
+
+.p2align	6
+L$Camellia_SIGMA:
 .long	0x3bcc908b, 0xa09e667f, 0x4caa73b2, 0xb67ae858
 .long	0xe94f82be, 0xc6ef372f, 0xf1d36f1c, 0x54ff53a5
 .long	0xde682d1d, 0x10e527fa, 0xb3e6c1fd, 0xb05688c2
 .long	0,          0,          0,          0
-.LCamellia_SBOX:
+L$Camellia_SBOX:
 .long	0x70707000,0x70700070
 .long	0x82828200,0x2c2c002c
 .long	0x2c2c2c00,0xb3b300b3
@@ -1601,19 +1601,19 @@ Camellia_Ekeygen:
 .long	0x008f8f8f,0xe300e3e3
 .long	0x00010101,0x40004040
 .long	0x003d3d3d,0x4f004f4f
-.globl	Camellia_cbc_encrypt
-.type	Camellia_cbc_encrypt,@function
-.align	16
-Camellia_cbc_encrypt:
+.globl	_Camellia_cbc_encrypt
+
+.p2align	4
+_Camellia_cbc_encrypt:
 	cmpq	$0,%rdx
-	je	.Lcbc_abort
+	je	L$cbc_abort
 	pushq	%rbx
 	pushq	%rbp
 	pushq	%r12
 	pushq	%r13
 	pushq	%r14
 	pushq	%r15
-.Lcbc_prologue:
+L$cbc_prologue:
 
 	movq	%rsp,%rbp
 	subq	$64,%rsp
@@ -1637,25 +1637,25 @@ Camellia_cbc_encrypt:
 	movq	%r8,40(%rsp)
 	movq	%rbp,48(%rsp)
 
-.Lcbc_body:
-	leaq	.LCamellia_SBOX(%rip),%rbp
+L$cbc_body:
+	leaq	L$Camellia_SBOX(%rip),%rbp
 
 	movl	$32,%ecx
-.align	4
-.Lcbc_prefetch_sbox:
+.p2align	2
+L$cbc_prefetch_sbox:
 	movq	0(%rbp),%rax
 	movq	32(%rbp),%rsi
 	movq	64(%rbp),%rdi
 	movq	96(%rbp),%r11
 	leaq	128(%rbp),%rbp
-	loop	.Lcbc_prefetch_sbox
+	loop	L$cbc_prefetch_sbox
 	subq	$4096,%rbp
 	shlq	$6,%r15
 	movq	%rdx,%rcx
 	leaq	(%r14,%r15,1),%r15
 
 	cmpl	$0,%r9d
-	je	.LCBC_DECRYPT
+	je	L$CBC_DECRYPT
 
 	andq	$-16,%rdx
 	andq	$15,%rcx
@@ -1669,11 +1669,11 @@ Camellia_cbc_encrypt:
 	movl	4(%rbx),%r9d
 	movl	8(%rbx),%r10d
 	movl	12(%rbx),%r11d
-	je	.Lcbc_enc_tail
-	jmp	.Lcbc_eloop
+	je	L$cbc_enc_tail
+	jmp	L$cbc_eloop
 
-.align	16
-.Lcbc_eloop:
+.p2align	4
+L$cbc_eloop:
 	xorl	0(%r12),%r8d
 	xorl	4(%r12),%r9d
 	xorl	8(%r12),%r10d
@@ -1699,41 +1699,41 @@ Camellia_cbc_encrypt:
 	movl	%r11d,12(%r13)
 	cmpq	%rdx,%r12
 	leaq	16(%r13),%r13
-	jne	.Lcbc_eloop
+	jne	L$cbc_eloop
 
 	cmpq	$0,%rcx
-	jne	.Lcbc_enc_tail
+	jne	L$cbc_enc_tail
 
 	movq	40(%rsp),%r13
 	movl	%r8d,0(%r13)
 	movl	%r9d,4(%r13)
 	movl	%r10d,8(%r13)
 	movl	%r11d,12(%r13)
-	jmp	.Lcbc_done
+	jmp	L$cbc_done
 
-.align	16
-.Lcbc_enc_tail:
+.p2align	4
+L$cbc_enc_tail:
 	xorq	%rax,%rax
 	movq	%rax,0+24(%rsp)
 	movq	%rax,8+24(%rsp)
 	movq	%rax,16(%rsp)
 
-.Lcbc_enc_pushf:
+L$cbc_enc_pushf:
 	pushfq
 	cld
 	movq	%r12,%rsi
 	leaq	8+24(%rsp),%rdi
 .long	0x9066A4F3
 	popfq
-.Lcbc_enc_popf:
+L$cbc_enc_popf:
 
 	leaq	24(%rsp),%r12
 	leaq	16+24(%rsp),%rax
 	movq	%rax,8(%rsp)
-	jmp	.Lcbc_eloop
+	jmp	L$cbc_eloop
 
-.align	16
-.LCBC_DECRYPT:
+.p2align	4
+L$CBC_DECRYPT:
 	xchgq	%r14,%r15
 	addq	$15,%rdx
 	andq	$15,%rcx
@@ -1745,9 +1745,9 @@ Camellia_cbc_encrypt:
 
 	movq	(%rbx),%rax
 	movq	8(%rbx),%rbx
-	jmp	.Lcbc_dloop
-.align	16
-.Lcbc_dloop:
+	jmp	L$cbc_dloop
+.p2align	4
+L$cbc_dloop:
 	movl	0(%r12),%r8d
 	movl	4(%r12),%r9d
 	movl	8(%r12),%r10d
@@ -1777,7 +1777,7 @@ Camellia_cbc_encrypt:
 	leaq	16(%r12),%r12
 	xorl	12+24(%rsp),%r11d
 	cmpq	%rdx,%r12
-	je	.Lcbc_ddone
+	je	L$cbc_ddone
 
 	movl	%r8d,0(%r13)
 	movl	%r9d,4(%r13)
@@ -1785,13 +1785,13 @@ Camellia_cbc_encrypt:
 	movl	%r11d,12(%r13)
 
 	leaq	16(%r13),%r13
-	jmp	.Lcbc_dloop
+	jmp	L$cbc_dloop
 
-.align	16
-.Lcbc_ddone:
+.p2align	4
+L$cbc_ddone:
 	movq	40(%rsp),%rdx
 	cmpq	$0,%rcx
-	jne	.Lcbc_dec_tail
+	jne	L$cbc_dec_tail
 
 	movl	%r8d,0(%r13)
 	movl	%r9d,4(%r13)
@@ -1800,29 +1800,29 @@ Camellia_cbc_encrypt:
 
 	movq	%rax,(%rdx)
 	movq	%rbx,8(%rdx)
-	jmp	.Lcbc_done
-.align	16
-.Lcbc_dec_tail:
+	jmp	L$cbc_done
+.p2align	4
+L$cbc_dec_tail:
 	movl	%r8d,0+24(%rsp)
 	movl	%r9d,4+24(%rsp)
 	movl	%r10d,8+24(%rsp)
 	movl	%r11d,12+24(%rsp)
 
-.Lcbc_dec_pushf:
+L$cbc_dec_pushf:
 	pushfq
 	cld
 	leaq	8+24(%rsp),%rsi
 	leaq	(%r13),%rdi
 .long	0x9066A4F3
 	popfq
-.Lcbc_dec_popf:
+L$cbc_dec_popf:
 
 	movq	%rax,(%rdx)
 	movq	%rbx,8(%rdx)
-	jmp	.Lcbc_done
+	jmp	L$cbc_done
 
-.align	16
-.Lcbc_done:
+.p2align	4
+L$cbc_done:
 	movq	48(%rsp),%rcx
 	movq	0(%rcx),%r15
 	movq	8(%rcx),%r14
@@ -1831,8 +1831,8 @@ Camellia_cbc_encrypt:
 	movq	32(%rcx),%rbp
 	movq	40(%rcx),%rbx
 	leaq	48(%rcx),%rsp
-.Lcbc_abort:
+L$cbc_abort:
 	.byte	0xf3,0xc3
-.size	Camellia_cbc_encrypt,.-Camellia_cbc_encrypt
+
 
 .byte	67,97,109,101,108,108,105,97,32,102,111,114,32,120,56,54,95,54,52,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0

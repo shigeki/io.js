@@ -1,7 +1,7 @@
 .text	
 
-.type	_mul_1x1,@function
-.align	16
+
+.p2align	4
 _mul_1x1:
 	subq	$128+8,%rsp
 	movq	$-1,%r9
@@ -194,16 +194,16 @@ _mul_1x1:
 
 	addq	$128+8,%rsp
 	.byte	0xf3,0xc3
-.Lend_mul_1x1:
-.size	_mul_1x1,.-_mul_1x1
+L$end_mul_1x1:
 
-.globl	bn_GF2m_mul_2x2
-.type	bn_GF2m_mul_2x2,@function
-.align	16
-bn_GF2m_mul_2x2:
-	movq	OPENSSL_ia32cap_P(%rip),%rax
+
+.globl	_bn_GF2m_mul_2x2
+
+.p2align	4
+_bn_GF2m_mul_2x2:
+	movq	_OPENSSL_ia32cap_P(%rip),%rax
 	btq	$33,%rax
-	jnc	.Lvanilla_mul_2x2
+	jnc	L$vanilla_mul_2x2
 
 .byte	102,72,15,110,198
 .byte	102,72,15,110,201
@@ -227,15 +227,15 @@ bn_GF2m_mul_2x2:
 	movdqu	%xmm0,16(%rdi)
 	.byte	0xf3,0xc3
 
-.align	16
-.Lvanilla_mul_2x2:
+.p2align	4
+L$vanilla_mul_2x2:
 	leaq	-136(%rsp),%rsp
 	movq	%r14,80(%rsp)
 	movq	%r13,88(%rsp)
 	movq	%r12,96(%rsp)
 	movq	%rbp,104(%rsp)
 	movq	%rbx,112(%rsp)
-.Lbody_mul_2x2:
+L$body_mul_2x2:
 	movq	%rdi,32(%rsp)
 	movq	%rsi,40(%rsp)
 	movq	%rdx,48(%rsp)
@@ -285,7 +285,7 @@ bn_GF2m_mul_2x2:
 	movq	112(%rsp),%rbx
 	leaq	136(%rsp),%rsp
 	.byte	0xf3,0xc3
-.Lend_mul_2x2:
-.size	bn_GF2m_mul_2x2,.-bn_GF2m_mul_2x2
+L$end_mul_2x2:
+
 .byte	71,70,40,50,94,109,41,32,77,117,108,116,105,112,108,105,99,97,116,105,111,110,32,102,111,114,32,120,56,54,95,54,52,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
-.align	16
+.p2align	4
