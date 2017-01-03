@@ -121,7 +121,7 @@
         'use_openssl_def': 0,
       }],
       # openssl-1.1.0 does not have FIPS support yet
-      [ 'use_openssl110=="true" and openssl_fips=="false"', {
+      [ 'use_openssl110=="true" and openssl_fips==""', {
         'openssl_target%': 'openssl110',
       }, {
         'openssl_target%': 'openssl',
