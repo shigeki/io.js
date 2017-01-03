@@ -69,8 +69,8 @@ our %target = (
   ar => "ar",
   bf_asm_src => "bf_enc.c",
   bf_obj => "bf_enc.o",
-  bn_asm_src => "asm/s390x.S s390x-mont.S s390x-gf2m.s",
-  bn_obj => "asm/s390x.o s390x-mont.o s390x-gf2m.o",
+  bn_asm_src => "s390x-mont.S s390x-gf2m.s",
+  bn_obj => "s390x-mont.o s390x-gf2m.o",
   bn_ops => "SIXTY_FOUR_BIT_LONG RC4_CHAR",
   build_file => "Makefile",
   build_scheme => [ "unified", "unix" ],
@@ -3991,10 +3991,6 @@ our %unified_info = (
                 [
                     "crypto/blake2/m_blake2s.c",
                 ],
-            "crypto/bn/asm/s390x.o" =>
-                [
-                    "crypto/bn/asm/s390x.S",
-                ],
             "crypto/bn/bn_add.o" =>
                 [
                     "crypto/bn/bn_add.c",
@@ -6198,7 +6194,6 @@ our %unified_info = (
                     "crypto/blake2/blake2s.o",
                     "crypto/blake2/m_blake2b.o",
                     "crypto/blake2/m_blake2s.o",
-                    "crypto/bn/asm/s390x.o",
                     "crypto/bn/bn_add.o",
                     "crypto/bn/bn_blind.o",
                     "crypto/bn/bn_const.o",

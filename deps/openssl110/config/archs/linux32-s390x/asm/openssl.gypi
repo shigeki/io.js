@@ -147,7 +147,6 @@
       'openssl/crypto/blake2/m_blake2b.c',
       'openssl/crypto/blake2/m_blake2s.c',
       'openssl/crypto/bn/bn_add.c',
-      'openssl/crypto/bn/bn_asm.c',
       'openssl/crypto/bn/bn_blind.c',
       'openssl/crypto/bn/bn_const.c',
       'openssl/crypto/bn/bn_ctx.c',
