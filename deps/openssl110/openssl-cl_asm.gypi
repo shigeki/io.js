@@ -9,9 +9,11 @@
     }, 'target_arch=="ppc64" and OS=="linux"', {
       'includes': ['config/archs/linux-ppc64/asm/openssl-cl.gypi'],
     }, 'target_arch=="s390" and OS=="linux"', {
-      'includes': ['config/archs/linux32-s390x/asm/openssl-cl.gypi'],
+      # we do not support asm for now
+      'includes': ['config/archs/linux32-s390x/no-asm/openssl-cl.gypi'],
     }, 'target_arch=="s390x" and OS=="linux"', {
-      'includes': ['config/archs/linux64-s390x/asm/openssl-cl.gypi'],
+      # we do not support asm for now
+      'includes': ['config/archs/linux64-s390x/no-asm/openssl-cl.gypi'],
     }, 'target_arch=="arm" and OS=="linux"', {
       'includes': ['config/archs/linux-armv4/asm/openssl-cl.gypi'],
     }, 'target_arch=="arm64" and OS=="linux"', {

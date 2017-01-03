@@ -10,10 +10,10 @@
     }, 'target_arch=="ppc64" and OS=="linux"', {
       'includes': ['config/archs/linux-ppc64/asm/openssl.gypi'],
     }, 'target_arch=="s390" and OS=="linux"', {
-      'includes': ['config/archs/linux32-s390x/asm/openssl.gypi'],
+      # we do not support asm for now
+      'includes': ['config/archs/linux32-s390x/no-asm/openssl.gypi'],
     }, 'target_arch=="s390x" and OS=="linux"', {
-      # linuxone(linux64-s390x) does not entries in build.inf so we support only no-asm for now
-      # 'includes': ['config/archs/linux64-s390x/asm/openssl.gypi'],
+      # we do not support asm for now
       'includes': ['config/archs/linux64-s390x/no-asm/openssl.gypi'],
     }, 'target_arch=="arm" and OS=="linux"', {
       'includes': ['config/archs/linux-armv4/asm/openssl.gypi'],
