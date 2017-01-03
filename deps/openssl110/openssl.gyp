@@ -23,13 +23,6 @@
             '__BYTE_ORDER=__BIG_ENDIAN',
             '__FLOAT_WORD_ORDER=__BIG_ENDIAN'],
         }],
-        [ 'node_byteorder=="big"', {
-          # Define Big Endian
-          'defines': ['B_ENDIAN']
-        }, {
-        # Define Little Endian
-        'defines':['L_ENDIAN']
-        }],],
       'conditions': [
         ['openssl_no_asm==0', {
           'includes': ['./openssl_asm.gypi'],
