@@ -82,8 +82,8 @@ our %target = (
   chacha_obj => "chacha-s390x.o",
   cmll_asm_src => "camellia.c cmll_misc.c cmll_cbc.c",
   cmll_obj => "camellia.o cmll_misc.o cmll_cbc.o",
-  cpuid_asm_src => "s390xcap.c s390xcpuid.S",
-  cpuid_obj => "s390xcap.o s390xcpuid.o",
+  cpuid_asm_src => "s390xcap.c",
+  cpuid_obj => "s390xcap.o",
   defines => [  ],
   des_asm_src => "des_enc.c fcrypt_b.c",
   des_obj => "des_enc.o fcrypt_b.o",
@@ -5582,10 +5582,6 @@ our %unified_info = (
                 [
                     "crypto/s390xcap.c",
                 ],
-            "crypto/s390xcpuid.o" =>
-                [
-                    "crypto/s390xcpuid.S",
-                ],
             "crypto/seed/seed.o" =>
                 [
                     "crypto/seed/seed.c",
@@ -6618,7 +6614,6 @@ our %unified_info = (
                     "crypto/rsa/rsa_x931.o",
                     "crypto/rsa/rsa_x931g.o",
                     "crypto/s390xcap.o",
-                    "crypto/s390xcpuid.o",
                     "crypto/seed/seed.o",
                     "crypto/seed/seed_cbc.o",
                     "crypto/seed/seed_cfb.o",

@@ -19,4 +19,4 @@ static const char cflags[] = {
     'i','n','e','s','-','1','.','1','\\','"','"',' ','\0'
 };
 #define PLATFORM "platform: solaris64-x86_64-gcc"
-#define DATE "built on: Tue Jan  3 14:10:24 2017"
+#define DATE "built on: Tue Jan  3 14:17:04 2017"

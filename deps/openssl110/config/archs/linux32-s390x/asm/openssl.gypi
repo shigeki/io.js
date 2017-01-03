@@ -529,7 +529,6 @@
       'openssl/crypto/rsa/rsa_x931.c',
       'openssl/crypto/rsa/rsa_x931g.c',
       'openssl/crypto/s390xcap.c',
-      'openssl/crypto/s390xcpuid.S',
       'openssl/crypto/seed/seed.c',
       'openssl/crypto/seed/seed_cbc.c',
       'openssl/crypto/seed/seed_cfb.c',
