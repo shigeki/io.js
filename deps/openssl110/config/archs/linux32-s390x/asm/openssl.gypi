@@ -430,7 +430,6 @@
       'openssl/crypto/modes/ctr128.c',
       'openssl/crypto/modes/cts128.c',
       'openssl/crypto/modes/gcm128.c',
-      'openssl/crypto/modes/ghash-s390x.S',
       'openssl/crypto/modes/ocb128.c',
       'openssl/crypto/modes/ofb128.c',
       'openssl/crypto/modes/wrap128.c',
@@ -649,6 +648,7 @@
       './config/archs/linux32-s390x/asm/crypto/bn/s390x-gf2m.s',
       './config/archs/linux32-s390x/asm/crypto/bn/s390x-mont.S',
       './config/archs/linux32-s390x/asm/crypto/chacha/chacha-s390x.S',
+      './config/archs/linux32-s390x/asm/crypto/modes/ghash-s390x.S',
     ],
     'openssl_defines_linux32-s390x': [
       'DSO_DLFCN',
