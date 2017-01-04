@@ -34,7 +34,7 @@
     }, 'target_arch=="x64" and OS=="solaris"', {
       'includes': ['config/archs/solaris64-x86_64-gcc/asm/openssl.gypi'],
     }, 'target_arch=="x64" and OS=="win"', {
-      # 'includes': ['config/archs/VC-WIN64A/asm/openssl.gypi'],
+       'includes': ['config/archs/VC-WIN64A/asm/openssl.gypi'],
     }, 'target_arch=="x64" and OS=="linux"', {
       'includes': ['config/archs/linux-x86_64/asm/openssl.gypi'],
     }, {
