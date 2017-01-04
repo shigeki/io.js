@@ -172,8 +172,8 @@ goto run
 if defined noprojgen goto msbuild
 
 @rem Generate the VS project.
-echo configure %configure_flags% --enable-openssl110 --dest-cpu=%target_arch% --tag=%TAG%
-python configure %configure_flags% --enable-openssl110 --dest-cpu=%target_arch% --tag=%TAG%
+echo configure %configure_flags% --use-openssl110 --dest-cpu=%target_arch% --tag=%TAG%
+python configure %configure_flags% --use-openssl110 --dest-cpu=%target_arch% --tag=%TAG%
 if errorlevel 1 goto create-msvs-files-failed
 if not exist node.sln goto create-msvs-files-failed
 echo Project files generated.
