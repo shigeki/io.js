@@ -36,8 +36,13 @@
           'cflags': ['-Wno-missing-field-initializers'],
         }],
         # TODO because gcc_version is not specified anywhere
-        [ 'is_clang==1 or gcc_version>=0', {
+        [ 'gcc_version>=0', {
           'cflags': ['-Wno-old-style-declaration'],
+        }],
+        [ 'OS=="mac"', {
+          'xcode_settings': {
+            'WARNING_CFLAGS': ['-Wno-missing-field-initializers']
+          }
         }],
         [ 'OS=="solaris"', {
           'defines': ['__EXTENSIONS__'],
