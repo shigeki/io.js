@@ -19,7 +19,7 @@
       'defines': [
         ## default of Win. See INSTALL in openssl repo.
         'OPENSSLDIR="C:\Program Files\Common Files\SSL"'
-        'ENGINESDIR="nul"',
+        'ENGINESDIR="C:\\Program Files\\OpenSSL\\lib\\engines-1_1\"',
         'PURIFY', '_REENTRANT', 'OPENSSL_NO_SSL2',
         'OPENSSL_NO_SSL3', 'OPENSSL_NO_HEARTBEATS', 'MK1MF_BUILD',
         'WIN32_LEAN_AND_MEAN', 'OPENSSL_SYSNAME_WIN32', 'WIN32',
