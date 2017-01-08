@@ -20,6 +20,13 @@
         ## default of Win. See INSTALL in openssl repo.
         'OPENSSLDIR="C:\Program Files\Common Files\SSL"'
         'ENGINESDIR="nul"',
+        'PURIFY', '_REENTRANT', 'OPENSSL_NO_SSL2',
+        'OPENSSL_NO_SSL3', 'OPENSSL_NO_HEARTBEATS', 'MK1MF_BUILD',
+        'WIN32_LEAN_AND_MEAN', 'OPENSSL_SYSNAME_WIN32', 'WIN32',
+        '_CRT_SECURE_NO_DEPRECATE', '_CRT_NONSTDC_NO_DEPRECATE',
+        '_HAS_EXCEPTIONS=0', 'BUILDING_V8_SHARED=1',
+        'BUILDING_UV_SHARED=1', 'L_ENDIAN', 'DSO_WIN32',
+        'OPENSSL_NO_DYNAMIC_ENGINE', 'OPENSSL_NO_CAPIENG',
       ],
     }, 'OS=="mac"', {
       'xcode_settings': {
