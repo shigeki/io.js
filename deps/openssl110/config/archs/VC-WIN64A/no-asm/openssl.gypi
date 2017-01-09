@@ -657,8 +657,11 @@
       '-W3', '-wd4090', '-Gs0', '-GF', '-Gy', '-nologo','/O2',
     ],
     'openssl_ex_libs_VC-WIN64A': [
-      'ws2_32.lib', 'gdi32.lib', 'advapi32.lib',
-      'crypt32.lib', 'user32.lib',
+      '-lws2_32.lib',
+      '-lgdi32.lib',
+      '-ladvapi32.lib',
+      '-lcrypt32.lib',
+      '-luser32.lib',
     ],
   },
   'include_dirs': [
