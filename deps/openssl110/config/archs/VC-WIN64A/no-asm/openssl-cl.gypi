@@ -71,6 +71,8 @@
   },
   'defines': ['<@(openssl_defines_VC-WIN64A)'],
   'cflags' : ['<@(openssl_cflags_VC-WIN64A)'],
-  'libraries': ['<@(openssl_ex_libs_VC-WIN64A)'],
+  'link_settings': {
+    'libraries': ['<@(openssl_ex_libs_VC-WIN64A)'],
+  },
   'sources': ['<@(openssl_cli_srcs_VC-WIN64A)'],
 }
