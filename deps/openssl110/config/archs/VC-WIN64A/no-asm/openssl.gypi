@@ -650,11 +650,11 @@
       'NDEBUG',
       'OPENSSL_NO_DYNAMIC_ENGINE',
       'OPENSSL_PIC',
+      'OPENSSL_SYS_WIN32', 'WIN32_LEAN_AND_MEAN', 'L_ENDIAN',
+      '_CRT_SECURE_NO_DEPRECATE', 'UNICODE', '_UNICODE',
     ],
     'openssl_cflags_VC-WIN64A': [
-      '-W3', '-wd4090', '-Gs0', '-GF', '-Gy', '-nologo',
-      '-DOPENSSL_SYS_WIN32', '-DWIN32_LEAN_AND_MEAN', '-DL_ENDIAN',
-      '-D_CRT_SECURE_NO_DEPRECATE', '-DUNICODE', '-D_UNICODE',  '/O2',
+      '-W3', '-wd4090', '-Gs0', '-GF', '-Gy', '-nologo','/O2',
     ],
     'openssl_ex_libs_VC-WIN64A': [
       'ws2_32.lib', 'gdi32.lib', 'advapi32.lib',
