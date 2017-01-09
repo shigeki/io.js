@@ -598,8 +598,7 @@
       # TODO(bnoordhuis) Make all platforms export the same list of symbols.
       # Teach mkssldef.py to generate linker maps that UNIX linkers understand.
       'conditions': [
-        # disable if openssl-1.1.x for now
-        [ 'use_openssl_def==1 and use_openssl110!="true"', {
+        [ 'use_openssl_def==1', {
           'variables': {
             'mkssldef_flags': [
               # Categories to export.
