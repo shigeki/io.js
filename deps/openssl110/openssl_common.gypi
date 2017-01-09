@@ -22,6 +22,15 @@
         'OPENSSLDIR="C:\Program Files\Common Files\SSL"',
         'ENGINESDIR="NUL"',
       ],
+      'link_settings': {
+        'libraries': [
+          '-lws2_32.lib',
+          '-lgdi32.lib',
+          '-ladvapi32.lib',
+          '-lcrypt32.lib',
+          '-luser32.lib',
+        ],
+      },
     }, 'OS=="mac"', {
       'xcode_settings': {
         'WARNING_CFLAGS': ['-Wno-missing-field-initializers']
