@@ -123,8 +123,16 @@
       # openssl-1.1.0 does not have FIPS support yet
       [ 'use_openssl110=="true" and openssl_fips==""', {
         'openssl_target%': 'openssl110',
+        'openssl_ordinals%': [
+          'deps/<(openssl_target)/openssl/util/libcrypto.num',
+          'deps/<(openssl_target)/openssl/util/libssl.num',
+        ],
       }, {
         'openssl_target%': 'openssl',
+        'openssl_ordinals%': [
+          'deps/<(openssl_target)/openssl/util/libeay.num',
+          'deps/<(openssl_target)/openssl/util/ssleay.num',
+        ],
       }],
     ],
   },
