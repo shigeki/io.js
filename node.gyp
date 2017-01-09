@@ -951,6 +951,9 @@
             'deps/v8/src/v8.gyp:v8_libplatform'
           ],
         }],
+        [ 'openssl_no_asm==1', {
+          'defines': ['OPENSSL_NO_ASM'],
+        }],
       ]
     }
   ], # end targets
