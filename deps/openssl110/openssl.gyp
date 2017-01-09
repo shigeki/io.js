@@ -30,7 +30,7 @@
       'dependencies': ['openssl'],
       'includes': ['./openssl_common.gypi'],
       'conditions': [
-        ['openssl_no_asm==0 and target_arch!="s390x" and OS!="win"', {
+        ['openssl_no_asm==0', {
           'includes': ['./openssl-cl_asm.gypi'],
         }, {
           'includes': ['./openssl-cl_no_asm.gypi'],

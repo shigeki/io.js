@@ -931,7 +931,7 @@ def configure_v8(o):
 def configure_openssl(o):
   o['variables']['node_use_openssl'] = b(not options.without_ssl)
   o['variables']['node_shared_openssl'] = b(options.shared_openssl)
-  o['variables']['openssl_no_asm'] = 1 if options.openssl_no_asm else 0
+  o['variables']['openssl_no_asm'] = 1 if options.openssl_no_asm or flavor == 'win' or options.dest_cpu == 's390x' else 0
 #  o['variables']['use_openssl110'] = 'true' if options.use_openssl110 else 'false'
   o['variables']['use_openssl110'] = 'true'
   if options.openssl_fips:
