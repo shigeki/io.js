@@ -124,14 +124,14 @@
       [ 'use_openssl110=="true" and openssl_fips==""', {
         'openssl_target%': 'openssl110',
         'openssl_ordinals%': [
-          'deps/<(openssl_target)/openssl/util/libcrypto.num',
-          'deps/<(openssl_target)/openssl/util/libssl.num',
+          'deps/openssl110/openssl/util/libcrypto.num',
+          'deps/openssl110/openssl/util/libssl.num',
         ],
       }, {
         'openssl_target%': 'openssl',
         'openssl_ordinals%': [
-          'deps/<(openssl_target)/openssl/util/libeay.num',
-          'deps/<(openssl_target)/openssl/util/ssleay.num',
+          'deps/openssl/openssl/util/libeay.num',
+          'deps/openssl/openssl/util/ssleay.num',
         ],
       }],
     ],
@@ -624,11 +624,8 @@
           'actions': [
             {
               'action_name': 'mkssldef',
-              'inputs': [
-                'deps/<(openssl_target)/openssl/util/libeay.num',
-                'deps/<(openssl_target)/openssl/util/ssleay.num',
-              ],
-             'outputs': ['<(SHARED_INTERMEDIATE_DIR)/openssl.def'],
+              'inputs': ['<@(openssl_ordinals)'],
+              'outputs': ['<(SHARED_INTERMEDIATE_DIR)/openssl.def'],
               'action': [
                 'python',
                 'tools/mkssldef.py',
