@@ -14,8 +14,10 @@
         '__LITTLE_ENDIAN=1234',
         '__BIG_ENDIAN=4321',
         '__BYTE_ORDER=__BIG_ENDIAN',
-        '__FLOAT_WORD_ORDER=__BIG_ENDIAN'],
-      'defines': ['OPENSSLDIR="/etc/ssl"'],
+        '__FLOAT_WORD_ORDER=__BIG_ENDIAN',
+        'OPENSSLDIR="/etc/ssl"',
+        'ENGINESDIR="/dev/null"',
+      ],
     }, 'OS=="win"', {
       'defines': [
         ## default of Win. See INSTALL in openssl repo.
