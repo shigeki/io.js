@@ -6,6 +6,7 @@
     'openssl/crypto/include/',
     'openssl/crypto/modes/',
   ],
+  # build options specific to OS
   'conditions': [
     [ 'OS=="aix"', {
       # AIX is missing /usr/include/endian.h
@@ -19,33 +20,32 @@
       'defines': [
         ## default of Win. See INSTALL in openssl repo.
         'OPENSSLDIR="C:\Program Files\Common Files\SSL"',
-        'ENGINESDIR="C:\\Program Files\\OpenSSL\\lib\\engines-1_1\"',
-        'PURIFY', '_REENTRANT', 'OPENSSL_NO_SSL2',
-        'OPENSSL_NO_SSL3', 'OPENSSL_NO_HEARTBEATS', 'MK1MF_BUILD',
-        'WIN32_LEAN_AND_MEAN', 'OPENSSL_SYSNAME_WIN32', 'WIN32',
-        '_CRT_SECURE_NO_DEPRECATE', '_CRT_NONSTDC_NO_DEPRECATE',
-        '_HAS_EXCEPTIONS=0', 'BUILDING_V8_SHARED=1',
-        'BUILDING_UV_SHARED=1', 'L_ENDIAN', 'DSO_WIN32',
-        'OPENSSL_NO_DYNAMIC_ENGINE', 'OPENSSL_NO_CAPIENG',
+        'ENGINESDIR="NUL"',
       ],
     }, 'OS=="mac"', {
       'xcode_settings': {
         'WARNING_CFLAGS': ['-Wno-missing-field-initializers']
       },
-      'defines': ['OPENSSLDIR="/System/Library/OpenSSL/"'],
+      'defines': [
+        'OPENSSLDIR="/System/Library/OpenSSL/"'
+        'ENGINESDIR="/dev/null"',
+      ],
     }, 'OS=="solaris"', {
-      'defines': ['__EXTENSIONS__'],
-      'defines': ['OPENSSLDIR="/etc/ssl"'],
+      'defines': [
+        'OPENSSLDIR="/etc/ssl"',
+        'ENGINESDIR="/dev/null"',
+        '__EXTENSIONS__'
+      ],
     }, {
       # linux and others
       'cflags': ['-Wno-missing-field-initializers',
                  ## TODO: check gcc_version>=4.3
                  '-Wno-old-style-declaration'],
       'defines': [
+        'OPENSSLDIR="/etc/ssl"'
         'ENGINESDIR="/dev/null"',
         'TERMIOS',
       ],
-      'defines': ['OPENSSLDIR="/etc/ssl"'],
     }],
   ]
 }

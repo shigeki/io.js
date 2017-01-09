@@ -652,10 +652,13 @@
       'OPENSSL_PIC',
     ],
     'openssl_cflags_VC-WIN64A': [
-      '-W3 -wd4090 -Gs0 -GF -Gy -nologo -DOPENSSL_SYS_WIN32 -DWIN32_LEAN_AND_MEAN -DL_ENDIAN -D_CRT_SECURE_NO_DEPRECATE -DUNICODE -D_UNICODE  /O2',
+      '-W3', '-wd4090', '-Gs0', '-GF', '-Gy', '-nologo',
+      '-DOPENSSL_SYS_WIN32', '-DWIN32_LEAN_AND_MEAN', '-DL_ENDIAN',
+      '-D_CRT_SECURE_NO_DEPRECATE', '-DUNICODE', '-D_UNICODE',  '/O2',
     ],
     'openssl_ex_libs_VC-WIN64A': [
-      'ws2_32.lib gdi32.lib advapi32.lib crypt32.lib user32.lib',
+      'ws2_32.lib', 'gdi32.lib', 'advapi32.lib',
+      'crypt32.lib', 'user32.lib',
     ],
   },
   'include_dirs': [
