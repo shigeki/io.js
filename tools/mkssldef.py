@@ -29,7 +29,6 @@ if __name__ == '__main__':
       group = line.split()
       name = group[0]
       meta = group[-1]
-      print(group, name, meta)
       if any(map(lambda p: p.match(name), excludes)): continue
       meta = meta.split(':')
       assert meta[0] in ('EXIST', 'NOEXIST')
