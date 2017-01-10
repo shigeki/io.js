@@ -60,6 +60,21 @@ print GYPI "    'openssl_defines_$arch': [\n";
 foreach my $define (@{$config{defines}}) {
     print GYPI "      '$define',\n";
 }
+foreach my $define (@{$config{openssl_algorithm_defines}}) {
+    print GYPI "      '$define',\n";
+}
+foreach my $define (@{$config{openssl_api_defines}}) {
+    print GYPI "      '$define',\n";
+}
+foreach my $define (@{$config{openssl_other_defines}}) {
+    print GYPI "      '$define',\n";
+}
+foreach my $define (@{$config{openssl_sys_defines}}) {
+    print GYPI "      '$define',\n";
+}
+foreach my $define (@{$config{openssl_thread_defines}}) {
+    print GYPI "      '$define',\n";
+}
 print GYPI "    ],\n";
 print GYPI "    'openssl_cflags_$arch': [\n";
 print GYPI "      '$target{cflags}',\n";
@@ -88,6 +103,21 @@ print CLGYPI "{
 print CLGYPI "    'openssl_defines_$arch': [\n";
 foreach my $define (@{$config{defines}}) {
     print CLGYPI "      '$define',\n";
+}
+foreach my $define (@{$config{openssl_algorithm_defines}}) {
+    print GYPI "      '$define',\n";
+}
+foreach my $define (@{$config{openssl_api_defines}}) {
+    print GYPI "      '$define',\n";
+}
+foreach my $define (@{$config{openssl_other_defines}}) {
+    print GYPI "      '$define',\n";
+}
+foreach my $define (@{$config{openssl_sys_defines}}) {
+    print GYPI "      '$define',\n";
+}
+foreach my $define (@{$config{openssl_thread_defines}}) {
+    print GYPI "      '$define',\n";
 }
 print CLGYPI "    ],\n";
 

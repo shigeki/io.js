@@ -25,6 +25,9 @@ extern "C" {
 #ifndef OPENSSL_SYS_AIX
 # define OPENSSL_SYS_AIX 1
 #endif
+#ifndef OPENSSL_NO_COMP
+# define OPENSSL_NO_COMP
+#endif
 #ifndef OPENSSL_NO_MD2
 # define OPENSSL_NO_MD2
 #endif

@@ -14,12 +14,6 @@
       'type': '<(library)',
       'includes': ['./openssl_common.gypi'],
       'defines': [
-        # Compression is not used and considered insecure (CRIME.)
-        'OPENSSL_NO_COMP',
-
-        # SSLv3 is susceptible to downgrade attacks (POODLE.)
-        'OPENSSL_NO_SSL3',
-
         # Heartbeat is a TLS extension, that couldn't be turned off or
         # asked to be not advertised. Unfortunately this is unacceptable for
         # Microsoft's IIS, which seems to be ignoring whole ClientHello after

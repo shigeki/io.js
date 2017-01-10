@@ -1,7 +1,7 @@
 MAKE    = make
 PERL    = perl
 CONFIGURE = ./Configure
-COPT = no-shared no-threads no-afalgeng
+COPT = no-shared no-comp no-ssl3 no-afalgeng no-threads
 
 ARCHS = aix-gcc aix64-gcc BSD-x86_64 \
 darwin64-x86_64-cc darwin-i386-cc linux-aarch64 \
