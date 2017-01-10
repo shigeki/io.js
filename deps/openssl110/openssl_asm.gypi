@@ -44,6 +44,8 @@
       ],
     }, 'target_arch=="x64" and OS=="linux"', {
       'includes': ['config/archs/linux-x86_64/asm/openssl.gypi'],
+      # for testing in Ubuntu 12.04
+      'cflags': ['-march=corei7'],
     }, {
       # Other architectures don't use assembly
       'includes': ['config/archs/linux-x86_64/asm/openssl.gypi'],
