@@ -121,12 +121,13 @@
         'use_openssl_def': 0,
       }],
       # openssl-1.1.0 does not have FIPS support yet
-      [ 'use_openssl110=="true" and openssl_fips==""', {
-        'openssl_target%': 'openssl110',
-        'openssl_ordinals%': [
-          'deps/openssl110/openssl/util/libcrypto.num',
-          'deps/openssl110/openssl/util/libssl.num',
-        ],
+      [ '(use_openssl110=="true" and openssl_fips=="") and '
+        '((OS=="win" and MSVS_VERSION>="2012") or gas_version>="2.23")', {
+          'openssl_target%': 'openssl110',
+          'openssl_ordinals%': [
+            'deps/openssl110/openssl/util/libcrypto.num',
+            'deps/openssl110/openssl/util/libssl.num',
+          ],
       }, {
         'openssl_target%': 'openssl',
         'openssl_ordinals%': [
