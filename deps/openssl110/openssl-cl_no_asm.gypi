@@ -23,7 +23,7 @@
     }, 'target_arch=="ia32" and OS=="solaris"', {
       'includes': ['config/archs/solaris-x86-gcc/no-asm/openssl-cl.gypi'],
     }, 'target_arch=="ia32" and OS=="win"', {
-      # 'includes': ['config/archs/VC-WIN32/no-asm/openssl-cl.gypi'],
+      'includes': ['config/archs/VC-WIN32/no-asm/openssl-cl.gypi'],
     }, 'target_arch=="ia32"', {
       # noasm linux-elf for other ia32 platforms
       'includes': ['config/archs/linux-elf/no-asm/openssl-cl.gypi'],
@@ -35,13 +35,6 @@
       'includes': ['config/archs/solaris64-x86_64-gcc/no-asm/openssl-cl.gypi'],
     }, 'target_arch=="x64" and OS=="win"', {
       'includes': ['config/archs/VC-WIN64A/no-asm/openssl-cl.gypi'],
-      'defines': [
-        'OPENSSL_SYS_WIN32', 'WIN32_LEAN_AND_MEAN', 'L_ENDIAN',
-        '_CRT_SECURE_NO_DEPRECATE', 'UNICODE', '_UNICODE',
-      ],
-      'cflags': [
-        '-W3', '-wd4090', '-Gs0', '-GF', '-Gy', '-nologo','/O2',
-      ],
     }, 'target_arch=="x64" and OS=="linux"', {
       'includes': ['config/archs/linux-x86_64/no-asm/openssl-cl.gypi'],
     }, {
