@@ -30,7 +30,7 @@ foreach my $obj (@{$unified_info{sources}->{'apps/openssl'}}) {
 }
 
 foreach my $src (@generated_srcs) {
-    $cmd = "cd ../openssl; CC=gcc ASM=nasm make -f ../config/Makefile_VC-WIN64A $src; cp --parents $src ../config/archs/$arch/$conf_opt; cd ../config";
+    $cmd = "cd ../openssl; CC=gcc ASM=nasm make -f ../config/Makefile_$arch $src; cp --parents $src ../config/archs/$arch/$conf_opt; cd ../config";
     system("$cmd");
 }
 
@@ -75,8 +75,8 @@ print GYPI "    './crypto',\n";
 print GYPI "    './crypto/include/internal',\n";
 print GYPI "  ],\n";
 print GYPI "  'defines': ['<@(openssl_defines_$arch)'],\n";
-print GYPI "  'cflags' : ['<@(openssl_cflags_$arch)'],\n";
-print GYPI "  'libraries': ['<@(openssl_ex_libs_$arch)'],\n";
+print GYPI "#  'cflags' : ['<@(openssl_cflags_$arch)'],\n";
+print GYPI "#  'libraries': ['<@(openssl_ex_libs_$arch)'],\n";
 print GYPI "  'sources': ['<@(openssl_sources)', '<@(openssl_sources_$arch)'],\n";
 print GYPI "}\n";
 
@@ -106,8 +106,8 @@ foreach my $src (@apps_openssl_srcs) {
 print CLGYPI "    ],\n";
 print CLGYPI "  },\n";
 print CLGYPI "  'defines': ['<@(openssl_defines_$arch)'],\n";
-print CLGYPI "  'cflags' : ['<@(openssl_cflags_$arch)'],\n";
-print CLGYPI "  'libraries': ['<@(openssl_ex_libs_$arch)'],\n";
+print CLGYPI "#  'cflags' : ['<@(openssl_cflags_$arch)'],\n";
+print CLGYPI "#  'libraries': ['<@(openssl_ex_libs_$arch)'],\n";
 print CLGYPI "  'sources': ['<@(openssl_cli_srcs_$arch)'],\n";
 print CLGYPI "}\n";
 

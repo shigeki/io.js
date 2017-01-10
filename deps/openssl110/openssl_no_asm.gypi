@@ -24,7 +24,7 @@
     }, 'target_arch=="ia32" and OS=="solaris"', {
       'includes': ['config/archs/solaris-x86-gcc/no-asm/openssl.gypi'],
     }, 'target_arch=="ia32" and OS=="win"', {
-      # 'includes': ['config/archs/VC-WIN32/no-asm/openssl.gypi'],
+      'includes': ['config/archs/VC-WIN32/no-asm/openssl.gypi'],
     }, 'target_arch=="ia32"', {
       # noasm linux-elf for other ia32 platforms
       'includes': ['config/archs/linux-elf/no-asm/openssl.gypi'],

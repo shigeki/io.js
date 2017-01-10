@@ -9,7 +9,7 @@ linux-armv4 linux-elf linux-x32 linux-x86_64 linux-ppc \
 linux-ppc64 linux32-s390x linux64-s390x solaris-x86-gcc \
 solaris64-x86_64-gcc
 
-ARCHS_WIN = VC-WIN64A
+ARCHS_WIN = VC-WIN64A VC-WIN32
 
 # Temporary remove VC-WIN32 VC-WIN64A for NASM support
 
@@ -80,7 +80,7 @@ $(ARCHS_WIN):
 	if [ ! -d ./archs/$@/asm/include ]; then mkdir ./archs/$@/asm/include ; fi
 	if [ ! -d ./archs/$@/asm/include/openssl ]; then mkdir ./archs/$@/asm/include/openssl ; fi
 	cd ../openssl; $(PERL) $(CONFIGURE) $(COPT) $@ > /dev/null; \
-	$(MAKE) -f ../config/Makefile_VC-WIN64A build_generated crypto/buildinf.h > /dev/null;
+	$(MAKE) -f ../config/Makefile_$@ build_generated crypto/buildinf.h > /dev/null;
 	$(PERL) -p -e $(CPUIDFIX) $(SRC_CFG) > ./archs/$@/asm/include/openssl/$(CFG);
 	@for c in $(INT_CFGS); do \
 	    mv $(INT_CFG_DIR)/$$c ./archs/$@/asm/crypto/include/internal/$$c; \
@@ -88,7 +88,7 @@ $(ARCHS_WIN):
 	cp $(OPSSL_SRC)/crypto/buildinf.h ./archs/$@/asm/crypto/
 	cp $(OPSSL_SRC)/configdata.pm ./archs/$@/asm/
 	./generate_win.pl asm $@
-	cd ../openssl; make -f ../config/Makefile_VC-WIN64A clean > /dev/null
+	cd ../openssl; make -f ../config/Makefile_$@ clean > /dev/null
 	cd ../openssl; find crypto \( -name \*.S \) -exec rm "{}" \;
 # NO_ASM
 	if [ ! -d ./archs/$@/no-asm ]; then mkdir ./archs/$@/no-asm ; fi
@@ -98,7 +98,7 @@ $(ARCHS_WIN):
 	if [ ! -d ./archs/$@/no-asm/include ]; then mkdir ./archs/$@/no-asm/include ; fi
 	if [ ! -d ./archs/$@/no-asm/include/openssl ]; then mkdir ./archs/$@/no-asm/include/openssl ; fi
 	cd ../openssl; $(PERL) $(CONFIGURE) $(COPT) no-asm $@ > /dev/null; \
-	$(MAKE) -f ../config/Makefile_VC-WIN64A build_generated crypto/buildinf.h > /dev/null
+	$(MAKE) -f ../config/Makefile_$@ build_generated crypto/buildinf.h > /dev/null
 	$(PERL) -p -e $(CPUIDFIX) $(SRC_CFG) > ./archs/$@/no-asm/include/openssl/$(CFG)
 	@for c in $(INT_CFGS); do \
 	    mv $(INT_CFG_DIR)/$$c ./archs/$@/no-asm/crypto/include/internal/$$c; \
@@ -106,7 +106,7 @@ $(ARCHS_WIN):
 	cp $(OPSSL_SRC)/crypto/buildinf.h ./archs/$@/no-asm/crypto/
 	cp $(OPSSL_SRC)/configdata.pm ./archs/$@/no-asm/
 	./generate_win.pl no-asm $@
-	cd ../openssl; make -f ../config/Makefile_VC-WIN64A clean > /dev/null
+	cd ../openssl; make -f ../config/Makefile_$@ clean > /dev/null
 	cd ../openssl; find crypto \( -name \*.S \) -exec rm "{}" \;
 
 replace:
