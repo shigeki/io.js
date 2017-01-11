@@ -663,11 +663,6 @@ our %unified_info = (
                     "libcrypto",
                     "libssl",
                 ],
-            "test/buildtest_opensslconf" =>
-                [
-                    "libcrypto",
-                    "libssl",
-                ],
             "test/buildtest_opensslv" =>
                 [
                     "libcrypto",
@@ -2062,11 +2057,6 @@ our %unified_info = (
                     "test/generate_buildtest.pl",
                     "ocsp",
                 ],
-            "test/buildtest_opensslconf.c" =>
-                [
-                    "test/generate_buildtest.pl",
-                    "opensslconf",
-                ],
             "test/buildtest_opensslv.c" =>
                 [
                     "test/generate_buildtest.pl",
@@ -2668,10 +2658,6 @@ our %unified_info = (
                 [
                     "include",
                 ],
-            "test/buildtest_opensslconf" =>
-                [
-                    "include",
-                ],
             "test/buildtest_opensslv" =>
                 [
                     "include",
@@ -3141,7 +3127,6 @@ our %unified_info = (
             "test/buildtest_obj_mac",
             "test/buildtest_objects",
             "test/buildtest_ocsp",
-            "test/buildtest_opensslconf",
             "test/buildtest_opensslv",
             "test/buildtest_ossl_typ",
             "test/buildtest_pem",
@@ -7303,14 +7288,6 @@ our %unified_info = (
             "test/buildtest_ocsp.o" =>
                 [
                     "test/buildtest_ocsp.c",
-                ],
-            "test/buildtest_opensslconf" =>
-                [
-                    "test/buildtest_opensslconf.o",
-                ],
-            "test/buildtest_opensslconf.o" =>
-                [
-                    "test/buildtest_opensslconf.c",
                 ],
             "test/buildtest_opensslv" =>
                 [
