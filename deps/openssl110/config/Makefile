@@ -17,11 +17,6 @@ SRC_CFG = $(OPSSL_SRC)/include/openssl/$(CFG)
 INT_CFGS = bn_conf.h dso_conf.h
 INT_CFG_DIR = $(OPSSL_SRC)/crypto/include/internal
 
-BACKUP_FILES = ../openssl/Makefile ../openssl/Makefile.bak $(SRC_CFG)
-BACKUP_EXT = nodebackup
-
-CPUIDFIX = 's/\#define OPENSSL_CPUID_OBJ$$//;'
-
 PHONY = all clean backup restore
 .PHONY: $(PHONY)
 
@@ -91,21 +86,6 @@ replace:
 	@for c in $(INT_CFGS); do \
 	    cp ./$$c.tmpl $(INT_CFG_DIR)/$$c; \
 	done
-
-# backup files to avoid to be overwritten
-backup:
-	@for f in $(BACKUP_FILES); do \
-	    mv $$f $$f.$(BACKUP_EXT); \
-	done
-
-restore:
-	@for f in $(BACKUP_FILES); do \
-	    mv $$f.$(BACKUP_EXT) $$f ; \
-	done
-
-# remove unnecessary files create by Configure
-cleanconf:
-	cd ../openssl; make distclean
 
 clean:
 	find archs \( -name \*.S -o -name \*.s -o -name \*.gypi -o -name \*.h -o -name \*.pm \) -exec rm "{}" \;

@@ -1,5 +1,4 @@
 {
-  'defines': ['OPENSSL_CPUID_OBJ'],
   'conditions': [
     ['target_arch=="ppc" and OS=="aix"', {
       'includes': ['config/archs/aix-gcc/asm/openssl.gypi'],
