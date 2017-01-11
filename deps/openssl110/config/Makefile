@@ -11,8 +11,6 @@ solaris64-x86_64-gcc
 
 ARCHS_WIN = VC-WIN64A VC-WIN32
 
-# Temporary remove VC-WIN32 VC-WIN64A for NASM support
-
 CFG = opensslconf.h
 OPSSL_SRC = ../openssl
 SRC_CFG = $(OPSSL_SRC)/include/openssl/$(CFG)
@@ -22,7 +20,6 @@ INT_CFG_DIR = $(OPSSL_SRC)/crypto/include/internal
 BACKUP_FILES = ../openssl/Makefile ../openssl/Makefile.bak $(SRC_CFG)
 BACKUP_EXT = nodebackup
 
-# OPENSSL_CPUID_OBJ is defined in openssl.gypi for use --openssl-no-asm
 CPUIDFIX = 's/\#define OPENSSL_CPUID_OBJ$$//;'
 
 PHONY = all clean backup restore
@@ -32,17 +29,11 @@ all: $(ARCHS) $(ARCHS_WIN) replace
 
 $(ARCHS):
 	if [ -e ../openssl/.gitignore ]; then rm ../openssl/.gitignore ; fi
-	if [ ! -d ./archs/$@ ]; then mkdir ./archs/$@ ; fi
-# ASM
-	if [ ! -d ./archs/$@/asm ]; then mkdir ./archs/$@/asm ; fi
-	if [ ! -d ./archs/$@/asm/crypto ]; then mkdir ./archs/$@/asm/crypto ; fi
-	if [ ! -d ./archs/$@/asm/crypto/include ]; then mkdir ./archs/$@/asm/crypto/include ; fi
-	if [ ! -d ./archs/$@/asm/crypto/include/internal ]; then mkdir ./archs/$@/asm/crypto/include/internal ; fi
-	if [ ! -d ./archs/$@/asm/include ]; then mkdir ./archs/$@/asm/include ; fi
-	if [ ! -d ./archs/$@/asm/include/openssl ]; then mkdir ./archs/$@/asm/include/openssl ; fi
+	if [ ! -d ./archs/$@/asm/crypto/include/internal ]; then mkdir -p ./archs/$@/asm/crypto/include/internal ; fi
+	if [ ! -d ./archs/$@/asm/include/openssl ]; then mkdir -p ./archs/$@/asm/include/openssl ; fi
 	cd ../openssl; $(PERL) $(CONFIGURE) $(COPT) $@ > /dev/null; \
 	$(MAKE) build_generated crypto/buildinf.h > /dev/null;
-	$(PERL) -p -e $(CPUIDFIX) $(SRC_CFG) > ./archs/$@/asm/include/openssl/$(CFG);
+	cp $(SRC_CFG) ./archs/$@/asm/include/openssl/;
 	@for c in $(INT_CFGS); do \
 	    mv $(INT_CFG_DIR)/$$c ./archs/$@/asm/crypto/include/internal/$$c; \
 	done
@@ -52,15 +43,11 @@ $(ARCHS):
 	cd ../openssl; make clean > /dev/null; make distclean > /dev/null
 	cd ../openssl; find crypto \( -name \*.S \) -exec rm "{}" \;
 # NO_ASM
-	if [ ! -d ./archs/$@/no-asm ]; then mkdir ./archs/$@/no-asm ; fi
-	if [ ! -d ./archs/$@/no-asm/crypto ]; then mkdir ./archs/$@/no-asm/crypto ; fi
-	if [ ! -d ./archs/$@/no-asm/crypto/include ]; then mkdir ./archs/$@/no-asm/crypto/include ; fi
-	if [ ! -d ./archs/$@/no-asm/crypto/include/internal ]; then mkdir ./archs/$@/no-asm/crypto/include/internal ; fi
-	if [ ! -d ./archs/$@/no-asm/include ]; then mkdir ./archs/$@/no-asm/include ; fi
-	if [ ! -d ./archs/$@/no-asm/include/openssl ]; then mkdir ./archs/$@/no-asm/include/openssl ; fi
+	if [ ! -d ./archs/$@/no-asm/crypto/include/internal ]; then mkdir -p ./archs/$@/no-asm/crypto/include/internal ; fi
+	if [ ! -d ./archs/$@/no-asm/include/openssl ]; then mkdir -p ./archs/$@/no-asm/include/openssl ; fi
 	cd ../openssl; $(PERL) $(CONFIGURE) $(COPT) no-asm $@ > /dev/null; \
 	$(MAKE) build_generated crypto/buildinf.h > /dev/null
-	$(PERL) -p -e $(CPUIDFIX) $(SRC_CFG) > ./archs/$@/no-asm/include/openssl/$(CFG)
+	cp $(SRC_CFG) ./archs/$@/no-asm/include/openssl/
 	@for c in $(INT_CFGS); do \
 	    mv $(INT_CFG_DIR)/$$c ./archs/$@/no-asm/crypto/include/internal/$$c; \
 	done
@@ -71,17 +58,11 @@ $(ARCHS):
 	cd ../openssl; find crypto \( -name \*.S \) -exec rm "{}" \;
 
 $(ARCHS_WIN):
-	if [ ! -d ./archs/$@ ]; then mkdir ./archs/$@ ; fi
-# ASM
-	if [ ! -d ./archs/$@/asm ]; then mkdir ./archs/$@/asm ; fi
-	if [ ! -d ./archs/$@/asm/crypto ]; then mkdir ./archs/$@/asm/crypto ; fi
-	if [ ! -d ./archs/$@/asm/crypto/include ]; then mkdir ./archs/$@/asm/crypto/include ; fi
-	if [ ! -d ./archs/$@/asm/crypto/include/internal ]; then mkdir ./archs/$@/asm/crypto/include/internal ; fi
-	if [ ! -d ./archs/$@/asm/include ]; then mkdir ./archs/$@/asm/include ; fi
-	if [ ! -d ./archs/$@/asm/include/openssl ]; then mkdir ./archs/$@/asm/include/openssl ; fi
+	if [ ! -d ./archs/$@/asm/crypto/include/internal ]; then mkdir -p ./archs/$@/asm/crypto/include/internal ; fi
+	if [ ! -d ./archs/$@/asm/include/openssl ]; then mkdir -p ./archs/$@/asm/include/openssl ; fi
 	cd ../openssl; $(PERL) $(CONFIGURE) $(COPT) $@ > /dev/null; \
 	$(MAKE) -f ../config/Makefile_$@ build_generated crypto/buildinf.h > /dev/null;
-	$(PERL) -p -e $(CPUIDFIX) $(SRC_CFG) > ./archs/$@/asm/include/openssl/$(CFG);
+	cp $(SRC_CFG) ./archs/$@/asm/include/openssl/;
 	@for c in $(INT_CFGS); do \
 	    mv $(INT_CFG_DIR)/$$c ./archs/$@/asm/crypto/include/internal/$$c; \
 	done
@@ -91,15 +72,11 @@ $(ARCHS_WIN):
 	cd ../openssl; make -f ../config/Makefile_$@ clean > /dev/null
 	cd ../openssl; find crypto \( -name \*.S \) -exec rm "{}" \;
 # NO_ASM
-	if [ ! -d ./archs/$@/no-asm ]; then mkdir ./archs/$@/no-asm ; fi
-	if [ ! -d ./archs/$@/no-asm/crypto ]; then mkdir ./archs/$@/no-asm/crypto ; fi
-	if [ ! -d ./archs/$@/no-asm/crypto/include ]; then mkdir ./archs/$@/no-asm/crypto/include ; fi
-	if [ ! -d ./archs/$@/no-asm/crypto/include/internal ]; then mkdir ./archs/$@/no-asm/crypto/include/internal ; fi
-	if [ ! -d ./archs/$@/no-asm/include ]; then mkdir ./archs/$@/no-asm/include ; fi
-	if [ ! -d ./archs/$@/no-asm/include/openssl ]; then mkdir ./archs/$@/no-asm/include/openssl ; fi
+	if [ ! -d ./archs/$@/no-asm/crypto/include/internal ]; then mkdir -p ./archs/$@/no-asm/crypto/include/internal ; fi
+	if [ ! -d ./archs/$@/no-asm/include/openssl ]; then mkdir -p ./archs/$@/no-asm/include/openssl ; fi
 	cd ../openssl; $(PERL) $(CONFIGURE) $(COPT) no-asm $@ > /dev/null; \
 	$(MAKE) -f ../config/Makefile_$@ build_generated crypto/buildinf.h > /dev/null
-	$(PERL) -p -e $(CPUIDFIX) $(SRC_CFG) > ./archs/$@/no-asm/include/openssl/$(CFG)
+	cp $(SRC_CFG) ./archs/$@/no-asm/include/openssl/;
 	@for c in $(INT_CFGS); do \
 	    mv $(INT_CFG_DIR)/$$c ./archs/$@/no-asm/crypto/include/internal/$$c; \
 	done
