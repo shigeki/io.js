@@ -100,8 +100,8 @@ print GYPI "    './crypto',\n";
 print GYPI "    './crypto/include/internal',\n";
 print GYPI "  ],\n";
 print GYPI "  'defines': ['<@(openssl_defines_$arch)'],\n";
-print GYPI "  'cflags' : ['<@(openssl_cflags_$arch)'],\n" unless (is_win);
-print GYPI "  'libraries': ['<@(openssl_ex_libs_$arch)'],\n" unless (is_win);
+print GYPI "  'cflags' : ['<@(openssl_cflags_$arch)'],\n" unless ($is_win);
+print GYPI "  'libraries': ['<@(openssl_ex_libs_$arch)'],\n" unless ($is_win);
 print GYPI "  'sources': ['<@(openssl_sources)', '<@(openssl_sources_$arch)'],\n";
 print GYPI "}\n";
 
@@ -131,8 +131,8 @@ foreach my $src (@apps_openssl_srcs) {
 print CLGYPI "    ],\n";
 print CLGYPI "  },\n";
 print CLGYPI "  'defines': ['<@(openssl_defines_$arch)'],\n";
-print CLGYPI "  'cflags' : ['<@(openssl_cflags_$arch)'],\n" unless (is_win);
-print CLGYPI "  'libraries': ['<@(openssl_ex_libs_$arch)'],\n" unless (is_win);
+print CLGYPI "  'cflags' : ['<@(openssl_cflags_$arch)'],\n" unless ($is_win);
+print CLGYPI "  'libraries': ['<@(openssl_ex_libs_$arch)'],\n" unless ($is_win);
 print CLGYPI "  'sources': ['<@(openssl_cli_srcs_$arch)'],\n";
 print CLGYPI "}\n";
 
