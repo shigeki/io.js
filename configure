@@ -943,15 +943,21 @@ def configure_openssl(o):
   else:
     o['variables']['openssl_fips'] = ''
 
-  if options.use_openssl110 and o['variables']['openssl_fips'] == '':
+  if options.use_openssl110:
     o['variables']['use_openssl110'] = 'true'
     if ('gas_version' in o['variables'] and o['variables']['gas_version'] < '2.23') or \
        ('xcode_version' in o['variables'] and o['variables']['xcode_version'] < '5.0') or \
        ('llvm_version' in o['variables'] and o['variables']['llvm_version'] < '3.3') or \
-       options.dest_cpu == 's390x' or flavor == 'win':
+       o['variables']['target_arch'] == 's390x' or flavor == 'win':
+      warn('asm of openssl-1.1.0 is not supported on this machine')
       o['variables']['openssl_no_asm'] = 1
+
+    if o['variables']['openssl_fips'] != '':
+      warn('FIPS is not supported in openssl-1.1.0')
+      o['variables']['use_openssl110'] = 'false'
   else:
     o['variables']['use_openssl110'] = 'false'
+
 
   if options.without_ssl:
     return
