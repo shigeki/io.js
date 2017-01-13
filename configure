@@ -947,7 +947,7 @@ def configure_openssl(o):
   ('gas_version' in o['variables'] and o['variables']['gas_version'] < '2.23') or \
   ('xcode_version' in o['variables'] and o['variables']['xcode_version'] < '5.0') or \
   ('llvm_version' in o['variables'] and o['variables']['llvm_version'] < '3.3') or \
-  flavor == 'win'
+  o['variables']['target_arch'] == 's390x' or flavor == 'win'
 
   if options.use_openssl110:
     o['variables']['use_openssl110'] = 'true'
