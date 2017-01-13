@@ -949,11 +949,11 @@ def configure_openssl(o):
        ('xcode_version' in o['variables'] and o['variables']['xcode_version'] < '5.0') or \
        ('llvm_version' in o['variables'] and o['variables']['llvm_version'] < '3.3') or \
        o['variables']['target_arch'] == 's390x' or flavor == 'win':
-      warn('asm of openssl-1.1.0 is not supported on this machine')
+      warn('asm of openssl-1.1.0 is not supported on this machine. openssl_no_asm is added.')
       o['variables']['openssl_no_asm'] = 1
 
     if o['variables']['openssl_fips'] != '':
-      warn('FIPS is not supported in openssl-1.1.0')
+      warn('FIPS is not supported in openssl-1.1.0. Instead, openssl-1.0.2 is used.')
       o['variables']['use_openssl110'] = 'false'
   else:
     o['variables']['use_openssl110'] = 'false'
