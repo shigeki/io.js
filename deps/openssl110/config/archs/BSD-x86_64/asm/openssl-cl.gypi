@@ -83,5 +83,7 @@
     ],
   },
   'defines': ['<@(openssl_defines_BSD-x86_64)'],
+  'cflags' : ['<@(openssl_cflags_BSD-x86_64)'],
+  'libraries': ['<@(openssl_ex_libs_BSD-x86_64)'],
   'sources': ['<@(openssl_cli_srcs_BSD-x86_64)'],
 }

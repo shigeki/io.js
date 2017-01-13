@@ -663,5 +663,7 @@
     './crypto/include/internal',
   ],
   'defines': ['<@(openssl_defines_darwin-i386-cc)'],
+  'cflags' : ['<@(openssl_cflags_darwin-i386-cc)'],
+  'libraries': ['<@(openssl_ex_libs_darwin-i386-cc)'],
   'sources': ['<@(openssl_sources)', '<@(openssl_sources_darwin-i386-cc)'],
 }

@@ -663,5 +663,7 @@
     './crypto/include/internal',
   ],
   'defines': ['<@(openssl_defines_linux64-s390x)'],
+  'cflags' : ['<@(openssl_cflags_linux64-s390x)'],
+  'libraries': ['<@(openssl_ex_libs_linux64-s390x)'],
   'sources': ['<@(openssl_sources)', '<@(openssl_sources_linux64-s390x)'],
 }

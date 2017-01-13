@@ -84,5 +84,7 @@
     ],
   },
   'defines': ['<@(openssl_defines_linux-elf)'],
+  'cflags' : ['<@(openssl_cflags_linux-elf)'],
+  'libraries': ['<@(openssl_ex_libs_linux-elf)'],
   'sources': ['<@(openssl_cli_srcs_linux-elf)'],
 }

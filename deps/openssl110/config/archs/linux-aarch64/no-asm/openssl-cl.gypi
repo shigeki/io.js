@@ -68,5 +68,7 @@
     ],
   },
   'defines': ['<@(openssl_defines_linux-aarch64)'],
+  'cflags' : ['<@(openssl_cflags_linux-aarch64)'],
+  'libraries': ['<@(openssl_ex_libs_linux-aarch64)'],
   'sources': ['<@(openssl_cli_srcs_linux-aarch64)'],
 }
