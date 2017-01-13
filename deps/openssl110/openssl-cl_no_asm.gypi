@@ -6,6 +6,8 @@
       'includes': ['config/archs/linux-ppc/no-asm/openssl-cl.gypi'],
     }, 'target_arch=="ppc64" and OS=="aix"', {
       'includes': ['config/archs/aix64-gcc/no-asm/openssl-cl.gypi'],
+    }, 'target_arch=="ppc64" and OS=="linux" and node_byteorder =="little"', {
+      'includes': ['config/archs/linux-ppc64le/no-asm/openssl-cl.gypi'],
     }, 'target_arch=="ppc64" and OS=="linux"', {
       'includes': ['config/archs/linux-ppc64/no-asm/openssl-cl.gypi'],
     }, 'target_arch=="s390" and OS=="linux"', {
