@@ -29,6 +29,8 @@
 # include "./archs/solaris-x86-gcc/asm/crypto/include/internal/bn_conf.h"
 #elif defined(__sun) && defined(__x86_64__)
 # include "./archs/solaris64-x86_64-gcc/asm/crypto/include/internal/bn_conf.h"
+#elif defined(OPENSSL_LINUX) && defined(__PPC64__)  && defined(L_ENDIAN)
+# include "./archs/linux-ppc64le/asm/crypto/include/internal/bn_conf.h"
 #elif defined(OPENSSL_LINUX) && defined(__PPC64__)
 # include "./archs/linux-ppc64/asm/crypto/include/internal/bn_conf.h"
 #elif defined(OPENSSL_LINUX) && !defined(__PPC64__) && defined(__ppc__)

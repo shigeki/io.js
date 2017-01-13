@@ -27,6 +27,7 @@
   | linux     | arm64      | linux-aarch64        | o   |
   | linux     | ppc        | linux-ppc            | o   |
   | linux     | ppc64      | linux-ppc64          | o   |
+  | linux     | ppc64      | linux-ppc64le        | o   | (node_byteoder: little)
   | linux     | s390       | linux32-s390x        | o   |
   | linux     | s390x      | linux64-s390x        | o   |
   | mac       | ia32       | darwin-i386-cc       | -   |
@@ -120,6 +121,8 @@
 # include "./archs/solaris-x86-gcc/asm/include/openssl/opensslconf.h"
 #elif defined(__sun) && defined(__x86_64__)
 # include "./archs/solaris64-x86_64-gcc/asm/include/openssl/opensslconf.h"
+#elif defined(OPENSSL_LINUX) && defined(__PPC64__) && defined(L_ENDIAN)
+# include "./archs/linux-ppc64le/asm/include/openssl/opensslconf.h"
 #elif defined(OPENSSL_LINUX) && defined(__PPC64__)
 # include "./archs/linux-ppc64/asm/include/openssl/opensslconf.h"
 #elif defined(OPENSSL_LINUX) && !defined(__PPC64__) && defined(__ppc__)
