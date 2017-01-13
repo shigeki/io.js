@@ -136,7 +136,7 @@ parser.add_option('--openssl-fips',
 parser.add_option('--use-openssl110',
     action='store_true',
     dest='use_openssl110',
-    default='true',
+    default=True,
     help='Build with OpenSSL-1.1.0 (Experimental)')
 
 shared_optgroup.add_option('--shared-http-parser',
@@ -943,13 +943,12 @@ def configure_openssl(o):
   else:
     o['variables']['openssl_fips'] = ''
 
-  if options.use_openssl110 and options.openssl_fips == '':
+  if options.use_openssl110 and o['variables']['openssl_fips'] == '':
     o['variables']['use_openssl110'] = 'true'
-    if o['variables']['gas_version'] < "2.23" or \
-       o['variables']['xcode_version'] < "5.0" or \
-       o['variables']['llvm_version'] < "3.3" or \
-       options.dest_cpu == 's390x' or \
-       flavor == 'win':
+    if o['variables'].get('gas_version') < '2.23' or \
+       o['variables'].get('xcode_version') < '5.0' or \
+       o['variables'].get('llvm_version') < '3.3' or \
+       options.dest_cpu == 's390x' or flavor == 'win':
       o['variables']['openssl_no_asm'] = 0
   else:
     o['variables']['use_openssl110'] = 'false'
