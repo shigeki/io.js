@@ -946,8 +946,7 @@ def configure_openssl(o):
   openssl110_asm_not_supported = \
   ('gas_version' in o['variables'] and o['variables']['gas_version'] < '2.23') or \
   ('xcode_version' in o['variables'] and o['variables']['xcode_version'] < '5.0') or \
-  ('llvm_version' in o['variables'] and o['variables']['llvm_version'] < '3.3') or \
-  o['variables']['target_arch'] == 's390x' or flavor == 'win'
+  ('llvm_version' in o['variables'] and o['variables']['llvm_version'] < '3.3')
 
   if options.use_openssl110:
     o['variables']['use_openssl110'] = 'true'
@@ -955,7 +954,13 @@ def configure_openssl(o):
     o['variables']['use_openssl110'] = 'false'
 
   if options.use_openssl110 and openssl110_asm_not_supported:
-    warn('asm of openssl-1.1.0 is not supported on this machine. openssl_no_asm is added.')
+#    warn('asm of openssl-1.1.0 is not supported on this machine. openssl_no_asm is added.')
+#    o['variables']['openssl_no_asm'] = 1
+    print('Error: asm of openssl-1.1.0 is not supported on this machine. ')
+    sys.exit(1)
+
+  if options.use_openssl110 and (o['variables']['target_arch'] == 's390x' or flavor == 'win'):
+    warn('Temporary ASM is disabled')
     o['variables']['openssl_no_asm'] = 1
 
   if options.use_openssl110 and options.openssl_fips:
