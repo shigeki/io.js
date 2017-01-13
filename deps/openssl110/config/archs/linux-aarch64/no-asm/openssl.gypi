@@ -663,7 +663,5 @@
     './crypto/include/internal',
   ],
   'defines': ['<@(openssl_defines_linux-aarch64)'],
-  'cflags' : ['<@(openssl_cflags_linux-aarch64)'],
-  'libraries': ['<@(openssl_ex_libs_linux-aarch64)'],
   'sources': ['<@(openssl_sources)', '<@(openssl_sources_linux-aarch64)'],
 }

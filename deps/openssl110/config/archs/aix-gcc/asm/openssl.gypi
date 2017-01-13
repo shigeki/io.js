@@ -684,7 +684,5 @@
     './crypto/include/internal',
   ],
   'defines': ['<@(openssl_defines_aix-gcc)'],
-  'cflags' : ['<@(openssl_cflags_aix-gcc)'],
-  'libraries': ['<@(openssl_ex_libs_aix-gcc)'],
   'sources': ['<@(openssl_sources)', '<@(openssl_sources_aix-gcc)'],
 }

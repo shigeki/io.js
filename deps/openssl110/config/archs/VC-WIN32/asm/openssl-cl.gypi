@@ -84,7 +84,5 @@
     ],
   },
   'defines': ['<@(openssl_defines_VC-WIN32)'],
-#  'cflags' : ['<@(openssl_cflags_VC-WIN32)'],
-#  'libraries': ['<@(openssl_ex_libs_VC-WIN32)'],
   'sources': ['<@(openssl_cli_srcs_VC-WIN32)'],
 }

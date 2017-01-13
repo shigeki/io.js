@@ -684,7 +684,5 @@
     './crypto/include/internal',
   ],
   'defines': ['<@(openssl_defines_linux-ppc)'],
-  'cflags' : ['<@(openssl_cflags_linux-ppc)'],
-  'libraries': ['<@(openssl_ex_libs_linux-ppc)'],
   'sources': ['<@(openssl_sources)', '<@(openssl_sources_linux-ppc)'],
 }

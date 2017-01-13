@@ -662,7 +662,5 @@
     './crypto/include/internal',
   ],
   'defines': ['<@(openssl_defines_VC-WIN64A)'],
-#  'cflags' : ['<@(openssl_cflags_VC-WIN64A)'],
-#  'libraries': ['<@(openssl_ex_libs_VC-WIN64A)'],
   'sources': ['<@(openssl_sources)', '<@(openssl_sources_VC-WIN64A)'],
 }

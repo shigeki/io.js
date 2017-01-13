@@ -84,7 +84,5 @@
     ],
   },
   'defines': ['<@(openssl_defines_solaris-x86-gcc)'],
-  'cflags' : ['<@(openssl_cflags_solaris-x86-gcc)'],
-  'libraries': ['<@(openssl_ex_libs_solaris-x86-gcc)'],
   'sources': ['<@(openssl_cli_srcs_solaris-x86-gcc)'],
 }
