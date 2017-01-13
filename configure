@@ -945,11 +945,11 @@ def configure_openssl(o):
 
   if options.use_openssl110 and o['variables']['openssl_fips'] == '':
     o['variables']['use_openssl110'] = 'true'
-    if o['variables'].get('gas_version') < '2.23' or \
-       o['variables'].get('xcode_version') < '5.0' or \
-       o['variables'].get('llvm_version') < '3.3' or \
+    if ('gas_version' in o['variables'] and o['variables']['gas_version'] < '2.23') or \
+       ('xcode_version' in o['variables'] and o['variables']['xcode_version'] < '5.0') or \
+       ('llvm_version' in o['variables'] and o['variables']['llvm_version'] < '3.3') or \
        options.dest_cpu == 's390x' or flavor == 'win':
-      o['variables']['openssl_no_asm'] = 0
+      o['variables']['openssl_no_asm'] = 1
   else:
     o['variables']['use_openssl110'] = 'false'
 
