@@ -136,7 +136,8 @@ parser.add_option('--openssl-fips',
 parser.add_option('--use-openssl110',
     action='store_true',
     dest='use_openssl110',
-    help='Build with OpenSSL-1.1.0')
+    default='true',
+    help='Build with OpenSSL-1.1.0 (Experimental)')
 
 shared_optgroup.add_option('--shared-http-parser',
     action='store_true',
@@ -931,9 +932,7 @@ def configure_v8(o):
 def configure_openssl(o):
   o['variables']['node_use_openssl'] = b(not options.without_ssl)
   o['variables']['node_shared_openssl'] = b(options.shared_openssl)
-  o['variables']['openssl_no_asm'] = 1 if options.openssl_no_asm or flavor == 'win' or options.dest_cpu == 's390x' else 0
-#  o['variables']['use_openssl110'] = 'true' if options.use_openssl110 else 'false'
-  o['variables']['use_openssl110'] = 'true'
+  o['variables']['openssl_no_asm'] = 1 if options.openssl_no_asm else 0
   if options.openssl_fips:
     o['variables']['openssl_fips'] = options.openssl_fips
     fips_dir = os.path.join(root_dir, 'deps', 'openssl', 'fips')
@@ -944,6 +943,16 @@ def configure_openssl(o):
   else:
     o['variables']['openssl_fips'] = ''
 
+  if options.use_openssl110 and options.openssl_fips == '':
+    o['variables']['use_openssl110'] = 'true'
+    if o['variables']['gas_version'] < "2.23" or \
+       o['variables']['xcode_version'] < "5.0" or \
+       o['variables']['llvm_version'] < "3.3" or \
+       options.dest_cpu == 's390x' or \
+       flavor == 'win':
+      o['variables']['openssl_no_asm'] = 0
+  else:
+    o['variables']['use_openssl110'] = 'false'
 
   if options.without_ssl:
     return
