@@ -26,9 +26,7 @@ mv ../openssl/crypto/include/internal/dso_conf.h $base_dir/crypto/include/intern
 cp ../openssl/crypto/buildinf.h $base_dir/crypto/;
 ";
 
-print STDOUT "$cmd1\n";
 my $ret1 = system($cmd1);
-print STDOUT "$ret1\n";
 
 my @libssl_srcs = ();
 foreach my $obj (@{$unified_info{sources}->{libssl}}) {
@@ -141,6 +139,4 @@ print CLGYPI "}\n";
 close(CLGYPI);
 
 my $cmd2 ="cd ../openssl; make -f $makefile clean; make -f $makefile distclean; find ../openssl/crypto \\( -name \*.S -o -name \*.s -o -name \*.asm \\) -exec rm '{}' \\;";
-print STDOUT "$cmd2\n";
 my $ret2 = system($cmd2);
-print STDOUT "$ret2\n";
