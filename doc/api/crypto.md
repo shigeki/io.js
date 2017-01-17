@@ -1566,6 +1566,19 @@ is a bit field taking one of or a mix of the following flags (defined in
 * `crypto.constants.ENGINE_METHOD_ALL`
 * `crypto.constants.ENGINE_METHOD_NONE`
 
+### crypto.getEngines()
+
+Returns an array of objects with id and name of loaded engines.
+
+```js
+const crypto = require('crypto');
+console.log(crypto.getEngines());
+// Prints:
+// [ { id: 'rdrand', name: 'Intel RDRAND engine' },
+// { id: 'dynamic', name: 'Dynamic engine loading support' } ]
+```
+
+
 ## Notes
 
 ### Legacy Streams API (pre Node.js v0.10)

@@ -89,6 +89,7 @@ namespace node {
   V(domain_string, "domain")                                                  \
   V(emitting_top_level_domain_error_string, "_emittingTopLevelDomainError")   \
   V(exchange_string, "exchange")                                              \
+  V(id_string, "id")                                                          \
   V(idle_string, "idle")                                                      \
   V(irq_string, "irq")                                                        \
   V(encoding_string, "encoding")                                              \

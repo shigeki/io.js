@@ -5937,6 +5937,33 @@ void SetEngine(const FunctionCallbackInfo<Value>& args) {
   if (r == 0)
     return ThrowCryptoError(env, ERR_get_error());
 }
+
+
+void GetEngines(const FunctionCallbackInfo<Value>& args) {
+  Environment* env = Environment::GetCurrent(args);
+  ENGINE* e;
+  int i = 0;
+  Local<Array> arr = Array::New(env->isolate());
+
+  for (e = ENGINE_get_first(); e != nullptr; e = ENGINE_get_next(e)) {
+    const char* id = ENGINE_get_id(e);
+    const char* name = ENGINE_get_name(e);
+
+    if (id == nullptr || name == nullptr) {
+      ENGINE_free(e);
+      return env->ThrowError("Invalid Engine: id or name is not found.");
+    }
+
+    Local<Object> obj = Object::New(env->isolate());
+    obj->Set(env->id_string(), OneByteString(env->isolate(), id));
+    obj->Set(env->name_string(), OneByteString(env->isolate(), name));
+    arr->Set(i++, obj);
+  }
+
+  ENGINE_free(e);
+
+  args.GetReturnValue().Set(arr);
+}
 #endif  // !OPENSSL_NO_ENGINE
 
 void GetFipsCrypto(const FunctionCallbackInfo<Value>& args) {
@@ -5987,6 +6014,7 @@ void InitCrypto(Local<Object> target,
   env->SetMethod(target, "certExportChallenge", ExportChallenge);
 #ifndef OPENSSL_NO_ENGINE
   env->SetMethod(target, "setEngine", SetEngine);
+  env->SetMethod(target, "getEngines", GetEngines);
 #endif  // !OPENSSL_NO_ENGINE
   env->SetMethod(target, "getFipsCrypto", GetFipsCrypto);
   env->SetMethod(target, "setFipsCrypto", SetFipsCrypto);

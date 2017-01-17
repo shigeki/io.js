@@ -875,7 +875,18 @@
           ],
         } ],
       ]
-    },
+    }, {
+    'conditions': [
+      ['node_use_openssl=="true" and '
+       'node_shared_openssl=="false" and '
+       'openssl_fips==""', { # fipsld fails to link libopenssl.a
+         # target_name of node_test_engine
+         # for openssl engine test module used in
+         # test/parallel/test-crypto-engine.js
+         'includes': ['test/fixtures/openssl_test_engine/node_test_engine.gypi'],
+       },
+      ],
+    ],},
     {
       'target_name': 'cctest',
       'type': 'executable',
