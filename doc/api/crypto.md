@@ -1574,8 +1574,8 @@ Returns an array of objects with id and name of loaded engines.
 const crypto = require('crypto');
 console.log(crypto.getEngines());
 // Prints:
-// [ { id: 'rdrand', name: 'Intel RDRAND engine' },
-// { id: 'dynamic', name: 'Dynamic engine loading support' } ]
+//   [ { id: 'rdrand', name: 'Intel RDRAND engine' },
+//   { id: 'dynamic', name: 'Dynamic engine loading support' } ]
 ```
 
 
