@@ -516,6 +516,9 @@ determine if the server certificate was signed by one of the specified CAs. If
 the `tlsSocket.alpnProtocol` or `tlsSocket.npnProtocol` properties can be
 checked to determine the negotiated protocol.
 
+*Note*: Do not use `'secure'` event because TLS verification is not
+ completed yet at that time.
+
 ### tlsSocket.address()
 <!-- YAML
 added: v0.11.4
@@ -735,6 +738,19 @@ and its integrity is verified; large fragments can span multiple roundtrips
 and their processing can be delayed due to packet loss or reordering. However,
 smaller fragments add extra TLS framing bytes and CPU overhead, which may
 decrease overall server throughput.
+
+### tlsSocket.startTLS([options][, callback])
+<!-- YAML
+added: vx.x.x
+-->
+
+* `options` {Object} 'session' and 'servername' properties of
+  [`tls.connect()`][]. are accepted.
+* `callback` {Function} A function that will be called when
+  `'secureConnect'` event is emitted.
+
+Start TLS handshake after underlaying socket connection is established.
+ [`'secureConnect'`][] event is emmited after handshake completed.
 
 ## tls.connect(port[, host][, options][, callback])
 <!-- YAML
