@@ -15,6 +15,7 @@ all: \
   agent6-cert.pem \
   agent6.pfx \
   agent7-cert.pem \
+  agent8-cert.pem \
   agent10-cert.pem \
   agent10.pfx \
   ec10-cert.pem \
@@ -400,7 +401,7 @@ agent8-csr.pem: agent8.cnf agent8-key.pem
 	openssl req -new -config agent8.cnf -key agent8-key.pem \
 	-out agent8-csr.pem
 
-agent8-cert.pem: agent8-csr.pem
+agent8-cert.pem: agent8-csr.pem fake-startcom-root-key.pem fake-startcom-root-cert.pem
 	openssl ca \
 		-config fake-startcom-root.cnf \
 		-keyfile fake-startcom-root-key.pem \
