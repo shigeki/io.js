@@ -4,6 +4,11 @@ const common = require('../common');
 // Check cert chain is received by client, and is completed with the ca cert
 // known to the client.
 
+if (!common.opensslCli) {
+  common.skip('node compiled without OpenSSL CLI.');
+  return;
+}
+
 const join = require('path').join;
 const {
   assert, connect, debug, keys
@@ -15,6 +20,17 @@ const {
 const agent6Chain = keys.agent6.cert.split(/(?=-----BEGIN CERTIFICATE-----)/);
 const agent6End = agent6Chain[0];
 const agent6Middle = agent6Chain[1];
+
+// peer Cert
+const agen6_info = common.getCertInfo(common.fixturesDir +
+                                    '/keys/agent6-cert.pem');
+// issuer Cert
+const ca3_info = common.getCertInfo(common.fixturesDir +
+                                    '/keys/ca3-cert.pem');
+// root Cert
+const ca1_info = common.getCertInfo(common.fixturesDir +
+                                    '/keys/ca1-cert.pem');
+
 connect({
   client: {
     checkServerIdentity: (servername, cert) => { },
@@ -30,16 +46,16 @@ connect({
 
   const peer = pair.client.conn.getPeerCertificate();
   debug('peer:\n', peer);
-  assert.strictEqual(peer.serialNumber, 'C4CD893EF9A75DCC');
+  assert.strictEqual(peer.serialNumber, agen6_info.serial);
 
   const next = pair.client.conn.getPeerCertificate(true).issuerCertificate;
   const root = next.issuerCertificate;
   delete next.issuerCertificate;
   debug('next:\n', next);
-  assert.strictEqual(next.serialNumber, '9A84ABCFB8A72ABF');
+  assert.strictEqual(next.serialNumber, ca3_info.serial);
 
   debug('root:\n', root);
-  assert.strictEqual(root.serialNumber, '8DF21C01468AF393');
+  assert.strictEqual(root.serialNumber, ca1_info.serial);
 
   return cleanup();
 });

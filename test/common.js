@@ -190,6 +190,19 @@ Object.defineProperty(exports, 'hasFipsCrypto', {
   }
 });
 
+exports.getCertInfo = function(cert) {
+  let fingerprint, serial;
+  const cmd_out = child_process.execSync(
+    exports.opensslCli + ' x509 -noout -fingerprint -serial -in ' + cert);
+
+  if (cmd_out) {
+    const out = cmd_out.toString().split(/\r?\n/);
+    fingerprint = out[0].split('Fingerprint=')[1];
+    serial = out[1].split('serial=')[1];
+  }
+  return {'fingerprint': fingerprint, 'serial': serial};
+};
+
 if (exports.isWindows) {
   exports.PIPE = '\\\\.\\pipe\\libuv-test';
   if (process.env.TEST_THREAD_ID) {

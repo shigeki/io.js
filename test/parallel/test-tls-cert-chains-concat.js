@@ -4,10 +4,25 @@ const common = require('../common');
 // Check cert chain is received by client, and is completed with the ca cert
 // known to the client.
 
+if (!common.opensslCli) {
+  common.skip('node compiled without OpenSSL CLI.');
+  return;
+}
+
 const join = require('path').join;
 const {
   assert, connect, debug, keys
 } = require(join(common.fixturesDir, 'tls-connect'))();
+
+// peer Cert
+const agen6_info = common.getCertInfo(common.fixturesDir +
+                                    '/keys/agent6-cert.pem');
+// issuer Cert
+const ca3_info = common.getCertInfo(common.fixturesDir +
+                                    '/keys/ca3-cert.pem');
+// root Cert
+const ca1_info = common.getCertInfo(common.fixturesDir +
+                                    '/keys/ca1-cert.pem');
 
 // agent6-cert.pem includes cert for agent6 and ca3
 connect({
@@ -27,7 +42,7 @@ connect({
   assert.strictEqual(peer.subject.emailAddress, 'adam.lippai@tresorit.com');
   assert.strictEqual(peer.subject.CN, 'Ádám Lippai'),
   assert.strictEqual(peer.issuer.CN, 'ca3');
-  assert.strictEqual(peer.serialNumber, 'C4CD893EF9A75DCC');
+  assert.strictEqual(peer.serialNumber, agen6_info.serial);
 
   const next = pair.client.conn.getPeerCertificate(true).issuerCertificate;
   const root = next.issuerCertificate;
@@ -35,12 +50,12 @@ connect({
   debug('next:\n', next);
   assert.strictEqual(next.subject.CN, 'ca3');
   assert.strictEqual(next.issuer.CN, 'ca1');
-  assert.strictEqual(next.serialNumber, '9A84ABCFB8A72ABF');
+  assert.strictEqual(next.serialNumber, ca3_info.serial);
 
   debug('root:\n', root);
   assert.strictEqual(root.subject.CN, 'ca1');
   assert.strictEqual(root.issuer.CN, 'ca1');
-  assert.strictEqual(root.serialNumber, '8DF21C01468AF393');
+  assert.strictEqual(root.serialNumber, ca1_info.serial);
 
   // No client cert, so empty object returned.
   assert.deepStrictEqual(pair.server.conn.getPeerCertificate(), {});
