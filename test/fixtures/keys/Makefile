@@ -16,6 +16,7 @@ all: \
   agent6.pfx \
   agent7-cert.pem \
   agent8-cert.pem \
+  agent9-cert.pem \
   agent10-cert.pem \
   agent10.pfx \
   ec10-cert.pem \
@@ -431,7 +432,7 @@ agent9-csr.pem: agent9.cnf agent9-key.pem
 	-out agent9-csr.pem
 
 
-agent9-cert.pem: agent9-csr.pem
+agent9-cert.pem: agent9-csr.pem fake-startcom-root-cert.pem
 	openssl ca \
 		-config fake-startcom-root.cnf \
 		-keyfile fake-startcom-root-key.pem \
@@ -560,8 +561,11 @@ rsa_public_2048.pem: rsa_private_2048.pem
 rsa_public_4096.pem: rsa_private_4096.pem
 	openssl rsa -in rsa_private_4096.pem -out rsa_public_4096.pem
 
-clean:
+clean: clean-fake-startcom-root-cert
 	rm -f *.pem *.srl ca2-database.txt ca2-serial
+
+clean-fake-startcom-root-cert:
+	rm -f fake-startcom-root-database* fake-startcom-root-serial* fake-startcom-root-issued-certs/*
 
 test: agent1-verify agent2-verify agent3-verify agent4-verify agent5-verify
 
