@@ -153,6 +153,11 @@ parser.add_option('--openssl-fips',
     dest='openssl_fips',
     help='Build OpenSSL using FIPS canister .o file in supplied folder')
 
+parser.add_option('--use-openssl110',
+    action='store_true',
+    dest='use_openssl110',
+    help='Build with OpenSSL-1.1.0 (Experimental)')
+
 parser.add_option('--openssl-use-def-ca-store',
     action='store_true',
     dest='use_openssl_ca_store',
@@ -975,6 +980,24 @@ def configure_openssl(o):
   else:
     o['variables']['openssl_fips'] = ''
 
+  openssl110_asm_not_supported = \
+   ('gas_version' in o['variables'] and o['variables']['gas_version'] < '2.23') or \
+   ('xcode_version' in o['variables'] and o['variables']['xcode_version'] < '5.0') or \
+   ('llvm_version' in o['variables'] and o['variables']['llvm_version'] < '3.3') or \
+   o['variables']['target_arch'] == 's390x' or flavor == 'win'
+
+  if options.use_openssl110:
+    o['variables']['use_openssl110'] = 'true'
+  else:
+    o['variables']['use_openssl110'] = 'false'
+
+  if options.use_openssl110 and openssl110_asm_not_supported:
+     warn('asm of openssl-1.1.0 is not supported on this machine. openssl_no_asm is added.')
+     o['variables']['openssl_no_asm'] = 1
+
+  if options.use_openssl110 and options.openssl_fips:
+    warn('FIPS is not supported in openssl-1.1.0. Instead, openssl-1.0.2 is used.')
+    o['variables']['use_openssl110'] = 'false'
 
   if options.without_ssl:
     return
