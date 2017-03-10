@@ -156,6 +156,7 @@ parser.add_option('--openssl-fips',
 parser.add_option('--use-openssl110',
     action='store_true',
     dest='use_openssl110',
+    default=True,
     help='Build with OpenSSL-1.1.0 (Experimental)')
 
 parser.add_option('--openssl-use-def-ca-store',
