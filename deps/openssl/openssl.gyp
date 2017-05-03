@@ -102,6 +102,25 @@
                 '<@(openssl_defines_x64_win)',
               ],
               'sources': ['<@(openssl_sources_x64_win_masm)'],
+              'rules': [
+                {
+                  'rule_name': 'Assemble',
+                  'extension': 'asm',
+                  'inputs': [],
+                  'outputs': [
+                    '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
+                  ],
+                  'action': [
+                    'nasm.exe',
+                    '-f win64',
+                    '-DNEAR',
+                    '-Ox',
+                    '-g',
+                    '-o', '<(INTERMEDIATE_DIR)/<(RULE_INPUT_ROOT).obj',
+                    '<(RULE_INPUT_PATH)',
+                  ],
+                }
+              ],
             }, 'target_arch=="x64"', {
               # Linux or others
               'defines': [
