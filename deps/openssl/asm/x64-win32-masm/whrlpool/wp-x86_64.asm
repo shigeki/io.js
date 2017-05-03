@@ -1,14 +1,18 @@
-OPTION	DOTNAME
-.text$	SEGMENT ALIGN(256) 'CODE'
+default	rel
+%define XMMWORD
+%define YMMWORD
+%define ZMMWORD
+section	.text code align=64
 
-PUBLIC	whirlpool_block
+
+global	whirlpool_block
 
 ALIGN	16
-whirlpool_block	PROC PUBLIC
-	mov	QWORD PTR[8+rsp],rdi	;WIN64 prologue
-	mov	QWORD PTR[16+rsp],rsi
+whirlpool_block:
+	mov	QWORD[8+rsp],rdi	;WIN64 prologue
+	mov	QWORD[16+rsp],rsi
 	mov	rax,rsp
-$L$SEH_begin_whirlpool_block::
+$L$SEH_begin_whirlpool_block:
 	mov	rdi,rcx
 	mov	rsi,rdx
 	mov	rdx,r8
@@ -25,587 +29,586 @@ $L$SEH_begin_whirlpool_block::
 	sub	rsp,128+40
 	and	rsp,-64
 
-	lea	r10,QWORD PTR[128+rsp]
-	mov	QWORD PTR[r10],rdi
-	mov	QWORD PTR[8+r10],rsi
-	mov	QWORD PTR[16+r10],rdx
-	mov	QWORD PTR[32+r10],r11
-$L$prologue::
+	lea	r10,[128+rsp]
+	mov	QWORD[r10],rdi
+	mov	QWORD[8+r10],rsi
+	mov	QWORD[16+r10],rdx
+	mov	QWORD[32+r10],r11
+$L$prologue:
 
 	mov	rbx,r10
-	lea	rbp,QWORD PTR[$L$table]
+	lea	rbp,[$L$table]
 
 	xor	rcx,rcx
 	xor	rdx,rdx
-	mov	r8,QWORD PTR[rdi]
-	mov	r9,QWORD PTR[8+rdi]
-	mov	r10,QWORD PTR[16+rdi]
-	mov	r11,QWORD PTR[24+rdi]
-	mov	r12,QWORD PTR[32+rdi]
-	mov	r13,QWORD PTR[40+rdi]
-	mov	r14,QWORD PTR[48+rdi]
-	mov	r15,QWORD PTR[56+rdi]
-$L$outerloop::
-	mov	QWORD PTR[rsp],r8
-	mov	QWORD PTR[8+rsp],r9
-	mov	QWORD PTR[16+rsp],r10
-	mov	QWORD PTR[24+rsp],r11
-	mov	QWORD PTR[32+rsp],r12
-	mov	QWORD PTR[40+rsp],r13
-	mov	QWORD PTR[48+rsp],r14
-	mov	QWORD PTR[56+rsp],r15
-	xor	r8,QWORD PTR[rsi]
-	xor	r9,QWORD PTR[8+rsi]
-	xor	r10,QWORD PTR[16+rsi]
-	xor	r11,QWORD PTR[24+rsi]
-	xor	r12,QWORD PTR[32+rsi]
-	xor	r13,QWORD PTR[40+rsi]
-	xor	r14,QWORD PTR[48+rsi]
-	xor	r15,QWORD PTR[56+rsi]
-	mov	QWORD PTR[((64+0))+rsp],r8
-	mov	QWORD PTR[((64+8))+rsp],r9
-	mov	QWORD PTR[((64+16))+rsp],r10
-	mov	QWORD PTR[((64+24))+rsp],r11
-	mov	QWORD PTR[((64+32))+rsp],r12
-	mov	QWORD PTR[((64+40))+rsp],r13
-	mov	QWORD PTR[((64+48))+rsp],r14
-	mov	QWORD PTR[((64+56))+rsp],r15
+	mov	r8,QWORD[rdi]
+	mov	r9,QWORD[8+rdi]
+	mov	r10,QWORD[16+rdi]
+	mov	r11,QWORD[24+rdi]
+	mov	r12,QWORD[32+rdi]
+	mov	r13,QWORD[40+rdi]
+	mov	r14,QWORD[48+rdi]
+	mov	r15,QWORD[56+rdi]
+$L$outerloop:
+	mov	QWORD[rsp],r8
+	mov	QWORD[8+rsp],r9
+	mov	QWORD[16+rsp],r10
+	mov	QWORD[24+rsp],r11
+	mov	QWORD[32+rsp],r12
+	mov	QWORD[40+rsp],r13
+	mov	QWORD[48+rsp],r14
+	mov	QWORD[56+rsp],r15
+	xor	r8,QWORD[rsi]
+	xor	r9,QWORD[8+rsi]
+	xor	r10,QWORD[16+rsi]
+	xor	r11,QWORD[24+rsi]
+	xor	r12,QWORD[32+rsi]
+	xor	r13,QWORD[40+rsi]
+	xor	r14,QWORD[48+rsi]
+	xor	r15,QWORD[56+rsi]
+	mov	QWORD[((64+0))+rsp],r8
+	mov	QWORD[((64+8))+rsp],r9
+	mov	QWORD[((64+16))+rsp],r10
+	mov	QWORD[((64+24))+rsp],r11
+	mov	QWORD[((64+32))+rsp],r12
+	mov	QWORD[((64+40))+rsp],r13
+	mov	QWORD[((64+48))+rsp],r14
+	mov	QWORD[((64+56))+rsp],r15
 	xor	rsi,rsi
-	mov	QWORD PTR[24+rbx],rsi
-	jmp	$L$round
+	mov	QWORD[24+rbx],rsi
+	jmp	NEAR $L$round
 ALIGN	16
-$L$round::
-	mov	r8,QWORD PTR[4096+rsi*8+rbp]
-	mov	eax,DWORD PTR[rsp]
-	mov	ebx,DWORD PTR[4+rsp]
+$L$round:
+	mov	r8,QWORD[4096+rsi*8+rbp]
+	mov	eax,DWORD[rsp]
+	mov	ebx,DWORD[4+rsp]
 	movzx	ecx,al
 	movzx	edx,ah
 	shr	eax,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r8,QWORD PTR[rsi*8+rbp]
-	mov	r9,QWORD PTR[7+rdi*8+rbp]
-	mov	eax,DWORD PTR[((0+8))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r8,QWORD[rsi*8+rbp]
+	mov	r9,QWORD[7+rdi*8+rbp]
+	mov	eax,DWORD[((0+8))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	mov	r10,QWORD PTR[6+rsi*8+rbp]
-	mov	r11,QWORD PTR[5+rdi*8+rbp]
+	mov	r10,QWORD[6+rsi*8+rbp]
+	mov	r11,QWORD[5+rdi*8+rbp]
 	shr	ebx,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	mov	r12,QWORD PTR[4+rsi*8+rbp]
-	mov	r13,QWORD PTR[3+rdi*8+rbp]
-	mov	ebx,DWORD PTR[((0+8+4))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	mov	r12,QWORD[4+rsi*8+rbp]
+	mov	r13,QWORD[3+rdi*8+rbp]
+	mov	ebx,DWORD[((0+8+4))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	mov	r14,QWORD PTR[2+rsi*8+rbp]
-	mov	r15,QWORD PTR[1+rdi*8+rbp]
+	mov	r14,QWORD[2+rsi*8+rbp]
+	mov	r15,QWORD[1+rdi*8+rbp]
 	shr	eax,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r9,QWORD PTR[rsi*8+rbp]
-	xor	r10,QWORD PTR[7+rdi*8+rbp]
-	mov	eax,DWORD PTR[((8+8))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r9,QWORD[rsi*8+rbp]
+	xor	r10,QWORD[7+rdi*8+rbp]
+	mov	eax,DWORD[((8+8))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r11,QWORD PTR[6+rsi*8+rbp]
-	xor	r12,QWORD PTR[5+rdi*8+rbp]
+	xor	r11,QWORD[6+rsi*8+rbp]
+	xor	r12,QWORD[5+rdi*8+rbp]
 	shr	ebx,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r13,QWORD PTR[4+rsi*8+rbp]
-	xor	r14,QWORD PTR[3+rdi*8+rbp]
-	mov	ebx,DWORD PTR[((8+8+4))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r13,QWORD[4+rsi*8+rbp]
+	xor	r14,QWORD[3+rdi*8+rbp]
+	mov	ebx,DWORD[((8+8+4))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r15,QWORD PTR[2+rsi*8+rbp]
-	xor	r8,QWORD PTR[1+rdi*8+rbp]
+	xor	r15,QWORD[2+rsi*8+rbp]
+	xor	r8,QWORD[1+rdi*8+rbp]
 	shr	eax,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r10,QWORD PTR[rsi*8+rbp]
-	xor	r11,QWORD PTR[7+rdi*8+rbp]
-	mov	eax,DWORD PTR[((16+8))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r10,QWORD[rsi*8+rbp]
+	xor	r11,QWORD[7+rdi*8+rbp]
+	mov	eax,DWORD[((16+8))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r12,QWORD PTR[6+rsi*8+rbp]
-	xor	r13,QWORD PTR[5+rdi*8+rbp]
+	xor	r12,QWORD[6+rsi*8+rbp]
+	xor	r13,QWORD[5+rdi*8+rbp]
 	shr	ebx,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r14,QWORD PTR[4+rsi*8+rbp]
-	xor	r15,QWORD PTR[3+rdi*8+rbp]
-	mov	ebx,DWORD PTR[((16+8+4))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r14,QWORD[4+rsi*8+rbp]
+	xor	r15,QWORD[3+rdi*8+rbp]
+	mov	ebx,DWORD[((16+8+4))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r8,QWORD PTR[2+rsi*8+rbp]
-	xor	r9,QWORD PTR[1+rdi*8+rbp]
+	xor	r8,QWORD[2+rsi*8+rbp]
+	xor	r9,QWORD[1+rdi*8+rbp]
 	shr	eax,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r11,QWORD PTR[rsi*8+rbp]
-	xor	r12,QWORD PTR[7+rdi*8+rbp]
-	mov	eax,DWORD PTR[((24+8))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r11,QWORD[rsi*8+rbp]
+	xor	r12,QWORD[7+rdi*8+rbp]
+	mov	eax,DWORD[((24+8))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r13,QWORD PTR[6+rsi*8+rbp]
-	xor	r14,QWORD PTR[5+rdi*8+rbp]
+	xor	r13,QWORD[6+rsi*8+rbp]
+	xor	r14,QWORD[5+rdi*8+rbp]
 	shr	ebx,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r15,QWORD PTR[4+rsi*8+rbp]
-	xor	r8,QWORD PTR[3+rdi*8+rbp]
-	mov	ebx,DWORD PTR[((24+8+4))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r15,QWORD[4+rsi*8+rbp]
+	xor	r8,QWORD[3+rdi*8+rbp]
+	mov	ebx,DWORD[((24+8+4))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r9,QWORD PTR[2+rsi*8+rbp]
-	xor	r10,QWORD PTR[1+rdi*8+rbp]
+	xor	r9,QWORD[2+rsi*8+rbp]
+	xor	r10,QWORD[1+rdi*8+rbp]
 	shr	eax,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r12,QWORD PTR[rsi*8+rbp]
-	xor	r13,QWORD PTR[7+rdi*8+rbp]
-	mov	eax,DWORD PTR[((32+8))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r12,QWORD[rsi*8+rbp]
+	xor	r13,QWORD[7+rdi*8+rbp]
+	mov	eax,DWORD[((32+8))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r14,QWORD PTR[6+rsi*8+rbp]
-	xor	r15,QWORD PTR[5+rdi*8+rbp]
+	xor	r14,QWORD[6+rsi*8+rbp]
+	xor	r15,QWORD[5+rdi*8+rbp]
 	shr	ebx,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r8,QWORD PTR[4+rsi*8+rbp]
-	xor	r9,QWORD PTR[3+rdi*8+rbp]
-	mov	ebx,DWORD PTR[((32+8+4))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r8,QWORD[4+rsi*8+rbp]
+	xor	r9,QWORD[3+rdi*8+rbp]
+	mov	ebx,DWORD[((32+8+4))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r10,QWORD PTR[2+rsi*8+rbp]
-	xor	r11,QWORD PTR[1+rdi*8+rbp]
+	xor	r10,QWORD[2+rsi*8+rbp]
+	xor	r11,QWORD[1+rdi*8+rbp]
 	shr	eax,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r13,QWORD PTR[rsi*8+rbp]
-	xor	r14,QWORD PTR[7+rdi*8+rbp]
-	mov	eax,DWORD PTR[((40+8))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r13,QWORD[rsi*8+rbp]
+	xor	r14,QWORD[7+rdi*8+rbp]
+	mov	eax,DWORD[((40+8))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r15,QWORD PTR[6+rsi*8+rbp]
-	xor	r8,QWORD PTR[5+rdi*8+rbp]
+	xor	r15,QWORD[6+rsi*8+rbp]
+	xor	r8,QWORD[5+rdi*8+rbp]
 	shr	ebx,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r9,QWORD PTR[4+rsi*8+rbp]
-	xor	r10,QWORD PTR[3+rdi*8+rbp]
-	mov	ebx,DWORD PTR[((40+8+4))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r9,QWORD[4+rsi*8+rbp]
+	xor	r10,QWORD[3+rdi*8+rbp]
+	mov	ebx,DWORD[((40+8+4))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r11,QWORD PTR[2+rsi*8+rbp]
-	xor	r12,QWORD PTR[1+rdi*8+rbp]
+	xor	r11,QWORD[2+rsi*8+rbp]
+	xor	r12,QWORD[1+rdi*8+rbp]
 	shr	eax,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r14,QWORD PTR[rsi*8+rbp]
-	xor	r15,QWORD PTR[7+rdi*8+rbp]
-	mov	eax,DWORD PTR[((48+8))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r14,QWORD[rsi*8+rbp]
+	xor	r15,QWORD[7+rdi*8+rbp]
+	mov	eax,DWORD[((48+8))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r8,QWORD PTR[6+rsi*8+rbp]
-	xor	r9,QWORD PTR[5+rdi*8+rbp]
+	xor	r8,QWORD[6+rsi*8+rbp]
+	xor	r9,QWORD[5+rdi*8+rbp]
 	shr	ebx,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r10,QWORD PTR[4+rsi*8+rbp]
-	xor	r11,QWORD PTR[3+rdi*8+rbp]
-	mov	ebx,DWORD PTR[((48+8+4))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r10,QWORD[4+rsi*8+rbp]
+	xor	r11,QWORD[3+rdi*8+rbp]
+	mov	ebx,DWORD[((48+8+4))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r12,QWORD PTR[2+rsi*8+rbp]
-	xor	r13,QWORD PTR[1+rdi*8+rbp]
+	xor	r12,QWORD[2+rsi*8+rbp]
+	xor	r13,QWORD[1+rdi*8+rbp]
 	shr	eax,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r15,QWORD PTR[rsi*8+rbp]
-	xor	r8,QWORD PTR[7+rdi*8+rbp]
-	mov	eax,DWORD PTR[((56+8))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r15,QWORD[rsi*8+rbp]
+	xor	r8,QWORD[7+rdi*8+rbp]
+	mov	eax,DWORD[((56+8))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r9,QWORD PTR[6+rsi*8+rbp]
-	xor	r10,QWORD PTR[5+rdi*8+rbp]
+	xor	r9,QWORD[6+rsi*8+rbp]
+	xor	r10,QWORD[5+rdi*8+rbp]
 	shr	ebx,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r11,QWORD PTR[4+rsi*8+rbp]
-	xor	r12,QWORD PTR[3+rdi*8+rbp]
-	mov	ebx,DWORD PTR[((56+8+4))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r11,QWORD[4+rsi*8+rbp]
+	xor	r12,QWORD[3+rdi*8+rbp]
+	mov	ebx,DWORD[((56+8+4))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r13,QWORD PTR[2+rsi*8+rbp]
-	xor	r14,QWORD PTR[1+rdi*8+rbp]
-	mov	QWORD PTR[rsp],r8
-	mov	QWORD PTR[8+rsp],r9
-	mov	QWORD PTR[16+rsp],r10
-	mov	QWORD PTR[24+rsp],r11
-	mov	QWORD PTR[32+rsp],r12
-	mov	QWORD PTR[40+rsp],r13
-	mov	QWORD PTR[48+rsp],r14
-	mov	QWORD PTR[56+rsp],r15
+	xor	r13,QWORD[2+rsi*8+rbp]
+	xor	r14,QWORD[1+rdi*8+rbp]
+	mov	QWORD[rsp],r8
+	mov	QWORD[8+rsp],r9
+	mov	QWORD[16+rsp],r10
+	mov	QWORD[24+rsp],r11
+	mov	QWORD[32+rsp],r12
+	mov	QWORD[40+rsp],r13
+	mov	QWORD[48+rsp],r14
+	mov	QWORD[56+rsp],r15
 	shr	eax,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r8,QWORD PTR[rsi*8+rbp]
-	xor	r9,QWORD PTR[7+rdi*8+rbp]
-	mov	eax,DWORD PTR[((64+0+8))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r8,QWORD[rsi*8+rbp]
+	xor	r9,QWORD[7+rdi*8+rbp]
+	mov	eax,DWORD[((64+0+8))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r10,QWORD PTR[6+rsi*8+rbp]
-	xor	r11,QWORD PTR[5+rdi*8+rbp]
+	xor	r10,QWORD[6+rsi*8+rbp]
+	xor	r11,QWORD[5+rdi*8+rbp]
 	shr	ebx,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r12,QWORD PTR[4+rsi*8+rbp]
-	xor	r13,QWORD PTR[3+rdi*8+rbp]
-	mov	ebx,DWORD PTR[((64+0+8+4))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r12,QWORD[4+rsi*8+rbp]
+	xor	r13,QWORD[3+rdi*8+rbp]
+	mov	ebx,DWORD[((64+0+8+4))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r14,QWORD PTR[2+rsi*8+rbp]
-	xor	r15,QWORD PTR[1+rdi*8+rbp]
+	xor	r14,QWORD[2+rsi*8+rbp]
+	xor	r15,QWORD[1+rdi*8+rbp]
 	shr	eax,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r9,QWORD PTR[rsi*8+rbp]
-	xor	r10,QWORD PTR[7+rdi*8+rbp]
-	mov	eax,DWORD PTR[((64+8+8))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r9,QWORD[rsi*8+rbp]
+	xor	r10,QWORD[7+rdi*8+rbp]
+	mov	eax,DWORD[((64+8+8))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r11,QWORD PTR[6+rsi*8+rbp]
-	xor	r12,QWORD PTR[5+rdi*8+rbp]
+	xor	r11,QWORD[6+rsi*8+rbp]
+	xor	r12,QWORD[5+rdi*8+rbp]
 	shr	ebx,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r13,QWORD PTR[4+rsi*8+rbp]
-	xor	r14,QWORD PTR[3+rdi*8+rbp]
-	mov	ebx,DWORD PTR[((64+8+8+4))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r13,QWORD[4+rsi*8+rbp]
+	xor	r14,QWORD[3+rdi*8+rbp]
+	mov	ebx,DWORD[((64+8+8+4))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r15,QWORD PTR[2+rsi*8+rbp]
-	xor	r8,QWORD PTR[1+rdi*8+rbp]
+	xor	r15,QWORD[2+rsi*8+rbp]
+	xor	r8,QWORD[1+rdi*8+rbp]
 	shr	eax,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r10,QWORD PTR[rsi*8+rbp]
-	xor	r11,QWORD PTR[7+rdi*8+rbp]
-	mov	eax,DWORD PTR[((64+16+8))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r10,QWORD[rsi*8+rbp]
+	xor	r11,QWORD[7+rdi*8+rbp]
+	mov	eax,DWORD[((64+16+8))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r12,QWORD PTR[6+rsi*8+rbp]
-	xor	r13,QWORD PTR[5+rdi*8+rbp]
+	xor	r12,QWORD[6+rsi*8+rbp]
+	xor	r13,QWORD[5+rdi*8+rbp]
 	shr	ebx,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r14,QWORD PTR[4+rsi*8+rbp]
-	xor	r15,QWORD PTR[3+rdi*8+rbp]
-	mov	ebx,DWORD PTR[((64+16+8+4))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r14,QWORD[4+rsi*8+rbp]
+	xor	r15,QWORD[3+rdi*8+rbp]
+	mov	ebx,DWORD[((64+16+8+4))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r8,QWORD PTR[2+rsi*8+rbp]
-	xor	r9,QWORD PTR[1+rdi*8+rbp]
+	xor	r8,QWORD[2+rsi*8+rbp]
+	xor	r9,QWORD[1+rdi*8+rbp]
 	shr	eax,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r11,QWORD PTR[rsi*8+rbp]
-	xor	r12,QWORD PTR[7+rdi*8+rbp]
-	mov	eax,DWORD PTR[((64+24+8))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r11,QWORD[rsi*8+rbp]
+	xor	r12,QWORD[7+rdi*8+rbp]
+	mov	eax,DWORD[((64+24+8))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r13,QWORD PTR[6+rsi*8+rbp]
-	xor	r14,QWORD PTR[5+rdi*8+rbp]
+	xor	r13,QWORD[6+rsi*8+rbp]
+	xor	r14,QWORD[5+rdi*8+rbp]
 	shr	ebx,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r15,QWORD PTR[4+rsi*8+rbp]
-	xor	r8,QWORD PTR[3+rdi*8+rbp]
-	mov	ebx,DWORD PTR[((64+24+8+4))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r15,QWORD[4+rsi*8+rbp]
+	xor	r8,QWORD[3+rdi*8+rbp]
+	mov	ebx,DWORD[((64+24+8+4))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r9,QWORD PTR[2+rsi*8+rbp]
-	xor	r10,QWORD PTR[1+rdi*8+rbp]
+	xor	r9,QWORD[2+rsi*8+rbp]
+	xor	r10,QWORD[1+rdi*8+rbp]
 	shr	eax,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r12,QWORD PTR[rsi*8+rbp]
-	xor	r13,QWORD PTR[7+rdi*8+rbp]
-	mov	eax,DWORD PTR[((64+32+8))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r12,QWORD[rsi*8+rbp]
+	xor	r13,QWORD[7+rdi*8+rbp]
+	mov	eax,DWORD[((64+32+8))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r14,QWORD PTR[6+rsi*8+rbp]
-	xor	r15,QWORD PTR[5+rdi*8+rbp]
+	xor	r14,QWORD[6+rsi*8+rbp]
+	xor	r15,QWORD[5+rdi*8+rbp]
 	shr	ebx,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r8,QWORD PTR[4+rsi*8+rbp]
-	xor	r9,QWORD PTR[3+rdi*8+rbp]
-	mov	ebx,DWORD PTR[((64+32+8+4))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r8,QWORD[4+rsi*8+rbp]
+	xor	r9,QWORD[3+rdi*8+rbp]
+	mov	ebx,DWORD[((64+32+8+4))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r10,QWORD PTR[2+rsi*8+rbp]
-	xor	r11,QWORD PTR[1+rdi*8+rbp]
+	xor	r10,QWORD[2+rsi*8+rbp]
+	xor	r11,QWORD[1+rdi*8+rbp]
 	shr	eax,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r13,QWORD PTR[rsi*8+rbp]
-	xor	r14,QWORD PTR[7+rdi*8+rbp]
-	mov	eax,DWORD PTR[((64+40+8))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r13,QWORD[rsi*8+rbp]
+	xor	r14,QWORD[7+rdi*8+rbp]
+	mov	eax,DWORD[((64+40+8))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r15,QWORD PTR[6+rsi*8+rbp]
-	xor	r8,QWORD PTR[5+rdi*8+rbp]
+	xor	r15,QWORD[6+rsi*8+rbp]
+	xor	r8,QWORD[5+rdi*8+rbp]
 	shr	ebx,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r9,QWORD PTR[4+rsi*8+rbp]
-	xor	r10,QWORD PTR[3+rdi*8+rbp]
-	mov	ebx,DWORD PTR[((64+40+8+4))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r9,QWORD[4+rsi*8+rbp]
+	xor	r10,QWORD[3+rdi*8+rbp]
+	mov	ebx,DWORD[((64+40+8+4))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r11,QWORD PTR[2+rsi*8+rbp]
-	xor	r12,QWORD PTR[1+rdi*8+rbp]
+	xor	r11,QWORD[2+rsi*8+rbp]
+	xor	r12,QWORD[1+rdi*8+rbp]
 	shr	eax,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r14,QWORD PTR[rsi*8+rbp]
-	xor	r15,QWORD PTR[7+rdi*8+rbp]
-	mov	eax,DWORD PTR[((64+48+8))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r14,QWORD[rsi*8+rbp]
+	xor	r15,QWORD[7+rdi*8+rbp]
+	mov	eax,DWORD[((64+48+8))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r8,QWORD PTR[6+rsi*8+rbp]
-	xor	r9,QWORD PTR[5+rdi*8+rbp]
+	xor	r8,QWORD[6+rsi*8+rbp]
+	xor	r9,QWORD[5+rdi*8+rbp]
 	shr	ebx,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r10,QWORD PTR[4+rsi*8+rbp]
-	xor	r11,QWORD PTR[3+rdi*8+rbp]
-	mov	ebx,DWORD PTR[((64+48+8+4))+rsp]
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	xor	r10,QWORD[4+rsi*8+rbp]
+	xor	r11,QWORD[3+rdi*8+rbp]
+	mov	ebx,DWORD[((64+48+8+4))+rsp]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r12,QWORD PTR[2+rsi*8+rbp]
-	xor	r13,QWORD PTR[1+rdi*8+rbp]
+	xor	r12,QWORD[2+rsi*8+rbp]
+	xor	r13,QWORD[1+rdi*8+rbp]
 	shr	eax,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r15,QWORD PTR[rsi*8+rbp]
-	xor	r8,QWORD PTR[7+rdi*8+rbp]
+	xor	r15,QWORD[rsi*8+rbp]
+	xor	r8,QWORD[7+rdi*8+rbp]
 
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r9,QWORD PTR[6+rsi*8+rbp]
-	xor	r10,QWORD PTR[5+rdi*8+rbp]
+	xor	r9,QWORD[6+rsi*8+rbp]
+	xor	r10,QWORD[5+rdi*8+rbp]
 	shr	ebx,16
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,bl
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,bh
-	xor	r11,QWORD PTR[4+rsi*8+rbp]
-	xor	r12,QWORD PTR[3+rdi*8+rbp]
+	xor	r11,QWORD[4+rsi*8+rbp]
+	xor	r12,QWORD[3+rdi*8+rbp]
 
-	lea	rsi,QWORD PTR[rcx*1+rcx]
+	lea	rsi,[rcx*1+rcx]
 	movzx	ecx,al
-	lea	rdi,QWORD PTR[rdx*1+rdx]
+	lea	rdi,[rdx*1+rdx]
 	movzx	edx,ah
-	xor	r13,QWORD PTR[2+rsi*8+rbp]
-	xor	r14,QWORD PTR[1+rdi*8+rbp]
-	lea	rbx,QWORD PTR[128+rsp]
-	mov	rsi,QWORD PTR[24+rbx]
+	xor	r13,QWORD[2+rsi*8+rbp]
+	xor	r14,QWORD[1+rdi*8+rbp]
+	lea	rbx,[128+rsp]
+	mov	rsi,QWORD[24+rbx]
 	add	rsi,1
 	cmp	rsi,10
-	je	$L$roundsdone
+	je	NEAR $L$roundsdone
 
-	mov	QWORD PTR[24+rbx],rsi
-	mov	QWORD PTR[((64+0))+rsp],r8
-	mov	QWORD PTR[((64+8))+rsp],r9
-	mov	QWORD PTR[((64+16))+rsp],r10
-	mov	QWORD PTR[((64+24))+rsp],r11
-	mov	QWORD PTR[((64+32))+rsp],r12
-	mov	QWORD PTR[((64+40))+rsp],r13
-	mov	QWORD PTR[((64+48))+rsp],r14
-	mov	QWORD PTR[((64+56))+rsp],r15
-	jmp	$L$round
+	mov	QWORD[24+rbx],rsi
+	mov	QWORD[((64+0))+rsp],r8
+	mov	QWORD[((64+8))+rsp],r9
+	mov	QWORD[((64+16))+rsp],r10
+	mov	QWORD[((64+24))+rsp],r11
+	mov	QWORD[((64+32))+rsp],r12
+	mov	QWORD[((64+40))+rsp],r13
+	mov	QWORD[((64+48))+rsp],r14
+	mov	QWORD[((64+56))+rsp],r15
+	jmp	NEAR $L$round
 ALIGN	16
-$L$roundsdone::
-	mov	rdi,QWORD PTR[rbx]
-	mov	rsi,QWORD PTR[8+rbx]
-	mov	rax,QWORD PTR[16+rbx]
-	xor	r8,QWORD PTR[rsi]
-	xor	r9,QWORD PTR[8+rsi]
-	xor	r10,QWORD PTR[16+rsi]
-	xor	r11,QWORD PTR[24+rsi]
-	xor	r12,QWORD PTR[32+rsi]
-	xor	r13,QWORD PTR[40+rsi]
-	xor	r14,QWORD PTR[48+rsi]
-	xor	r15,QWORD PTR[56+rsi]
-	xor	r8,QWORD PTR[rdi]
-	xor	r9,QWORD PTR[8+rdi]
-	xor	r10,QWORD PTR[16+rdi]
-	xor	r11,QWORD PTR[24+rdi]
-	xor	r12,QWORD PTR[32+rdi]
-	xor	r13,QWORD PTR[40+rdi]
-	xor	r14,QWORD PTR[48+rdi]
-	xor	r15,QWORD PTR[56+rdi]
-	mov	QWORD PTR[rdi],r8
-	mov	QWORD PTR[8+rdi],r9
-	mov	QWORD PTR[16+rdi],r10
-	mov	QWORD PTR[24+rdi],r11
-	mov	QWORD PTR[32+rdi],r12
-	mov	QWORD PTR[40+rdi],r13
-	mov	QWORD PTR[48+rdi],r14
-	mov	QWORD PTR[56+rdi],r15
-	lea	rsi,QWORD PTR[64+rsi]
+$L$roundsdone:
+	mov	rdi,QWORD[rbx]
+	mov	rsi,QWORD[8+rbx]
+	mov	rax,QWORD[16+rbx]
+	xor	r8,QWORD[rsi]
+	xor	r9,QWORD[8+rsi]
+	xor	r10,QWORD[16+rsi]
+	xor	r11,QWORD[24+rsi]
+	xor	r12,QWORD[32+rsi]
+	xor	r13,QWORD[40+rsi]
+	xor	r14,QWORD[48+rsi]
+	xor	r15,QWORD[56+rsi]
+	xor	r8,QWORD[rdi]
+	xor	r9,QWORD[8+rdi]
+	xor	r10,QWORD[16+rdi]
+	xor	r11,QWORD[24+rdi]
+	xor	r12,QWORD[32+rdi]
+	xor	r13,QWORD[40+rdi]
+	xor	r14,QWORD[48+rdi]
+	xor	r15,QWORD[56+rdi]
+	mov	QWORD[rdi],r8
+	mov	QWORD[8+rdi],r9
+	mov	QWORD[16+rdi],r10
+	mov	QWORD[24+rdi],r11
+	mov	QWORD[32+rdi],r12
+	mov	QWORD[40+rdi],r13
+	mov	QWORD[48+rdi],r14
+	mov	QWORD[56+rdi],r15
+	lea	rsi,[64+rsi]
 	sub	rax,1
-	jz	$L$alldone
-	mov	QWORD PTR[8+rbx],rsi
-	mov	QWORD PTR[16+rbx],rax
-	jmp	$L$outerloop
-$L$alldone::
-	mov	rsi,QWORD PTR[32+rbx]
-	mov	r15,QWORD PTR[rsi]
-	mov	r14,QWORD PTR[8+rsi]
-	mov	r13,QWORD PTR[16+rsi]
-	mov	r12,QWORD PTR[24+rsi]
-	mov	rbp,QWORD PTR[32+rsi]
-	mov	rbx,QWORD PTR[40+rsi]
-	lea	rsp,QWORD PTR[48+rsi]
-$L$epilogue::
-	mov	rdi,QWORD PTR[8+rsp]	;WIN64 epilogue
-	mov	rsi,QWORD PTR[16+rsp]
+	jz	NEAR $L$alldone
+	mov	QWORD[8+rbx],rsi
+	mov	QWORD[16+rbx],rax
+	jmp	NEAR $L$outerloop
+$L$alldone:
+	mov	rsi,QWORD[32+rbx]
+	mov	r15,QWORD[rsi]
+	mov	r14,QWORD[8+rsi]
+	mov	r13,QWORD[16+rsi]
+	mov	r12,QWORD[24+rsi]
+	mov	rbp,QWORD[32+rsi]
+	mov	rbx,QWORD[40+rsi]
+	lea	rsp,[48+rsi]
+$L$epilogue:
+	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
+	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
-$L$SEH_end_whirlpool_block::
-whirlpool_block	ENDP
+$L$SEH_end_whirlpool_block:
 
 ALIGN	64
 
-$L$table::
+$L$table:
 DB	24,24,96,24,192,120,48,216,24,24,96,24,192,120,48,216
 DB	35,35,140,35,5,175,70,38,35,35,140,35,5,175,70,38
 DB	198,198,63,198,126,249,145,184,198,198,63,198,126,249,145,184
@@ -872,10 +875,10 @@ DB	189,93,16,244,203,62,5,103
 DB	228,39,65,139,167,125,149,216
 DB	251,238,124,102,221,23,71,158
 DB	202,45,191,7,173,90,131,51
-EXTERN	__imp_RtlVirtualUnwind:NEAR
+EXTERN	__imp_RtlVirtualUnwind
 
 ALIGN	16
-se_handler	PROC PRIVATE
+se_handler:
 	push	rsi
 	push	rdi
 	push	rbx
@@ -887,60 +890,60 @@ se_handler	PROC PRIVATE
 	pushfq
 	sub	rsp,64
 
-	mov	rax,QWORD PTR[120+r8]
-	mov	rbx,QWORD PTR[248+r8]
+	mov	rax,QWORD[120+r8]
+	mov	rbx,QWORD[248+r8]
 
-	lea	r10,QWORD PTR[$L$prologue]
+	lea	r10,[$L$prologue]
 	cmp	rbx,r10
-	jb	$L$in_prologue
+	jb	NEAR $L$in_prologue
 
-	mov	rax,QWORD PTR[152+r8]
+	mov	rax,QWORD[152+r8]
 
-	lea	r10,QWORD PTR[$L$epilogue]
+	lea	r10,[$L$epilogue]
 	cmp	rbx,r10
-	jae	$L$in_prologue
+	jae	NEAR $L$in_prologue
 
-	mov	rax,QWORD PTR[((128+32))+rax]
-	lea	rax,QWORD PTR[48+rax]
+	mov	rax,QWORD[((128+32))+rax]
+	lea	rax,[48+rax]
 
-	mov	rbx,QWORD PTR[((-8))+rax]
-	mov	rbp,QWORD PTR[((-16))+rax]
-	mov	r12,QWORD PTR[((-24))+rax]
-	mov	r13,QWORD PTR[((-32))+rax]
-	mov	r14,QWORD PTR[((-40))+rax]
-	mov	r15,QWORD PTR[((-48))+rax]
-	mov	QWORD PTR[144+r8],rbx
-	mov	QWORD PTR[160+r8],rbp
-	mov	QWORD PTR[216+r8],r12
-	mov	QWORD PTR[224+r8],r13
-	mov	QWORD PTR[232+r8],r14
-	mov	QWORD PTR[240+r8],r15
+	mov	rbx,QWORD[((-8))+rax]
+	mov	rbp,QWORD[((-16))+rax]
+	mov	r12,QWORD[((-24))+rax]
+	mov	r13,QWORD[((-32))+rax]
+	mov	r14,QWORD[((-40))+rax]
+	mov	r15,QWORD[((-48))+rax]
+	mov	QWORD[144+r8],rbx
+	mov	QWORD[160+r8],rbp
+	mov	QWORD[216+r8],r12
+	mov	QWORD[224+r8],r13
+	mov	QWORD[232+r8],r14
+	mov	QWORD[240+r8],r15
 
-$L$in_prologue::
-	mov	rdi,QWORD PTR[8+rax]
-	mov	rsi,QWORD PTR[16+rax]
-	mov	QWORD PTR[152+r8],rax
-	mov	QWORD PTR[168+r8],rsi
-	mov	QWORD PTR[176+r8],rdi
+$L$in_prologue:
+	mov	rdi,QWORD[8+rax]
+	mov	rsi,QWORD[16+rax]
+	mov	QWORD[152+r8],rax
+	mov	QWORD[168+r8],rsi
+	mov	QWORD[176+r8],rdi
 
-	mov	rdi,QWORD PTR[40+r9]
+	mov	rdi,QWORD[40+r9]
 	mov	rsi,r8
 	mov	ecx,154
-	DD	0a548f3fch
+	DD	0xa548f3fc
 
 	mov	rsi,r9
 	xor	rcx,rcx
-	mov	rdx,QWORD PTR[8+rsi]
-	mov	r8,QWORD PTR[rsi]
-	mov	r9,QWORD PTR[16+rsi]
-	mov	r10,QWORD PTR[40+rsi]
-	lea	r11,QWORD PTR[56+rsi]
-	lea	r12,QWORD PTR[24+rsi]
-	mov	QWORD PTR[32+rsp],r10
-	mov	QWORD PTR[40+rsp],r11
-	mov	QWORD PTR[48+rsp],r12
-	mov	QWORD PTR[56+rsp],rcx
-	call	QWORD PTR[__imp_RtlVirtualUnwind]
+	mov	rdx,QWORD[8+rsi]
+	mov	r8,QWORD[rsi]
+	mov	r9,QWORD[16+rsi]
+	mov	r10,QWORD[40+rsi]
+	lea	r11,[56+rsi]
+	lea	r12,[24+rsi]
+	mov	QWORD[32+rsp],r10
+	mov	QWORD[40+rsp],r11
+	mov	QWORD[48+rsp],r12
+	mov	QWORD[56+rsp],rcx
+	call	QWORD[__imp_RtlVirtualUnwind]
 
 	mov	eax,1
 	add	rsp,64
@@ -954,21 +957,16 @@ $L$in_prologue::
 	pop	rdi
 	pop	rsi
 	DB	0F3h,0C3h		;repret
-se_handler	ENDP
 
-.text$	ENDS
-.pdata	SEGMENT READONLY ALIGN(4)
+
+section	.pdata rdata align=4
 ALIGN	4
-	DD	imagerel $L$SEH_begin_whirlpool_block
-	DD	imagerel $L$SEH_end_whirlpool_block
-	DD	imagerel $L$SEH_info_whirlpool_block
+	DD	$L$SEH_begin_whirlpool_block wrt ..imagebase
+	DD	$L$SEH_end_whirlpool_block wrt ..imagebase
+	DD	$L$SEH_info_whirlpool_block wrt ..imagebase
 
-.pdata	ENDS
-.xdata	SEGMENT READONLY ALIGN(8)
+section	.xdata rdata align=8
 ALIGN	8
-$L$SEH_info_whirlpool_block::
+$L$SEH_info_whirlpool_block:
 DB	9,0,0,0
-	DD	imagerel se_handler
-
-.xdata	ENDS
-END
+	DD	se_handler wrt ..imagebase

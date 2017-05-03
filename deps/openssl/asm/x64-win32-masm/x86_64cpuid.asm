@@ -1,97 +1,98 @@
-OPTION	DOTNAME
-EXTERN	OPENSSL_cpuid_setup:NEAR
+default	rel
+%define XMMWORD
+%define YMMWORD
+%define ZMMWORD
+EXTERN	OPENSSL_cpuid_setup
 
-.CRT$XCU	SEGMENT READONLY ALIGN(8)
+section	.CRT$XCU rdata align=8
 		DQ	OPENSSL_cpuid_setup
 
 
-.CRT$XCU	ENDS
-_DATA	SEGMENT
-COMM	OPENSSL_ia32cap_P:DWORD:4
+common	OPENSSL_ia32cap_P 16
 
-_DATA	ENDS
-.text$	SEGMENT ALIGN(256) 'CODE'
+section	.text code align=64
 
-PUBLIC	OPENSSL_atomic_add
+
+global	OPENSSL_atomic_add
 
 ALIGN	16
-OPENSSL_atomic_add	PROC PUBLIC
-	mov	eax,DWORD PTR[rcx]
-$L$spin::	lea	r8,QWORD PTR[rax*1+rdx]
-DB	0f0h
-	cmpxchg	DWORD PTR[rcx],r8d
-	jne	$L$spin
+OPENSSL_atomic_add:
+	mov	eax,DWORD[rcx]
+$L$spin:	lea	r8,[rax*1+rdx]
+DB	0xf0
+	cmpxchg	DWORD[rcx],r8d
+	jne	NEAR $L$spin
 	mov	eax,r8d
-DB	048h,098h
+DB	0x48,0x98
 	DB	0F3h,0C3h		;repret
-OPENSSL_atomic_add	ENDP
 
-PUBLIC	OPENSSL_rdtsc
+
+global	OPENSSL_rdtsc
 
 ALIGN	16
-OPENSSL_rdtsc	PROC PUBLIC
+OPENSSL_rdtsc:
 	rdtsc
 	shl	rdx,32
 	or	rax,rdx
 	DB	0F3h,0C3h		;repret
-OPENSSL_rdtsc	ENDP
 
-PUBLIC	OPENSSL_ia32_cpuid
+
+global	OPENSSL_ia32_cpuid
 
 ALIGN	16
-OPENSSL_ia32_cpuid	PROC PUBLIC
-	mov	QWORD PTR[8+rsp],rdi	;WIN64 prologue
-	mov	QWORD PTR[16+rsp],rsi
+OPENSSL_ia32_cpuid:
+	mov	QWORD[8+rsp],rdi	;WIN64 prologue
+	mov	QWORD[16+rsp],rsi
 	mov	rax,rsp
-$L$SEH_begin_OPENSSL_ia32_cpuid::
+$L$SEH_begin_OPENSSL_ia32_cpuid:
 	mov	rdi,rcx
 
 
 	mov	r8,rbx
 
 	xor	eax,eax
-	mov	DWORD PTR[8+rdi],eax
+	mov	DWORD[8+rdi],eax
 	cpuid
 	mov	r11d,eax
 
 	xor	eax,eax
-	cmp	ebx,0756e6547h
+	cmp	ebx,0x756e6547
 	setne	al
 	mov	r9d,eax
-	cmp	edx,049656e69h
+	cmp	edx,0x49656e69
 	setne	al
 	or	r9d,eax
-	cmp	ecx,06c65746eh
+	cmp	ecx,0x6c65746e
 	setne	al
 	or	r9d,eax
-	jz	$L$intel
+	jz	NEAR $L$intel
 
-	cmp	ebx,068747541h
+	cmp	ebx,0x68747541
 	setne	al
 	mov	r10d,eax
-	cmp	edx,069746E65h
+	cmp	edx,0x69746E65
 	setne	al
 	or	r10d,eax
-	cmp	ecx,0444D4163h
+	cmp	ecx,0x444D4163
 	setne	al
 	or	r10d,eax
-	jnz	$L$intel
+	jnz	NEAR $L$intel
 
 
-	mov	eax,080000000h
+	mov	eax,0x80000000
 	cpuid
-	cmp	eax,080000001h
-	jb	$L$intel
+	cmp	eax,0x80000001
+	jb	NEAR $L$intel
 	mov	r10d,eax
-	mov	eax,080000001h
+	mov	eax,0x80000001
 	cpuid
 	or	r9d,ecx
-	and	r9d,000000801h
+	and	r9d,0x00000801
 
-	cmp	r10d,080000008h
-	jb	$L$intel
+	cmp	r10d,0x80000008
+	jb	NEAR $L$intel
 
-	mov	eax,080000008h
+	mov	eax,0x80000008
 	cpuid
 	movzx	r10,cl
 	inc	r10
@@ -99,122 +100,121 @@ $L$SEH_begin_OPENSSL_ia32_cpuid::
 	mov	eax,1
 	cpuid
 	bt	edx,28
-	jnc	$L$generic
+	jnc	NEAR $L$generic
 	shr	ebx,16
 	cmp	bl,r10b
-	ja	$L$generic
-	and	edx,0efffffffh
-	jmp	$L$generic
+	ja	NEAR $L$generic
+	and	edx,0xefffffff
+	jmp	NEAR $L$generic
 
-$L$intel::
+$L$intel:
 	cmp	r11d,4
 	mov	r10d,-1
-	jb	$L$nocacheinfo
+	jb	NEAR $L$nocacheinfo
 
 	mov	eax,4
 	mov	ecx,0
 	cpuid
 	mov	r10d,eax
 	shr	r10d,14
-	and	r10d,0fffh
+	and	r10d,0xfff
 
 	cmp	r11d,7
-	jb	$L$nocacheinfo
+	jb	NEAR $L$nocacheinfo
 
 	mov	eax,7
 	xor	ecx,ecx
 	cpuid
-	mov	DWORD PTR[8+rdi],ebx
+	mov	DWORD[8+rdi],ebx
 
-$L$nocacheinfo::
+$L$nocacheinfo:
 	mov	eax,1
 	cpuid
-	and	edx,0bfefffffh
+	and	edx,0xbfefffff
 	cmp	r9d,0
-	jne	$L$notintel
-	or	edx,040000000h
+	jne	NEAR $L$notintel
+	or	edx,0x40000000
 	and	ah,15
 	cmp	ah,15
-	jne	$L$notintel
-	or	edx,000100000h
-$L$notintel::
+	jne	NEAR $L$notintel
+	or	edx,0x00100000
+$L$notintel:
 	bt	edx,28
-	jnc	$L$generic
-	and	edx,0efffffffh
+	jnc	NEAR $L$generic
+	and	edx,0xefffffff
 	cmp	r10d,0
-	je	$L$generic
+	je	NEAR $L$generic
 
-	or	edx,010000000h
+	or	edx,0x10000000
 	shr	ebx,16
 	cmp	bl,1
-	ja	$L$generic
-	and	edx,0efffffffh
-$L$generic::
-	and	r9d,000000800h
-	and	ecx,0fffff7ffh
+	ja	NEAR $L$generic
+	and	edx,0xefffffff
+$L$generic:
+	and	r9d,0x00000800
+	and	ecx,0xfffff7ff
 	or	r9d,ecx
 
 	mov	r10d,edx
 	bt	r9d,27
-	jnc	$L$clear_avx
+	jnc	NEAR $L$clear_avx
 	xor	ecx,ecx
-DB	00fh,001h,0d0h
+DB	0x0f,0x01,0xd0
 	and	eax,6
 	cmp	eax,6
-	je	$L$done
-$L$clear_avx::
-	mov	eax,0efffe7ffh
+	je	NEAR $L$done
+$L$clear_avx:
+	mov	eax,0xefffe7ff
 	and	r9d,eax
-	and	DWORD PTR[8+rdi],0ffffffdfh
-$L$done::
+	and	DWORD[8+rdi],0xffffffdf
+$L$done:
 	shl	r9,32
 	mov	eax,r10d
 	mov	rbx,r8
 	or	rax,r9
-	mov	rdi,QWORD PTR[8+rsp]	;WIN64 epilogue
-	mov	rsi,QWORD PTR[16+rsp]
+	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
+	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
-$L$SEH_end_OPENSSL_ia32_cpuid::
-OPENSSL_ia32_cpuid	ENDP
+$L$SEH_end_OPENSSL_ia32_cpuid:
 
-PUBLIC	OPENSSL_cleanse
+global	OPENSSL_cleanse
 
 ALIGN	16
-OPENSSL_cleanse	PROC PUBLIC
+OPENSSL_cleanse:
 	xor	rax,rax
 	cmp	rdx,15
-	jae	$L$ot
+	jae	NEAR $L$ot
 	cmp	rdx,0
-	je	$L$ret
-$L$ittle::
-	mov	BYTE PTR[rcx],al
+	je	NEAR $L$ret
+$L$ittle:
+	mov	BYTE[rcx],al
 	sub	rdx,1
-	lea	rcx,QWORD PTR[1+rcx]
-	jnz	$L$ittle
-$L$ret::
+	lea	rcx,[1+rcx]
+	jnz	NEAR $L$ittle
+$L$ret:
 	DB	0F3h,0C3h		;repret
 ALIGN	16
-$L$ot::
+$L$ot:
 	test	rcx,7
-	jz	$L$aligned
-	mov	BYTE PTR[rcx],al
-	lea	rdx,QWORD PTR[((-1))+rdx]
-	lea	rcx,QWORD PTR[1+rcx]
-	jmp	$L$ot
-$L$aligned::
-	mov	QWORD PTR[rcx],rax
-	lea	rdx,QWORD PTR[((-8))+rdx]
+	jz	NEAR $L$aligned
+	mov	BYTE[rcx],al
+	lea	rdx,[((-1))+rdx]
+	lea	rcx,[1+rcx]
+	jmp	NEAR $L$ot
+$L$aligned:
+	mov	QWORD[rcx],rax
+	lea	rdx,[((-8))+rdx]
 	test	rdx,-8
-	lea	rcx,QWORD PTR[8+rcx]
-	jnz	$L$aligned
+	lea	rcx,[8+rcx]
+	jnz	NEAR $L$aligned
 	cmp	rdx,0
-	jne	$L$ittle
+	jne	NEAR $L$ittle
 	DB	0F3h,0C3h		;repret
-OPENSSL_cleanse	ENDP
-PUBLIC	OPENSSL_wipe_cpu
+
+global	OPENSSL_wipe_cpu
 
 ALIGN	16
-OPENSSL_wipe_cpu	PROC PUBLIC
+OPENSSL_wipe_cpu:
 	pxor	xmm0,xmm0
 	pxor	xmm1,xmm1
 	pxor	xmm2,xmm2
@@ -227,38 +227,34 @@ OPENSSL_wipe_cpu	PROC PUBLIC
 	xor	r9,r9
 	xor	r10,r10
 	xor	r11,r11
-	lea	rax,QWORD PTR[8+rsp]
+	lea	rax,[8+rsp]
 	DB	0F3h,0C3h		;repret
-OPENSSL_wipe_cpu	ENDP
-PUBLIC	OPENSSL_ia32_rdrand
+
+global	OPENSSL_ia32_rdrand
 
 ALIGN	16
-OPENSSL_ia32_rdrand	PROC PUBLIC
+OPENSSL_ia32_rdrand:
 	mov	ecx,8
-$L$oop_rdrand::
+$L$oop_rdrand:
 DB	72,15,199,240
-	jc	$L$break_rdrand
+	jc	NEAR $L$break_rdrand
 	loop	$L$oop_rdrand
-$L$break_rdrand::
+$L$break_rdrand:
 	cmp	rax,0
 	cmove	rax,rcx
 	DB	0F3h,0C3h		;repret
-OPENSSL_ia32_rdrand	ENDP
 
-PUBLIC	OPENSSL_ia32_rdseed
+
+global	OPENSSL_ia32_rdseed
 
 ALIGN	16
-OPENSSL_ia32_rdseed	PROC PUBLIC
+OPENSSL_ia32_rdseed:
 	mov	ecx,8
-$L$oop_rdseed::
+$L$oop_rdseed:
 DB	72,15,199,248
-	jc	$L$break_rdseed
+	jc	NEAR $L$break_rdseed
 	loop	$L$oop_rdseed
-$L$break_rdseed::
+$L$break_rdseed:
 	cmp	rax,0
 	cmove	rax,rcx
 	DB	0F3h,0C3h		;repret
-OPENSSL_ia32_rdseed	ENDP
-
-.text$	ENDS
-END

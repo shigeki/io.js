@@ -1,102 +1,106 @@
-OPTION	DOTNAME
-.text$	SEGMENT ALIGN(256) 'CODE'
+default	rel
+%define XMMWORD
+%define YMMWORD
+%define ZMMWORD
+section	.text code align=64
 
-EXTERN	OPENSSL_ia32cap_P:NEAR
 
-PUBLIC	sha256_multi_block
+EXTERN	OPENSSL_ia32cap_P
+
+global	sha256_multi_block
 
 ALIGN	32
-sha256_multi_block	PROC PUBLIC
-	mov	QWORD PTR[8+rsp],rdi	;WIN64 prologue
-	mov	QWORD PTR[16+rsp],rsi
+sha256_multi_block:
+	mov	QWORD[8+rsp],rdi	;WIN64 prologue
+	mov	QWORD[16+rsp],rsi
 	mov	rax,rsp
-$L$SEH_begin_sha256_multi_block::
+$L$SEH_begin_sha256_multi_block:
 	mov	rdi,rcx
 	mov	rsi,rdx
 	mov	rdx,r8
 
 
-	mov	rcx,QWORD PTR[((OPENSSL_ia32cap_P+4))]
+	mov	rcx,QWORD[((OPENSSL_ia32cap_P+4))]
 	bt	rcx,61
-	jc	_shaext_shortcut
+	jc	NEAR _shaext_shortcut
 	test	ecx,268435456
-	jnz	_avx_shortcut
+	jnz	NEAR _avx_shortcut
 	mov	rax,rsp
 	push	rbx
 	push	rbp
-	lea	rsp,QWORD PTR[((-168))+rsp]
-	movaps	XMMWORD PTR[rsp],xmm6
-	movaps	XMMWORD PTR[16+rsp],xmm7
-	movaps	XMMWORD PTR[32+rsp],xmm8
-	movaps	XMMWORD PTR[48+rsp],xmm9
-	movaps	XMMWORD PTR[(-120)+rax],xmm10
-	movaps	XMMWORD PTR[(-104)+rax],xmm11
-	movaps	XMMWORD PTR[(-88)+rax],xmm12
-	movaps	XMMWORD PTR[(-72)+rax],xmm13
-	movaps	XMMWORD PTR[(-56)+rax],xmm14
-	movaps	XMMWORD PTR[(-40)+rax],xmm15
+	lea	rsp,[((-168))+rsp]
+	movaps	XMMWORD[rsp],xmm6
+	movaps	XMMWORD[16+rsp],xmm7
+	movaps	XMMWORD[32+rsp],xmm8
+	movaps	XMMWORD[48+rsp],xmm9
+	movaps	XMMWORD[(-120)+rax],xmm10
+	movaps	XMMWORD[(-104)+rax],xmm11
+	movaps	XMMWORD[(-88)+rax],xmm12
+	movaps	XMMWORD[(-72)+rax],xmm13
+	movaps	XMMWORD[(-56)+rax],xmm14
+	movaps	XMMWORD[(-40)+rax],xmm15
 	sub	rsp,288
 	and	rsp,-256
-	mov	QWORD PTR[272+rsp],rax
-$L$body::
-	lea	rbp,QWORD PTR[((K256+128))]
-	lea	rbx,QWORD PTR[256+rsp]
-	lea	rdi,QWORD PTR[128+rdi]
+	mov	QWORD[272+rsp],rax
+$L$body:
+	lea	rbp,[((K256+128))]
+	lea	rbx,[256+rsp]
+	lea	rdi,[128+rdi]
 
-$L$oop_grande::
-	mov	DWORD PTR[280+rsp],edx
+$L$oop_grande:
+	mov	DWORD[280+rsp],edx
 	xor	edx,edx
-	mov	r8,QWORD PTR[rsi]
-	mov	ecx,DWORD PTR[8+rsi]
+	mov	r8,QWORD[rsi]
+	mov	ecx,DWORD[8+rsi]
 	cmp	ecx,edx
 	cmovg	edx,ecx
 	test	ecx,ecx
-	mov	DWORD PTR[rbx],ecx
+	mov	DWORD[rbx],ecx
 	cmovle	r8,rbp
-	mov	r9,QWORD PTR[16+rsi]
-	mov	ecx,DWORD PTR[24+rsi]
+	mov	r9,QWORD[16+rsi]
+	mov	ecx,DWORD[24+rsi]
 	cmp	ecx,edx
 	cmovg	edx,ecx
 	test	ecx,ecx
-	mov	DWORD PTR[4+rbx],ecx
+	mov	DWORD[4+rbx],ecx
 	cmovle	r9,rbp
-	mov	r10,QWORD PTR[32+rsi]
-	mov	ecx,DWORD PTR[40+rsi]
+	mov	r10,QWORD[32+rsi]
+	mov	ecx,DWORD[40+rsi]
 	cmp	ecx,edx
 	cmovg	edx,ecx
 	test	ecx,ecx
-	mov	DWORD PTR[8+rbx],ecx
+	mov	DWORD[8+rbx],ecx
 	cmovle	r10,rbp
-	mov	r11,QWORD PTR[48+rsi]
-	mov	ecx,DWORD PTR[56+rsi]
+	mov	r11,QWORD[48+rsi]
+	mov	ecx,DWORD[56+rsi]
 	cmp	ecx,edx
 	cmovg	edx,ecx
 	test	ecx,ecx
-	mov	DWORD PTR[12+rbx],ecx
+	mov	DWORD[12+rbx],ecx
 	cmovle	r11,rbp
 	test	edx,edx
-	jz	$L$done
+	jz	NEAR $L$done
 
-	movdqu	xmm8,XMMWORD PTR[((0-128))+rdi]
-	lea	rax,QWORD PTR[128+rsp]
-	movdqu	xmm9,XMMWORD PTR[((32-128))+rdi]
-	movdqu	xmm10,XMMWORD PTR[((64-128))+rdi]
-	movdqu	xmm11,XMMWORD PTR[((96-128))+rdi]
-	movdqu	xmm12,XMMWORD PTR[((128-128))+rdi]
-	movdqu	xmm13,XMMWORD PTR[((160-128))+rdi]
-	movdqu	xmm14,XMMWORD PTR[((192-128))+rdi]
-	movdqu	xmm15,XMMWORD PTR[((224-128))+rdi]
-	movdqu	xmm6,XMMWORD PTR[$L$pbswap]
-	jmp	$L$oop
+	movdqu	xmm8,XMMWORD[((0-128))+rdi]
+	lea	rax,[128+rsp]
+	movdqu	xmm9,XMMWORD[((32-128))+rdi]
+	movdqu	xmm10,XMMWORD[((64-128))+rdi]
+	movdqu	xmm11,XMMWORD[((96-128))+rdi]
+	movdqu	xmm12,XMMWORD[((128-128))+rdi]
+	movdqu	xmm13,XMMWORD[((160-128))+rdi]
+	movdqu	xmm14,XMMWORD[((192-128))+rdi]
+	movdqu	xmm15,XMMWORD[((224-128))+rdi]
+	movdqu	xmm6,XMMWORD[$L$pbswap]
+	jmp	NEAR $L$oop
 
 ALIGN	32
-$L$oop::
+$L$oop:
 	movdqa	xmm4,xmm10
 	pxor	xmm4,xmm9
-	movd	xmm5,DWORD PTR[r8]
-	movd	xmm0,DWORD PTR[r9]
-	movd	xmm1,DWORD PTR[r10]
-	movd	xmm2,DWORD PTR[r11]
+	movd	xmm5,DWORD[r8]
+	movd	xmm0,DWORD[r9]
+	movd	xmm1,DWORD[r10]
+	movd	xmm2,DWORD[r11]
 	punpckldq	xmm5,xmm1
 	punpckldq	xmm0,xmm2
 	punpckldq	xmm5,xmm0
@@ -107,13 +111,13 @@ DB	102,15,56,0,238
 	psrld	xmm7,6
 	movdqa	xmm1,xmm12
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(0-128)+rax],xmm5
+	movdqa	XMMWORD[(0-128)+rax],xmm5
 	paddd	xmm5,xmm15
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[((-128))+rbp]
+	paddd	xmm5,XMMWORD[((-128))+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -158,10 +162,10 @@ DB	102,15,56,0,238
 
 	paddd	xmm15,xmm5
 	paddd	xmm15,xmm7
-	movd	xmm5,DWORD PTR[4+r8]
-	movd	xmm0,DWORD PTR[4+r9]
-	movd	xmm1,DWORD PTR[4+r10]
-	movd	xmm2,DWORD PTR[4+r11]
+	movd	xmm5,DWORD[4+r8]
+	movd	xmm0,DWORD[4+r9]
+	movd	xmm1,DWORD[4+r10]
+	movd	xmm2,DWORD[4+r11]
 	punpckldq	xmm5,xmm1
 	punpckldq	xmm0,xmm2
 	punpckldq	xmm5,xmm0
@@ -172,13 +176,13 @@ DB	102,15,56,0,238
 	psrld	xmm7,6
 	movdqa	xmm1,xmm11
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(16-128)+rax],xmm5
+	movdqa	XMMWORD[(16-128)+rax],xmm5
 	paddd	xmm5,xmm14
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[((-96))+rbp]
+	paddd	xmm5,XMMWORD[((-96))+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -223,10 +227,10 @@ DB	102,15,56,0,238
 
 	paddd	xmm14,xmm5
 	paddd	xmm14,xmm7
-	movd	xmm5,DWORD PTR[8+r8]
-	movd	xmm0,DWORD PTR[8+r9]
-	movd	xmm1,DWORD PTR[8+r10]
-	movd	xmm2,DWORD PTR[8+r11]
+	movd	xmm5,DWORD[8+r8]
+	movd	xmm0,DWORD[8+r9]
+	movd	xmm1,DWORD[8+r10]
+	movd	xmm2,DWORD[8+r11]
 	punpckldq	xmm5,xmm1
 	punpckldq	xmm0,xmm2
 	punpckldq	xmm5,xmm0
@@ -237,13 +241,13 @@ DB	102,15,56,0,238
 	psrld	xmm7,6
 	movdqa	xmm1,xmm10
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(32-128)+rax],xmm5
+	movdqa	XMMWORD[(32-128)+rax],xmm5
 	paddd	xmm5,xmm13
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[((-64))+rbp]
+	paddd	xmm5,XMMWORD[((-64))+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -288,10 +292,10 @@ DB	102,15,56,0,238
 
 	paddd	xmm13,xmm5
 	paddd	xmm13,xmm7
-	movd	xmm5,DWORD PTR[12+r8]
-	movd	xmm0,DWORD PTR[12+r9]
-	movd	xmm1,DWORD PTR[12+r10]
-	movd	xmm2,DWORD PTR[12+r11]
+	movd	xmm5,DWORD[12+r8]
+	movd	xmm0,DWORD[12+r9]
+	movd	xmm1,DWORD[12+r10]
+	movd	xmm2,DWORD[12+r11]
 	punpckldq	xmm5,xmm1
 	punpckldq	xmm0,xmm2
 	punpckldq	xmm5,xmm0
@@ -302,13 +306,13 @@ DB	102,15,56,0,238
 	psrld	xmm7,6
 	movdqa	xmm1,xmm9
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(48-128)+rax],xmm5
+	movdqa	XMMWORD[(48-128)+rax],xmm5
 	paddd	xmm5,xmm12
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[((-32))+rbp]
+	paddd	xmm5,XMMWORD[((-32))+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -353,10 +357,10 @@ DB	102,15,56,0,238
 
 	paddd	xmm12,xmm5
 	paddd	xmm12,xmm7
-	movd	xmm5,DWORD PTR[16+r8]
-	movd	xmm0,DWORD PTR[16+r9]
-	movd	xmm1,DWORD PTR[16+r10]
-	movd	xmm2,DWORD PTR[16+r11]
+	movd	xmm5,DWORD[16+r8]
+	movd	xmm0,DWORD[16+r9]
+	movd	xmm1,DWORD[16+r10]
+	movd	xmm2,DWORD[16+r11]
 	punpckldq	xmm5,xmm1
 	punpckldq	xmm0,xmm2
 	punpckldq	xmm5,xmm0
@@ -367,13 +371,13 @@ DB	102,15,56,0,238
 	psrld	xmm7,6
 	movdqa	xmm1,xmm8
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(64-128)+rax],xmm5
+	movdqa	XMMWORD[(64-128)+rax],xmm5
 	paddd	xmm5,xmm11
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[rbp]
+	paddd	xmm5,XMMWORD[rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -418,10 +422,10 @@ DB	102,15,56,0,238
 
 	paddd	xmm11,xmm5
 	paddd	xmm11,xmm7
-	movd	xmm5,DWORD PTR[20+r8]
-	movd	xmm0,DWORD PTR[20+r9]
-	movd	xmm1,DWORD PTR[20+r10]
-	movd	xmm2,DWORD PTR[20+r11]
+	movd	xmm5,DWORD[20+r8]
+	movd	xmm0,DWORD[20+r9]
+	movd	xmm1,DWORD[20+r10]
+	movd	xmm2,DWORD[20+r11]
 	punpckldq	xmm5,xmm1
 	punpckldq	xmm0,xmm2
 	punpckldq	xmm5,xmm0
@@ -432,13 +436,13 @@ DB	102,15,56,0,238
 	psrld	xmm7,6
 	movdqa	xmm1,xmm15
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(80-128)+rax],xmm5
+	movdqa	XMMWORD[(80-128)+rax],xmm5
 	paddd	xmm5,xmm10
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[32+rbp]
+	paddd	xmm5,XMMWORD[32+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -483,10 +487,10 @@ DB	102,15,56,0,238
 
 	paddd	xmm10,xmm5
 	paddd	xmm10,xmm7
-	movd	xmm5,DWORD PTR[24+r8]
-	movd	xmm0,DWORD PTR[24+r9]
-	movd	xmm1,DWORD PTR[24+r10]
-	movd	xmm2,DWORD PTR[24+r11]
+	movd	xmm5,DWORD[24+r8]
+	movd	xmm0,DWORD[24+r9]
+	movd	xmm1,DWORD[24+r10]
+	movd	xmm2,DWORD[24+r11]
 	punpckldq	xmm5,xmm1
 	punpckldq	xmm0,xmm2
 	punpckldq	xmm5,xmm0
@@ -497,13 +501,13 @@ DB	102,15,56,0,238
 	psrld	xmm7,6
 	movdqa	xmm1,xmm14
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(96-128)+rax],xmm5
+	movdqa	XMMWORD[(96-128)+rax],xmm5
 	paddd	xmm5,xmm9
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[64+rbp]
+	paddd	xmm5,XMMWORD[64+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -548,10 +552,10 @@ DB	102,15,56,0,238
 
 	paddd	xmm9,xmm5
 	paddd	xmm9,xmm7
-	movd	xmm5,DWORD PTR[28+r8]
-	movd	xmm0,DWORD PTR[28+r9]
-	movd	xmm1,DWORD PTR[28+r10]
-	movd	xmm2,DWORD PTR[28+r11]
+	movd	xmm5,DWORD[28+r8]
+	movd	xmm0,DWORD[28+r9]
+	movd	xmm1,DWORD[28+r10]
+	movd	xmm2,DWORD[28+r11]
 	punpckldq	xmm5,xmm1
 	punpckldq	xmm0,xmm2
 	punpckldq	xmm5,xmm0
@@ -562,13 +566,13 @@ DB	102,15,56,0,238
 	psrld	xmm7,6
 	movdqa	xmm1,xmm13
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(112-128)+rax],xmm5
+	movdqa	XMMWORD[(112-128)+rax],xmm5
 	paddd	xmm5,xmm8
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[96+rbp]
+	paddd	xmm5,XMMWORD[96+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -613,11 +617,11 @@ DB	102,15,56,0,238
 
 	paddd	xmm8,xmm5
 	paddd	xmm8,xmm7
-	lea	rbp,QWORD PTR[256+rbp]
-	movd	xmm5,DWORD PTR[32+r8]
-	movd	xmm0,DWORD PTR[32+r9]
-	movd	xmm1,DWORD PTR[32+r10]
-	movd	xmm2,DWORD PTR[32+r11]
+	lea	rbp,[256+rbp]
+	movd	xmm5,DWORD[32+r8]
+	movd	xmm0,DWORD[32+r9]
+	movd	xmm1,DWORD[32+r10]
+	movd	xmm2,DWORD[32+r11]
 	punpckldq	xmm5,xmm1
 	punpckldq	xmm0,xmm2
 	punpckldq	xmm5,xmm0
@@ -628,13 +632,13 @@ DB	102,15,56,0,238
 	psrld	xmm7,6
 	movdqa	xmm1,xmm12
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(128-128)+rax],xmm5
+	movdqa	XMMWORD[(128-128)+rax],xmm5
 	paddd	xmm5,xmm15
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[((-128))+rbp]
+	paddd	xmm5,XMMWORD[((-128))+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -679,10 +683,10 @@ DB	102,15,56,0,238
 
 	paddd	xmm15,xmm5
 	paddd	xmm15,xmm7
-	movd	xmm5,DWORD PTR[36+r8]
-	movd	xmm0,DWORD PTR[36+r9]
-	movd	xmm1,DWORD PTR[36+r10]
-	movd	xmm2,DWORD PTR[36+r11]
+	movd	xmm5,DWORD[36+r8]
+	movd	xmm0,DWORD[36+r9]
+	movd	xmm1,DWORD[36+r10]
+	movd	xmm2,DWORD[36+r11]
 	punpckldq	xmm5,xmm1
 	punpckldq	xmm0,xmm2
 	punpckldq	xmm5,xmm0
@@ -693,13 +697,13 @@ DB	102,15,56,0,238
 	psrld	xmm7,6
 	movdqa	xmm1,xmm11
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(144-128)+rax],xmm5
+	movdqa	XMMWORD[(144-128)+rax],xmm5
 	paddd	xmm5,xmm14
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[((-96))+rbp]
+	paddd	xmm5,XMMWORD[((-96))+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -744,10 +748,10 @@ DB	102,15,56,0,238
 
 	paddd	xmm14,xmm5
 	paddd	xmm14,xmm7
-	movd	xmm5,DWORD PTR[40+r8]
-	movd	xmm0,DWORD PTR[40+r9]
-	movd	xmm1,DWORD PTR[40+r10]
-	movd	xmm2,DWORD PTR[40+r11]
+	movd	xmm5,DWORD[40+r8]
+	movd	xmm0,DWORD[40+r9]
+	movd	xmm1,DWORD[40+r10]
+	movd	xmm2,DWORD[40+r11]
 	punpckldq	xmm5,xmm1
 	punpckldq	xmm0,xmm2
 	punpckldq	xmm5,xmm0
@@ -758,13 +762,13 @@ DB	102,15,56,0,238
 	psrld	xmm7,6
 	movdqa	xmm1,xmm10
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(160-128)+rax],xmm5
+	movdqa	XMMWORD[(160-128)+rax],xmm5
 	paddd	xmm5,xmm13
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[((-64))+rbp]
+	paddd	xmm5,XMMWORD[((-64))+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -809,10 +813,10 @@ DB	102,15,56,0,238
 
 	paddd	xmm13,xmm5
 	paddd	xmm13,xmm7
-	movd	xmm5,DWORD PTR[44+r8]
-	movd	xmm0,DWORD PTR[44+r9]
-	movd	xmm1,DWORD PTR[44+r10]
-	movd	xmm2,DWORD PTR[44+r11]
+	movd	xmm5,DWORD[44+r8]
+	movd	xmm0,DWORD[44+r9]
+	movd	xmm1,DWORD[44+r10]
+	movd	xmm2,DWORD[44+r11]
 	punpckldq	xmm5,xmm1
 	punpckldq	xmm0,xmm2
 	punpckldq	xmm5,xmm0
@@ -823,13 +827,13 @@ DB	102,15,56,0,238
 	psrld	xmm7,6
 	movdqa	xmm1,xmm9
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(176-128)+rax],xmm5
+	movdqa	XMMWORD[(176-128)+rax],xmm5
 	paddd	xmm5,xmm12
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[((-32))+rbp]
+	paddd	xmm5,XMMWORD[((-32))+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -874,10 +878,10 @@ DB	102,15,56,0,238
 
 	paddd	xmm12,xmm5
 	paddd	xmm12,xmm7
-	movd	xmm5,DWORD PTR[48+r8]
-	movd	xmm0,DWORD PTR[48+r9]
-	movd	xmm1,DWORD PTR[48+r10]
-	movd	xmm2,DWORD PTR[48+r11]
+	movd	xmm5,DWORD[48+r8]
+	movd	xmm0,DWORD[48+r9]
+	movd	xmm1,DWORD[48+r10]
+	movd	xmm2,DWORD[48+r11]
 	punpckldq	xmm5,xmm1
 	punpckldq	xmm0,xmm2
 	punpckldq	xmm5,xmm0
@@ -888,13 +892,13 @@ DB	102,15,56,0,238
 	psrld	xmm7,6
 	movdqa	xmm1,xmm8
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(192-128)+rax],xmm5
+	movdqa	XMMWORD[(192-128)+rax],xmm5
 	paddd	xmm5,xmm11
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[rbp]
+	paddd	xmm5,XMMWORD[rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -939,10 +943,10 @@ DB	102,15,56,0,238
 
 	paddd	xmm11,xmm5
 	paddd	xmm11,xmm7
-	movd	xmm5,DWORD PTR[52+r8]
-	movd	xmm0,DWORD PTR[52+r9]
-	movd	xmm1,DWORD PTR[52+r10]
-	movd	xmm2,DWORD PTR[52+r11]
+	movd	xmm5,DWORD[52+r8]
+	movd	xmm0,DWORD[52+r9]
+	movd	xmm1,DWORD[52+r10]
+	movd	xmm2,DWORD[52+r11]
 	punpckldq	xmm5,xmm1
 	punpckldq	xmm0,xmm2
 	punpckldq	xmm5,xmm0
@@ -953,13 +957,13 @@ DB	102,15,56,0,238
 	psrld	xmm7,6
 	movdqa	xmm1,xmm15
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(208-128)+rax],xmm5
+	movdqa	XMMWORD[(208-128)+rax],xmm5
 	paddd	xmm5,xmm10
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[32+rbp]
+	paddd	xmm5,XMMWORD[32+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -1004,10 +1008,10 @@ DB	102,15,56,0,238
 
 	paddd	xmm10,xmm5
 	paddd	xmm10,xmm7
-	movd	xmm5,DWORD PTR[56+r8]
-	movd	xmm0,DWORD PTR[56+r9]
-	movd	xmm1,DWORD PTR[56+r10]
-	movd	xmm2,DWORD PTR[56+r11]
+	movd	xmm5,DWORD[56+r8]
+	movd	xmm0,DWORD[56+r9]
+	movd	xmm1,DWORD[56+r10]
+	movd	xmm2,DWORD[56+r11]
 	punpckldq	xmm5,xmm1
 	punpckldq	xmm0,xmm2
 	punpckldq	xmm5,xmm0
@@ -1018,13 +1022,13 @@ DB	102,15,56,0,238
 	psrld	xmm7,6
 	movdqa	xmm1,xmm14
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(224-128)+rax],xmm5
+	movdqa	XMMWORD[(224-128)+rax],xmm5
 	paddd	xmm5,xmm9
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[64+rbp]
+	paddd	xmm5,XMMWORD[64+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -1069,14 +1073,14 @@ DB	102,15,56,0,238
 
 	paddd	xmm9,xmm5
 	paddd	xmm9,xmm7
-	movd	xmm5,DWORD PTR[60+r8]
-	lea	r8,QWORD PTR[64+r8]
-	movd	xmm0,DWORD PTR[60+r9]
-	lea	r9,QWORD PTR[64+r9]
-	movd	xmm1,DWORD PTR[60+r10]
-	lea	r10,QWORD PTR[64+r10]
-	movd	xmm2,DWORD PTR[60+r11]
-	lea	r11,QWORD PTR[64+r11]
+	movd	xmm5,DWORD[60+r8]
+	lea	r8,[64+r8]
+	movd	xmm0,DWORD[60+r9]
+	lea	r9,[64+r9]
+	movd	xmm1,DWORD[60+r10]
+	lea	r10,[64+r10]
+	movd	xmm2,DWORD[60+r11]
+	lea	r11,[64+r11]
 	punpckldq	xmm5,xmm1
 	punpckldq	xmm0,xmm2
 	punpckldq	xmm5,xmm0
@@ -1087,13 +1091,13 @@ DB	102,15,56,0,238
 	psrld	xmm7,6
 	movdqa	xmm1,xmm13
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(240-128)+rax],xmm5
+	movdqa	XMMWORD[(240-128)+rax],xmm5
 	paddd	xmm5,xmm8
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[96+rbp]
+	paddd	xmm5,XMMWORD[96+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -1138,14 +1142,14 @@ DB	102,15,56,0,238
 
 	paddd	xmm8,xmm5
 	paddd	xmm8,xmm7
-	lea	rbp,QWORD PTR[256+rbp]
-	movdqu	xmm5,XMMWORD PTR[((0-128))+rax]
+	lea	rbp,[256+rbp]
+	movdqu	xmm5,XMMWORD[((0-128))+rax]
 	mov	ecx,3
-	jmp	$L$oop_16_xx
+	jmp	NEAR $L$oop_16_xx
 ALIGN	32
-$L$oop_16_xx::
-	movdqa	xmm6,XMMWORD PTR[((16-128))+rax]
-	paddd	xmm5,XMMWORD PTR[((144-128))+rax]
+$L$oop_16_xx:
+	movdqa	xmm6,XMMWORD[((16-128))+rax]
+	paddd	xmm5,XMMWORD[((144-128))+rax]
 
 	movdqa	xmm7,xmm6
 	movdqa	xmm1,xmm6
@@ -1153,7 +1157,7 @@ $L$oop_16_xx::
 	movdqa	xmm2,xmm6
 
 	psrld	xmm1,7
-	movdqa	xmm0,XMMWORD PTR[((224-128))+rax]
+	movdqa	xmm0,XMMWORD[((224-128))+rax]
 	pslld	xmm2,14
 	pxor	xmm7,xmm1
 	psrld	xmm1,18-7
@@ -1182,13 +1186,13 @@ $L$oop_16_xx::
 	psrld	xmm7,6
 	movdqa	xmm1,xmm12
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(0-128)+rax],xmm5
+	movdqa	XMMWORD[(0-128)+rax],xmm5
 	paddd	xmm5,xmm15
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[((-128))+rbp]
+	paddd	xmm5,XMMWORD[((-128))+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -1233,8 +1237,8 @@ $L$oop_16_xx::
 
 	paddd	xmm15,xmm5
 	paddd	xmm15,xmm7
-	movdqa	xmm5,XMMWORD PTR[((32-128))+rax]
-	paddd	xmm6,XMMWORD PTR[((160-128))+rax]
+	movdqa	xmm5,XMMWORD[((32-128))+rax]
+	paddd	xmm6,XMMWORD[((160-128))+rax]
 
 	movdqa	xmm7,xmm5
 	movdqa	xmm1,xmm5
@@ -1242,7 +1246,7 @@ $L$oop_16_xx::
 	movdqa	xmm2,xmm5
 
 	psrld	xmm1,7
-	movdqa	xmm0,XMMWORD PTR[((240-128))+rax]
+	movdqa	xmm0,XMMWORD[((240-128))+rax]
 	pslld	xmm2,14
 	pxor	xmm7,xmm1
 	psrld	xmm1,18-7
@@ -1271,13 +1275,13 @@ $L$oop_16_xx::
 	psrld	xmm7,6
 	movdqa	xmm1,xmm11
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(16-128)+rax],xmm6
+	movdqa	XMMWORD[(16-128)+rax],xmm6
 	paddd	xmm6,xmm14
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm6,XMMWORD PTR[((-96))+rbp]
+	paddd	xmm6,XMMWORD[((-96))+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -1322,8 +1326,8 @@ $L$oop_16_xx::
 
 	paddd	xmm14,xmm6
 	paddd	xmm14,xmm7
-	movdqa	xmm6,XMMWORD PTR[((48-128))+rax]
-	paddd	xmm5,XMMWORD PTR[((176-128))+rax]
+	movdqa	xmm6,XMMWORD[((48-128))+rax]
+	paddd	xmm5,XMMWORD[((176-128))+rax]
 
 	movdqa	xmm7,xmm6
 	movdqa	xmm1,xmm6
@@ -1331,7 +1335,7 @@ $L$oop_16_xx::
 	movdqa	xmm2,xmm6
 
 	psrld	xmm1,7
-	movdqa	xmm0,XMMWORD PTR[((0-128))+rax]
+	movdqa	xmm0,XMMWORD[((0-128))+rax]
 	pslld	xmm2,14
 	pxor	xmm7,xmm1
 	psrld	xmm1,18-7
@@ -1360,13 +1364,13 @@ $L$oop_16_xx::
 	psrld	xmm7,6
 	movdqa	xmm1,xmm10
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(32-128)+rax],xmm5
+	movdqa	XMMWORD[(32-128)+rax],xmm5
 	paddd	xmm5,xmm13
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[((-64))+rbp]
+	paddd	xmm5,XMMWORD[((-64))+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -1411,8 +1415,8 @@ $L$oop_16_xx::
 
 	paddd	xmm13,xmm5
 	paddd	xmm13,xmm7
-	movdqa	xmm5,XMMWORD PTR[((64-128))+rax]
-	paddd	xmm6,XMMWORD PTR[((192-128))+rax]
+	movdqa	xmm5,XMMWORD[((64-128))+rax]
+	paddd	xmm6,XMMWORD[((192-128))+rax]
 
 	movdqa	xmm7,xmm5
 	movdqa	xmm1,xmm5
@@ -1420,7 +1424,7 @@ $L$oop_16_xx::
 	movdqa	xmm2,xmm5
 
 	psrld	xmm1,7
-	movdqa	xmm0,XMMWORD PTR[((16-128))+rax]
+	movdqa	xmm0,XMMWORD[((16-128))+rax]
 	pslld	xmm2,14
 	pxor	xmm7,xmm1
 	psrld	xmm1,18-7
@@ -1449,13 +1453,13 @@ $L$oop_16_xx::
 	psrld	xmm7,6
 	movdqa	xmm1,xmm9
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(48-128)+rax],xmm6
+	movdqa	XMMWORD[(48-128)+rax],xmm6
 	paddd	xmm6,xmm12
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm6,XMMWORD PTR[((-32))+rbp]
+	paddd	xmm6,XMMWORD[((-32))+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -1500,8 +1504,8 @@ $L$oop_16_xx::
 
 	paddd	xmm12,xmm6
 	paddd	xmm12,xmm7
-	movdqa	xmm6,XMMWORD PTR[((80-128))+rax]
-	paddd	xmm5,XMMWORD PTR[((208-128))+rax]
+	movdqa	xmm6,XMMWORD[((80-128))+rax]
+	paddd	xmm5,XMMWORD[((208-128))+rax]
 
 	movdqa	xmm7,xmm6
 	movdqa	xmm1,xmm6
@@ -1509,7 +1513,7 @@ $L$oop_16_xx::
 	movdqa	xmm2,xmm6
 
 	psrld	xmm1,7
-	movdqa	xmm0,XMMWORD PTR[((32-128))+rax]
+	movdqa	xmm0,XMMWORD[((32-128))+rax]
 	pslld	xmm2,14
 	pxor	xmm7,xmm1
 	psrld	xmm1,18-7
@@ -1538,13 +1542,13 @@ $L$oop_16_xx::
 	psrld	xmm7,6
 	movdqa	xmm1,xmm8
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(64-128)+rax],xmm5
+	movdqa	XMMWORD[(64-128)+rax],xmm5
 	paddd	xmm5,xmm11
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[rbp]
+	paddd	xmm5,XMMWORD[rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -1589,8 +1593,8 @@ $L$oop_16_xx::
 
 	paddd	xmm11,xmm5
 	paddd	xmm11,xmm7
-	movdqa	xmm5,XMMWORD PTR[((96-128))+rax]
-	paddd	xmm6,XMMWORD PTR[((224-128))+rax]
+	movdqa	xmm5,XMMWORD[((96-128))+rax]
+	paddd	xmm6,XMMWORD[((224-128))+rax]
 
 	movdqa	xmm7,xmm5
 	movdqa	xmm1,xmm5
@@ -1598,7 +1602,7 @@ $L$oop_16_xx::
 	movdqa	xmm2,xmm5
 
 	psrld	xmm1,7
-	movdqa	xmm0,XMMWORD PTR[((48-128))+rax]
+	movdqa	xmm0,XMMWORD[((48-128))+rax]
 	pslld	xmm2,14
 	pxor	xmm7,xmm1
 	psrld	xmm1,18-7
@@ -1627,13 +1631,13 @@ $L$oop_16_xx::
 	psrld	xmm7,6
 	movdqa	xmm1,xmm15
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(80-128)+rax],xmm6
+	movdqa	XMMWORD[(80-128)+rax],xmm6
 	paddd	xmm6,xmm10
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm6,XMMWORD PTR[32+rbp]
+	paddd	xmm6,XMMWORD[32+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -1678,8 +1682,8 @@ $L$oop_16_xx::
 
 	paddd	xmm10,xmm6
 	paddd	xmm10,xmm7
-	movdqa	xmm6,XMMWORD PTR[((112-128))+rax]
-	paddd	xmm5,XMMWORD PTR[((240-128))+rax]
+	movdqa	xmm6,XMMWORD[((112-128))+rax]
+	paddd	xmm5,XMMWORD[((240-128))+rax]
 
 	movdqa	xmm7,xmm6
 	movdqa	xmm1,xmm6
@@ -1687,7 +1691,7 @@ $L$oop_16_xx::
 	movdqa	xmm2,xmm6
 
 	psrld	xmm1,7
-	movdqa	xmm0,XMMWORD PTR[((64-128))+rax]
+	movdqa	xmm0,XMMWORD[((64-128))+rax]
 	pslld	xmm2,14
 	pxor	xmm7,xmm1
 	psrld	xmm1,18-7
@@ -1716,13 +1720,13 @@ $L$oop_16_xx::
 	psrld	xmm7,6
 	movdqa	xmm1,xmm14
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(96-128)+rax],xmm5
+	movdqa	XMMWORD[(96-128)+rax],xmm5
 	paddd	xmm5,xmm9
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[64+rbp]
+	paddd	xmm5,XMMWORD[64+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -1767,8 +1771,8 @@ $L$oop_16_xx::
 
 	paddd	xmm9,xmm5
 	paddd	xmm9,xmm7
-	movdqa	xmm5,XMMWORD PTR[((128-128))+rax]
-	paddd	xmm6,XMMWORD PTR[((0-128))+rax]
+	movdqa	xmm5,XMMWORD[((128-128))+rax]
+	paddd	xmm6,XMMWORD[((0-128))+rax]
 
 	movdqa	xmm7,xmm5
 	movdqa	xmm1,xmm5
@@ -1776,7 +1780,7 @@ $L$oop_16_xx::
 	movdqa	xmm2,xmm5
 
 	psrld	xmm1,7
-	movdqa	xmm0,XMMWORD PTR[((80-128))+rax]
+	movdqa	xmm0,XMMWORD[((80-128))+rax]
 	pslld	xmm2,14
 	pxor	xmm7,xmm1
 	psrld	xmm1,18-7
@@ -1805,13 +1809,13 @@ $L$oop_16_xx::
 	psrld	xmm7,6
 	movdqa	xmm1,xmm13
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(112-128)+rax],xmm6
+	movdqa	XMMWORD[(112-128)+rax],xmm6
 	paddd	xmm6,xmm8
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm6,XMMWORD PTR[96+rbp]
+	paddd	xmm6,XMMWORD[96+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -1856,9 +1860,9 @@ $L$oop_16_xx::
 
 	paddd	xmm8,xmm6
 	paddd	xmm8,xmm7
-	lea	rbp,QWORD PTR[256+rbp]
-	movdqa	xmm6,XMMWORD PTR[((144-128))+rax]
-	paddd	xmm5,XMMWORD PTR[((16-128))+rax]
+	lea	rbp,[256+rbp]
+	movdqa	xmm6,XMMWORD[((144-128))+rax]
+	paddd	xmm5,XMMWORD[((16-128))+rax]
 
 	movdqa	xmm7,xmm6
 	movdqa	xmm1,xmm6
@@ -1866,7 +1870,7 @@ $L$oop_16_xx::
 	movdqa	xmm2,xmm6
 
 	psrld	xmm1,7
-	movdqa	xmm0,XMMWORD PTR[((96-128))+rax]
+	movdqa	xmm0,XMMWORD[((96-128))+rax]
 	pslld	xmm2,14
 	pxor	xmm7,xmm1
 	psrld	xmm1,18-7
@@ -1895,13 +1899,13 @@ $L$oop_16_xx::
 	psrld	xmm7,6
 	movdqa	xmm1,xmm12
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(128-128)+rax],xmm5
+	movdqa	XMMWORD[(128-128)+rax],xmm5
 	paddd	xmm5,xmm15
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[((-128))+rbp]
+	paddd	xmm5,XMMWORD[((-128))+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -1946,8 +1950,8 @@ $L$oop_16_xx::
 
 	paddd	xmm15,xmm5
 	paddd	xmm15,xmm7
-	movdqa	xmm5,XMMWORD PTR[((160-128))+rax]
-	paddd	xmm6,XMMWORD PTR[((32-128))+rax]
+	movdqa	xmm5,XMMWORD[((160-128))+rax]
+	paddd	xmm6,XMMWORD[((32-128))+rax]
 
 	movdqa	xmm7,xmm5
 	movdqa	xmm1,xmm5
@@ -1955,7 +1959,7 @@ $L$oop_16_xx::
 	movdqa	xmm2,xmm5
 
 	psrld	xmm1,7
-	movdqa	xmm0,XMMWORD PTR[((112-128))+rax]
+	movdqa	xmm0,XMMWORD[((112-128))+rax]
 	pslld	xmm2,14
 	pxor	xmm7,xmm1
 	psrld	xmm1,18-7
@@ -1984,13 +1988,13 @@ $L$oop_16_xx::
 	psrld	xmm7,6
 	movdqa	xmm1,xmm11
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(144-128)+rax],xmm6
+	movdqa	XMMWORD[(144-128)+rax],xmm6
 	paddd	xmm6,xmm14
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm6,XMMWORD PTR[((-96))+rbp]
+	paddd	xmm6,XMMWORD[((-96))+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -2035,8 +2039,8 @@ $L$oop_16_xx::
 
 	paddd	xmm14,xmm6
 	paddd	xmm14,xmm7
-	movdqa	xmm6,XMMWORD PTR[((176-128))+rax]
-	paddd	xmm5,XMMWORD PTR[((48-128))+rax]
+	movdqa	xmm6,XMMWORD[((176-128))+rax]
+	paddd	xmm5,XMMWORD[((48-128))+rax]
 
 	movdqa	xmm7,xmm6
 	movdqa	xmm1,xmm6
@@ -2044,7 +2048,7 @@ $L$oop_16_xx::
 	movdqa	xmm2,xmm6
 
 	psrld	xmm1,7
-	movdqa	xmm0,XMMWORD PTR[((128-128))+rax]
+	movdqa	xmm0,XMMWORD[((128-128))+rax]
 	pslld	xmm2,14
 	pxor	xmm7,xmm1
 	psrld	xmm1,18-7
@@ -2073,13 +2077,13 @@ $L$oop_16_xx::
 	psrld	xmm7,6
 	movdqa	xmm1,xmm10
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(160-128)+rax],xmm5
+	movdqa	XMMWORD[(160-128)+rax],xmm5
 	paddd	xmm5,xmm13
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[((-64))+rbp]
+	paddd	xmm5,XMMWORD[((-64))+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -2124,8 +2128,8 @@ $L$oop_16_xx::
 
 	paddd	xmm13,xmm5
 	paddd	xmm13,xmm7
-	movdqa	xmm5,XMMWORD PTR[((192-128))+rax]
-	paddd	xmm6,XMMWORD PTR[((64-128))+rax]
+	movdqa	xmm5,XMMWORD[((192-128))+rax]
+	paddd	xmm6,XMMWORD[((64-128))+rax]
 
 	movdqa	xmm7,xmm5
 	movdqa	xmm1,xmm5
@@ -2133,7 +2137,7 @@ $L$oop_16_xx::
 	movdqa	xmm2,xmm5
 
 	psrld	xmm1,7
-	movdqa	xmm0,XMMWORD PTR[((144-128))+rax]
+	movdqa	xmm0,XMMWORD[((144-128))+rax]
 	pslld	xmm2,14
 	pxor	xmm7,xmm1
 	psrld	xmm1,18-7
@@ -2162,13 +2166,13 @@ $L$oop_16_xx::
 	psrld	xmm7,6
 	movdqa	xmm1,xmm9
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(176-128)+rax],xmm6
+	movdqa	XMMWORD[(176-128)+rax],xmm6
 	paddd	xmm6,xmm12
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm6,XMMWORD PTR[((-32))+rbp]
+	paddd	xmm6,XMMWORD[((-32))+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -2213,8 +2217,8 @@ $L$oop_16_xx::
 
 	paddd	xmm12,xmm6
 	paddd	xmm12,xmm7
-	movdqa	xmm6,XMMWORD PTR[((208-128))+rax]
-	paddd	xmm5,XMMWORD PTR[((80-128))+rax]
+	movdqa	xmm6,XMMWORD[((208-128))+rax]
+	paddd	xmm5,XMMWORD[((80-128))+rax]
 
 	movdqa	xmm7,xmm6
 	movdqa	xmm1,xmm6
@@ -2222,7 +2226,7 @@ $L$oop_16_xx::
 	movdqa	xmm2,xmm6
 
 	psrld	xmm1,7
-	movdqa	xmm0,XMMWORD PTR[((160-128))+rax]
+	movdqa	xmm0,XMMWORD[((160-128))+rax]
 	pslld	xmm2,14
 	pxor	xmm7,xmm1
 	psrld	xmm1,18-7
@@ -2251,13 +2255,13 @@ $L$oop_16_xx::
 	psrld	xmm7,6
 	movdqa	xmm1,xmm8
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(192-128)+rax],xmm5
+	movdqa	XMMWORD[(192-128)+rax],xmm5
 	paddd	xmm5,xmm11
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[rbp]
+	paddd	xmm5,XMMWORD[rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -2302,8 +2306,8 @@ $L$oop_16_xx::
 
 	paddd	xmm11,xmm5
 	paddd	xmm11,xmm7
-	movdqa	xmm5,XMMWORD PTR[((224-128))+rax]
-	paddd	xmm6,XMMWORD PTR[((96-128))+rax]
+	movdqa	xmm5,XMMWORD[((224-128))+rax]
+	paddd	xmm6,XMMWORD[((96-128))+rax]
 
 	movdqa	xmm7,xmm5
 	movdqa	xmm1,xmm5
@@ -2311,7 +2315,7 @@ $L$oop_16_xx::
 	movdqa	xmm2,xmm5
 
 	psrld	xmm1,7
-	movdqa	xmm0,XMMWORD PTR[((176-128))+rax]
+	movdqa	xmm0,XMMWORD[((176-128))+rax]
 	pslld	xmm2,14
 	pxor	xmm7,xmm1
 	psrld	xmm1,18-7
@@ -2340,13 +2344,13 @@ $L$oop_16_xx::
 	psrld	xmm7,6
 	movdqa	xmm1,xmm15
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(208-128)+rax],xmm6
+	movdqa	XMMWORD[(208-128)+rax],xmm6
 	paddd	xmm6,xmm10
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm6,XMMWORD PTR[32+rbp]
+	paddd	xmm6,XMMWORD[32+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -2391,8 +2395,8 @@ $L$oop_16_xx::
 
 	paddd	xmm10,xmm6
 	paddd	xmm10,xmm7
-	movdqa	xmm6,XMMWORD PTR[((240-128))+rax]
-	paddd	xmm5,XMMWORD PTR[((112-128))+rax]
+	movdqa	xmm6,XMMWORD[((240-128))+rax]
+	paddd	xmm5,XMMWORD[((112-128))+rax]
 
 	movdqa	xmm7,xmm6
 	movdqa	xmm1,xmm6
@@ -2400,7 +2404,7 @@ $L$oop_16_xx::
 	movdqa	xmm2,xmm6
 
 	psrld	xmm1,7
-	movdqa	xmm0,XMMWORD PTR[((192-128))+rax]
+	movdqa	xmm0,XMMWORD[((192-128))+rax]
 	pslld	xmm2,14
 	pxor	xmm7,xmm1
 	psrld	xmm1,18-7
@@ -2429,13 +2433,13 @@ $L$oop_16_xx::
 	psrld	xmm7,6
 	movdqa	xmm1,xmm14
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(224-128)+rax],xmm5
+	movdqa	XMMWORD[(224-128)+rax],xmm5
 	paddd	xmm5,xmm9
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm5,XMMWORD PTR[64+rbp]
+	paddd	xmm5,XMMWORD[64+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -2480,8 +2484,8 @@ $L$oop_16_xx::
 
 	paddd	xmm9,xmm5
 	paddd	xmm9,xmm7
-	movdqa	xmm5,XMMWORD PTR[((0-128))+rax]
-	paddd	xmm6,XMMWORD PTR[((128-128))+rax]
+	movdqa	xmm5,XMMWORD[((0-128))+rax]
+	paddd	xmm6,XMMWORD[((128-128))+rax]
 
 	movdqa	xmm7,xmm5
 	movdqa	xmm1,xmm5
@@ -2489,7 +2493,7 @@ $L$oop_16_xx::
 	movdqa	xmm2,xmm5
 
 	psrld	xmm1,7
-	movdqa	xmm0,XMMWORD PTR[((208-128))+rax]
+	movdqa	xmm0,XMMWORD[((208-128))+rax]
 	pslld	xmm2,14
 	pxor	xmm7,xmm1
 	psrld	xmm1,18-7
@@ -2518,13 +2522,13 @@ $L$oop_16_xx::
 	psrld	xmm7,6
 	movdqa	xmm1,xmm13
 	pslld	xmm2,7
-	movdqa	XMMWORD PTR[(240-128)+rax],xmm6
+	movdqa	XMMWORD[(240-128)+rax],xmm6
 	paddd	xmm6,xmm8
 
 	psrld	xmm1,11
 	pxor	xmm7,xmm2
 	pslld	xmm2,21-7
-	paddd	xmm6,XMMWORD PTR[96+rbp]
+	paddd	xmm6,XMMWORD[96+rbp]
 	pxor	xmm7,xmm1
 
 	psrld	xmm1,25-11
@@ -2569,162 +2573,161 @@ $L$oop_16_xx::
 
 	paddd	xmm8,xmm6
 	paddd	xmm8,xmm7
-	lea	rbp,QWORD PTR[256+rbp]
+	lea	rbp,[256+rbp]
 	dec	ecx
-	jnz	$L$oop_16_xx
+	jnz	NEAR $L$oop_16_xx
 
 	mov	ecx,1
-	lea	rbp,QWORD PTR[((K256+128))]
+	lea	rbp,[((K256+128))]
 
-	movdqa	xmm7,XMMWORD PTR[rbx]
-	cmp	ecx,DWORD PTR[rbx]
+	movdqa	xmm7,XMMWORD[rbx]
+	cmp	ecx,DWORD[rbx]
 	pxor	xmm0,xmm0
 	cmovge	r8,rbp
-	cmp	ecx,DWORD PTR[4+rbx]
+	cmp	ecx,DWORD[4+rbx]
 	movdqa	xmm6,xmm7
 	cmovge	r9,rbp
-	cmp	ecx,DWORD PTR[8+rbx]
+	cmp	ecx,DWORD[8+rbx]
 	pcmpgtd	xmm6,xmm0
 	cmovge	r10,rbp
-	cmp	ecx,DWORD PTR[12+rbx]
+	cmp	ecx,DWORD[12+rbx]
 	paddd	xmm7,xmm6
 	cmovge	r11,rbp
 
-	movdqu	xmm0,XMMWORD PTR[((0-128))+rdi]
+	movdqu	xmm0,XMMWORD[((0-128))+rdi]
 	pand	xmm8,xmm6
-	movdqu	xmm1,XMMWORD PTR[((32-128))+rdi]
+	movdqu	xmm1,XMMWORD[((32-128))+rdi]
 	pand	xmm9,xmm6
-	movdqu	xmm2,XMMWORD PTR[((64-128))+rdi]
+	movdqu	xmm2,XMMWORD[((64-128))+rdi]
 	pand	xmm10,xmm6
-	movdqu	xmm5,XMMWORD PTR[((96-128))+rdi]
+	movdqu	xmm5,XMMWORD[((96-128))+rdi]
 	pand	xmm11,xmm6
 	paddd	xmm8,xmm0
-	movdqu	xmm0,XMMWORD PTR[((128-128))+rdi]
+	movdqu	xmm0,XMMWORD[((128-128))+rdi]
 	pand	xmm12,xmm6
 	paddd	xmm9,xmm1
-	movdqu	xmm1,XMMWORD PTR[((160-128))+rdi]
+	movdqu	xmm1,XMMWORD[((160-128))+rdi]
 	pand	xmm13,xmm6
 	paddd	xmm10,xmm2
-	movdqu	xmm2,XMMWORD PTR[((192-128))+rdi]
+	movdqu	xmm2,XMMWORD[((192-128))+rdi]
 	pand	xmm14,xmm6
 	paddd	xmm11,xmm5
-	movdqu	xmm5,XMMWORD PTR[((224-128))+rdi]
+	movdqu	xmm5,XMMWORD[((224-128))+rdi]
 	pand	xmm15,xmm6
 	paddd	xmm12,xmm0
 	paddd	xmm13,xmm1
-	movdqu	XMMWORD PTR[(0-128)+rdi],xmm8
+	movdqu	XMMWORD[(0-128)+rdi],xmm8
 	paddd	xmm14,xmm2
-	movdqu	XMMWORD PTR[(32-128)+rdi],xmm9
+	movdqu	XMMWORD[(32-128)+rdi],xmm9
 	paddd	xmm15,xmm5
-	movdqu	XMMWORD PTR[(64-128)+rdi],xmm10
-	movdqu	XMMWORD PTR[(96-128)+rdi],xmm11
-	movdqu	XMMWORD PTR[(128-128)+rdi],xmm12
-	movdqu	XMMWORD PTR[(160-128)+rdi],xmm13
-	movdqu	XMMWORD PTR[(192-128)+rdi],xmm14
-	movdqu	XMMWORD PTR[(224-128)+rdi],xmm15
+	movdqu	XMMWORD[(64-128)+rdi],xmm10
+	movdqu	XMMWORD[(96-128)+rdi],xmm11
+	movdqu	XMMWORD[(128-128)+rdi],xmm12
+	movdqu	XMMWORD[(160-128)+rdi],xmm13
+	movdqu	XMMWORD[(192-128)+rdi],xmm14
+	movdqu	XMMWORD[(224-128)+rdi],xmm15
 
-	movdqa	XMMWORD PTR[rbx],xmm7
-	movdqa	xmm6,XMMWORD PTR[$L$pbswap]
+	movdqa	XMMWORD[rbx],xmm7
+	movdqa	xmm6,XMMWORD[$L$pbswap]
 	dec	edx
-	jnz	$L$oop
+	jnz	NEAR $L$oop
 
-	mov	edx,DWORD PTR[280+rsp]
-	lea	rdi,QWORD PTR[16+rdi]
-	lea	rsi,QWORD PTR[64+rsi]
+	mov	edx,DWORD[280+rsp]
+	lea	rdi,[16+rdi]
+	lea	rsi,[64+rsi]
 	dec	edx
-	jnz	$L$oop_grande
+	jnz	NEAR $L$oop_grande
 
-$L$done::
-	mov	rax,QWORD PTR[272+rsp]
-	movaps	xmm6,XMMWORD PTR[((-184))+rax]
-	movaps	xmm7,XMMWORD PTR[((-168))+rax]
-	movaps	xmm8,XMMWORD PTR[((-152))+rax]
-	movaps	xmm9,XMMWORD PTR[((-136))+rax]
-	movaps	xmm10,XMMWORD PTR[((-120))+rax]
-	movaps	xmm11,XMMWORD PTR[((-104))+rax]
-	movaps	xmm12,XMMWORD PTR[((-88))+rax]
-	movaps	xmm13,XMMWORD PTR[((-72))+rax]
-	movaps	xmm14,XMMWORD PTR[((-56))+rax]
-	movaps	xmm15,XMMWORD PTR[((-40))+rax]
-	mov	rbp,QWORD PTR[((-16))+rax]
-	mov	rbx,QWORD PTR[((-8))+rax]
-	lea	rsp,QWORD PTR[rax]
-$L$epilogue::
-	mov	rdi,QWORD PTR[8+rsp]	;WIN64 epilogue
-	mov	rsi,QWORD PTR[16+rsp]
+$L$done:
+	mov	rax,QWORD[272+rsp]
+	movaps	xmm6,XMMWORD[((-184))+rax]
+	movaps	xmm7,XMMWORD[((-168))+rax]
+	movaps	xmm8,XMMWORD[((-152))+rax]
+	movaps	xmm9,XMMWORD[((-136))+rax]
+	movaps	xmm10,XMMWORD[((-120))+rax]
+	movaps	xmm11,XMMWORD[((-104))+rax]
+	movaps	xmm12,XMMWORD[((-88))+rax]
+	movaps	xmm13,XMMWORD[((-72))+rax]
+	movaps	xmm14,XMMWORD[((-56))+rax]
+	movaps	xmm15,XMMWORD[((-40))+rax]
+	mov	rbp,QWORD[((-16))+rax]
+	mov	rbx,QWORD[((-8))+rax]
+	lea	rsp,[rax]
+$L$epilogue:
+	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
+	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
-$L$SEH_end_sha256_multi_block::
-sha256_multi_block	ENDP
+$L$SEH_end_sha256_multi_block:
 
 ALIGN	32
-sha256_multi_block_shaext	PROC PRIVATE
-	mov	QWORD PTR[8+rsp],rdi	;WIN64 prologue
-	mov	QWORD PTR[16+rsp],rsi
+sha256_multi_block_shaext:
+	mov	QWORD[8+rsp],rdi	;WIN64 prologue
+	mov	QWORD[16+rsp],rsi
 	mov	rax,rsp
-$L$SEH_begin_sha256_multi_block_shaext::
+$L$SEH_begin_sha256_multi_block_shaext:
 	mov	rdi,rcx
 	mov	rsi,rdx
 	mov	rdx,r8
 
 
-_shaext_shortcut::
+_shaext_shortcut:
 	mov	rax,rsp
 	push	rbx
 	push	rbp
-	lea	rsp,QWORD PTR[((-168))+rsp]
-	movaps	XMMWORD PTR[rsp],xmm6
-	movaps	XMMWORD PTR[16+rsp],xmm7
-	movaps	XMMWORD PTR[32+rsp],xmm8
-	movaps	XMMWORD PTR[48+rsp],xmm9
-	movaps	XMMWORD PTR[(-120)+rax],xmm10
-	movaps	XMMWORD PTR[(-104)+rax],xmm11
-	movaps	XMMWORD PTR[(-88)+rax],xmm12
-	movaps	XMMWORD PTR[(-72)+rax],xmm13
-	movaps	XMMWORD PTR[(-56)+rax],xmm14
-	movaps	XMMWORD PTR[(-40)+rax],xmm15
+	lea	rsp,[((-168))+rsp]
+	movaps	XMMWORD[rsp],xmm6
+	movaps	XMMWORD[16+rsp],xmm7
+	movaps	XMMWORD[32+rsp],xmm8
+	movaps	XMMWORD[48+rsp],xmm9
+	movaps	XMMWORD[(-120)+rax],xmm10
+	movaps	XMMWORD[(-104)+rax],xmm11
+	movaps	XMMWORD[(-88)+rax],xmm12
+	movaps	XMMWORD[(-72)+rax],xmm13
+	movaps	XMMWORD[(-56)+rax],xmm14
+	movaps	XMMWORD[(-40)+rax],xmm15
 	sub	rsp,288
 	shl	edx,1
 	and	rsp,-256
-	lea	rdi,QWORD PTR[128+rdi]
-	mov	QWORD PTR[272+rsp],rax
-$L$body_shaext::
-	lea	rbx,QWORD PTR[256+rsp]
-	lea	rbp,QWORD PTR[((K256_shaext+128))]
+	lea	rdi,[128+rdi]
+	mov	QWORD[272+rsp],rax
+$L$body_shaext:
+	lea	rbx,[256+rsp]
+	lea	rbp,[((K256_shaext+128))]
 
-$L$oop_grande_shaext::
-	mov	DWORD PTR[280+rsp],edx
+$L$oop_grande_shaext:
+	mov	DWORD[280+rsp],edx
 	xor	edx,edx
-	mov	r8,QWORD PTR[rsi]
-	mov	ecx,DWORD PTR[8+rsi]
+	mov	r8,QWORD[rsi]
+	mov	ecx,DWORD[8+rsi]
 	cmp	ecx,edx
 	cmovg	edx,ecx
 	test	ecx,ecx
-	mov	DWORD PTR[rbx],ecx
+	mov	DWORD[rbx],ecx
 	cmovle	r8,rsp
-	mov	r9,QWORD PTR[16+rsi]
-	mov	ecx,DWORD PTR[24+rsi]
+	mov	r9,QWORD[16+rsi]
+	mov	ecx,DWORD[24+rsi]
 	cmp	ecx,edx
 	cmovg	edx,ecx
 	test	ecx,ecx
-	mov	DWORD PTR[4+rbx],ecx
+	mov	DWORD[4+rbx],ecx
 	cmovle	r9,rsp
 	test	edx,edx
-	jz	$L$done_shaext
+	jz	NEAR $L$done_shaext
 
-	movq	xmm12,QWORD PTR[((0-128))+rdi]
-	movq	xmm4,QWORD PTR[((32-128))+rdi]
-	movq	xmm13,QWORD PTR[((64-128))+rdi]
-	movq	xmm5,QWORD PTR[((96-128))+rdi]
-	movq	xmm8,QWORD PTR[((128-128))+rdi]
-	movq	xmm9,QWORD PTR[((160-128))+rdi]
-	movq	xmm10,QWORD PTR[((192-128))+rdi]
-	movq	xmm11,QWORD PTR[((224-128))+rdi]
+	movq	xmm12,QWORD[((0-128))+rdi]
+	movq	xmm4,QWORD[((32-128))+rdi]
+	movq	xmm13,QWORD[((64-128))+rdi]
+	movq	xmm5,QWORD[((96-128))+rdi]
+	movq	xmm8,QWORD[((128-128))+rdi]
+	movq	xmm9,QWORD[((160-128))+rdi]
+	movq	xmm10,QWORD[((192-128))+rdi]
+	movq	xmm11,QWORD[((224-128))+rdi]
 
 	punpckldq	xmm12,xmm4
 	punpckldq	xmm13,xmm5
 	punpckldq	xmm8,xmm9
 	punpckldq	xmm10,xmm11
-	movdqa	xmm3,XMMWORD PTR[((K256_shaext-16))]
+	movdqa	xmm3,XMMWORD[((K256_shaext-16))]
 
 	movdqa	xmm14,xmm12
 	movdqa	xmm15,xmm13
@@ -2737,51 +2740,51 @@ $L$oop_grande_shaext::
 	pshufd	xmm13,xmm13,27
 	pshufd	xmm14,xmm14,27
 	pshufd	xmm15,xmm15,27
-	jmp	$L$oop_shaext
+	jmp	NEAR $L$oop_shaext
 
 ALIGN	32
-$L$oop_shaext::
-	movdqu	xmm4,XMMWORD PTR[r8]
-	movdqu	xmm8,XMMWORD PTR[r9]
-	movdqu	xmm5,XMMWORD PTR[16+r8]
-	movdqu	xmm9,XMMWORD PTR[16+r9]
-	movdqu	xmm6,XMMWORD PTR[32+r8]
+$L$oop_shaext:
+	movdqu	xmm4,XMMWORD[r8]
+	movdqu	xmm8,XMMWORD[r9]
+	movdqu	xmm5,XMMWORD[16+r8]
+	movdqu	xmm9,XMMWORD[16+r9]
+	movdqu	xmm6,XMMWORD[32+r8]
 DB	102,15,56,0,227
-	movdqu	xmm10,XMMWORD PTR[32+r9]
+	movdqu	xmm10,XMMWORD[32+r9]
 DB	102,68,15,56,0,195
-	movdqu	xmm7,XMMWORD PTR[48+r8]
-	lea	r8,QWORD PTR[64+r8]
-	movdqu	xmm11,XMMWORD PTR[48+r9]
-	lea	r9,QWORD PTR[64+r9]
+	movdqu	xmm7,XMMWORD[48+r8]
+	lea	r8,[64+r8]
+	movdqu	xmm11,XMMWORD[48+r9]
+	lea	r9,[64+r9]
 
-	movdqa	xmm0,XMMWORD PTR[((0-128))+rbp]
+	movdqa	xmm0,XMMWORD[((0-128))+rbp]
 DB	102,15,56,0,235
 	paddd	xmm0,xmm4
 	pxor	xmm4,xmm12
 	movdqa	xmm1,xmm0
-	movdqa	xmm2,XMMWORD PTR[((0-128))+rbp]
+	movdqa	xmm2,XMMWORD[((0-128))+rbp]
 DB	102,68,15,56,0,203
 	paddd	xmm2,xmm8
-	movdqa	XMMWORD PTR[80+rsp],xmm13
+	movdqa	XMMWORD[80+rsp],xmm13
 DB	69,15,56,203,236
 	pxor	xmm8,xmm14
 	movdqa	xmm0,xmm2
-	movdqa	XMMWORD PTR[112+rsp],xmm15
+	movdqa	XMMWORD[112+rsp],xmm15
 DB	69,15,56,203,254
-	pshufd	xmm0,xmm1,00eh
+	pshufd	xmm0,xmm1,0x0e
 	pxor	xmm4,xmm12
-	movdqa	XMMWORD PTR[64+rsp],xmm12
+	movdqa	XMMWORD[64+rsp],xmm12
 DB	69,15,56,203,229
-	pshufd	xmm0,xmm2,00eh
+	pshufd	xmm0,xmm2,0x0e
 	pxor	xmm8,xmm14
-	movdqa	XMMWORD PTR[96+rsp],xmm14
-	movdqa	xmm1,XMMWORD PTR[((16-128))+rbp]
+	movdqa	XMMWORD[96+rsp],xmm14
+	movdqa	xmm1,XMMWORD[((16-128))+rbp]
 	paddd	xmm1,xmm5
 DB	102,15,56,0,243
 DB	69,15,56,203,247
 
 	movdqa	xmm0,xmm1
-	movdqa	xmm2,XMMWORD PTR[((16-128))+rbp]
+	movdqa	xmm2,XMMWORD[((16-128))+rbp]
 	paddd	xmm2,xmm9
 DB	69,15,56,203,236
 	movdqa	xmm0,xmm2
@@ -2790,38 +2793,38 @@ DB	102,15,56,0,251
 DB	102,68,15,56,0,211
 	prefetcht0	[127+r9]
 DB	69,15,56,203,254
-	pshufd	xmm0,xmm1,00eh
+	pshufd	xmm0,xmm1,0x0e
 DB	102,68,15,56,0,219
 DB	15,56,204,229
 DB	69,15,56,203,229
-	pshufd	xmm0,xmm2,00eh
-	movdqa	xmm1,XMMWORD PTR[((32-128))+rbp]
+	pshufd	xmm0,xmm2,0x0e
+	movdqa	xmm1,XMMWORD[((32-128))+rbp]
 	paddd	xmm1,xmm6
 DB	69,15,56,203,247
 
 	movdqa	xmm0,xmm1
-	movdqa	xmm2,XMMWORD PTR[((32-128))+rbp]
+	movdqa	xmm2,XMMWORD[((32-128))+rbp]
 	paddd	xmm2,xmm10
 DB	69,15,56,203,236
 DB	69,15,56,204,193
 	movdqa	xmm0,xmm2
 	movdqa	xmm3,xmm7
 DB	69,15,56,203,254
-	pshufd	xmm0,xmm1,00eh
+	pshufd	xmm0,xmm1,0x0e
 DB	102,15,58,15,222,4
 	paddd	xmm4,xmm3
 	movdqa	xmm3,xmm11
 DB	102,65,15,58,15,218,4
 DB	15,56,204,238
 DB	69,15,56,203,229
-	pshufd	xmm0,xmm2,00eh
-	movdqa	xmm1,XMMWORD PTR[((48-128))+rbp]
+	pshufd	xmm0,xmm2,0x0e
+	movdqa	xmm1,XMMWORD[((48-128))+rbp]
 	paddd	xmm1,xmm7
 DB	69,15,56,203,247
 DB	69,15,56,204,202
 
 	movdqa	xmm0,xmm1
-	movdqa	xmm2,XMMWORD PTR[((48-128))+rbp]
+	movdqa	xmm2,XMMWORD[((48-128))+rbp]
 	paddd	xmm8,xmm3
 	paddd	xmm2,xmm11
 DB	15,56,205,231
@@ -2831,19 +2834,19 @@ DB	69,15,56,203,236
 DB	102,15,58,15,223,4
 DB	69,15,56,203,254
 DB	69,15,56,205,195
-	pshufd	xmm0,xmm1,00eh
+	pshufd	xmm0,xmm1,0x0e
 	paddd	xmm5,xmm3
 	movdqa	xmm3,xmm8
 DB	102,65,15,58,15,219,4
 DB	15,56,204,247
 DB	69,15,56,203,229
-	pshufd	xmm0,xmm2,00eh
-	movdqa	xmm1,XMMWORD PTR[((64-128))+rbp]
+	pshufd	xmm0,xmm2,0x0e
+	movdqa	xmm1,XMMWORD[((64-128))+rbp]
 	paddd	xmm1,xmm4
 DB	69,15,56,203,247
 DB	69,15,56,204,211
 	movdqa	xmm0,xmm1
-	movdqa	xmm2,XMMWORD PTR[((64-128))+rbp]
+	movdqa	xmm2,XMMWORD[((64-128))+rbp]
 	paddd	xmm9,xmm3
 	paddd	xmm2,xmm8
 DB	15,56,205,236
@@ -2853,19 +2856,19 @@ DB	69,15,56,203,236
 DB	102,15,58,15,220,4
 DB	69,15,56,203,254
 DB	69,15,56,205,200
-	pshufd	xmm0,xmm1,00eh
+	pshufd	xmm0,xmm1,0x0e
 	paddd	xmm6,xmm3
 	movdqa	xmm3,xmm9
 DB	102,65,15,58,15,216,4
 DB	15,56,204,252
 DB	69,15,56,203,229
-	pshufd	xmm0,xmm2,00eh
-	movdqa	xmm1,XMMWORD PTR[((80-128))+rbp]
+	pshufd	xmm0,xmm2,0x0e
+	movdqa	xmm1,XMMWORD[((80-128))+rbp]
 	paddd	xmm1,xmm5
 DB	69,15,56,203,247
 DB	69,15,56,204,216
 	movdqa	xmm0,xmm1
-	movdqa	xmm2,XMMWORD PTR[((80-128))+rbp]
+	movdqa	xmm2,XMMWORD[((80-128))+rbp]
 	paddd	xmm10,xmm3
 	paddd	xmm2,xmm9
 DB	15,56,205,245
@@ -2875,19 +2878,19 @@ DB	69,15,56,203,236
 DB	102,15,58,15,221,4
 DB	69,15,56,203,254
 DB	69,15,56,205,209
-	pshufd	xmm0,xmm1,00eh
+	pshufd	xmm0,xmm1,0x0e
 	paddd	xmm7,xmm3
 	movdqa	xmm3,xmm10
 DB	102,65,15,58,15,217,4
 DB	15,56,204,229
 DB	69,15,56,203,229
-	pshufd	xmm0,xmm2,00eh
-	movdqa	xmm1,XMMWORD PTR[((96-128))+rbp]
+	pshufd	xmm0,xmm2,0x0e
+	movdqa	xmm1,XMMWORD[((96-128))+rbp]
 	paddd	xmm1,xmm6
 DB	69,15,56,203,247
 DB	69,15,56,204,193
 	movdqa	xmm0,xmm1
-	movdqa	xmm2,XMMWORD PTR[((96-128))+rbp]
+	movdqa	xmm2,XMMWORD[((96-128))+rbp]
 	paddd	xmm11,xmm3
 	paddd	xmm2,xmm10
 DB	15,56,205,254
@@ -2897,19 +2900,19 @@ DB	69,15,56,203,236
 DB	102,15,58,15,222,4
 DB	69,15,56,203,254
 DB	69,15,56,205,218
-	pshufd	xmm0,xmm1,00eh
+	pshufd	xmm0,xmm1,0x0e
 	paddd	xmm4,xmm3
 	movdqa	xmm3,xmm11
 DB	102,65,15,58,15,218,4
 DB	15,56,204,238
 DB	69,15,56,203,229
-	pshufd	xmm0,xmm2,00eh
-	movdqa	xmm1,XMMWORD PTR[((112-128))+rbp]
+	pshufd	xmm0,xmm2,0x0e
+	movdqa	xmm1,XMMWORD[((112-128))+rbp]
 	paddd	xmm1,xmm7
 DB	69,15,56,203,247
 DB	69,15,56,204,202
 	movdqa	xmm0,xmm1
-	movdqa	xmm2,XMMWORD PTR[((112-128))+rbp]
+	movdqa	xmm2,XMMWORD[((112-128))+rbp]
 	paddd	xmm8,xmm3
 	paddd	xmm2,xmm11
 DB	15,56,205,231
@@ -2919,19 +2922,19 @@ DB	69,15,56,203,236
 DB	102,15,58,15,223,4
 DB	69,15,56,203,254
 DB	69,15,56,205,195
-	pshufd	xmm0,xmm1,00eh
+	pshufd	xmm0,xmm1,0x0e
 	paddd	xmm5,xmm3
 	movdqa	xmm3,xmm8
 DB	102,65,15,58,15,219,4
 DB	15,56,204,247
 DB	69,15,56,203,229
-	pshufd	xmm0,xmm2,00eh
-	movdqa	xmm1,XMMWORD PTR[((128-128))+rbp]
+	pshufd	xmm0,xmm2,0x0e
+	movdqa	xmm1,XMMWORD[((128-128))+rbp]
 	paddd	xmm1,xmm4
 DB	69,15,56,203,247
 DB	69,15,56,204,211
 	movdqa	xmm0,xmm1
-	movdqa	xmm2,XMMWORD PTR[((128-128))+rbp]
+	movdqa	xmm2,XMMWORD[((128-128))+rbp]
 	paddd	xmm9,xmm3
 	paddd	xmm2,xmm8
 DB	15,56,205,236
@@ -2941,19 +2944,19 @@ DB	69,15,56,203,236
 DB	102,15,58,15,220,4
 DB	69,15,56,203,254
 DB	69,15,56,205,200
-	pshufd	xmm0,xmm1,00eh
+	pshufd	xmm0,xmm1,0x0e
 	paddd	xmm6,xmm3
 	movdqa	xmm3,xmm9
 DB	102,65,15,58,15,216,4
 DB	15,56,204,252
 DB	69,15,56,203,229
-	pshufd	xmm0,xmm2,00eh
-	movdqa	xmm1,XMMWORD PTR[((144-128))+rbp]
+	pshufd	xmm0,xmm2,0x0e
+	movdqa	xmm1,XMMWORD[((144-128))+rbp]
 	paddd	xmm1,xmm5
 DB	69,15,56,203,247
 DB	69,15,56,204,216
 	movdqa	xmm0,xmm1
-	movdqa	xmm2,XMMWORD PTR[((144-128))+rbp]
+	movdqa	xmm2,XMMWORD[((144-128))+rbp]
 	paddd	xmm10,xmm3
 	paddd	xmm2,xmm9
 DB	15,56,205,245
@@ -2963,19 +2966,19 @@ DB	69,15,56,203,236
 DB	102,15,58,15,221,4
 DB	69,15,56,203,254
 DB	69,15,56,205,209
-	pshufd	xmm0,xmm1,00eh
+	pshufd	xmm0,xmm1,0x0e
 	paddd	xmm7,xmm3
 	movdqa	xmm3,xmm10
 DB	102,65,15,58,15,217,4
 DB	15,56,204,229
 DB	69,15,56,203,229
-	pshufd	xmm0,xmm2,00eh
-	movdqa	xmm1,XMMWORD PTR[((160-128))+rbp]
+	pshufd	xmm0,xmm2,0x0e
+	movdqa	xmm1,XMMWORD[((160-128))+rbp]
 	paddd	xmm1,xmm6
 DB	69,15,56,203,247
 DB	69,15,56,204,193
 	movdqa	xmm0,xmm1
-	movdqa	xmm2,XMMWORD PTR[((160-128))+rbp]
+	movdqa	xmm2,XMMWORD[((160-128))+rbp]
 	paddd	xmm11,xmm3
 	paddd	xmm2,xmm10
 DB	15,56,205,254
@@ -2985,19 +2988,19 @@ DB	69,15,56,203,236
 DB	102,15,58,15,222,4
 DB	69,15,56,203,254
 DB	69,15,56,205,218
-	pshufd	xmm0,xmm1,00eh
+	pshufd	xmm0,xmm1,0x0e
 	paddd	xmm4,xmm3
 	movdqa	xmm3,xmm11
 DB	102,65,15,58,15,218,4
 DB	15,56,204,238
 DB	69,15,56,203,229
-	pshufd	xmm0,xmm2,00eh
-	movdqa	xmm1,XMMWORD PTR[((176-128))+rbp]
+	pshufd	xmm0,xmm2,0x0e
+	movdqa	xmm1,XMMWORD[((176-128))+rbp]
 	paddd	xmm1,xmm7
 DB	69,15,56,203,247
 DB	69,15,56,204,202
 	movdqa	xmm0,xmm1
-	movdqa	xmm2,XMMWORD PTR[((176-128))+rbp]
+	movdqa	xmm2,XMMWORD[((176-128))+rbp]
 	paddd	xmm8,xmm3
 	paddd	xmm2,xmm11
 DB	15,56,205,231
@@ -3007,19 +3010,19 @@ DB	69,15,56,203,236
 DB	102,15,58,15,223,4
 DB	69,15,56,203,254
 DB	69,15,56,205,195
-	pshufd	xmm0,xmm1,00eh
+	pshufd	xmm0,xmm1,0x0e
 	paddd	xmm5,xmm3
 	movdqa	xmm3,xmm8
 DB	102,65,15,58,15,219,4
 DB	15,56,204,247
 DB	69,15,56,203,229
-	pshufd	xmm0,xmm2,00eh
-	movdqa	xmm1,XMMWORD PTR[((192-128))+rbp]
+	pshufd	xmm0,xmm2,0x0e
+	movdqa	xmm1,XMMWORD[((192-128))+rbp]
 	paddd	xmm1,xmm4
 DB	69,15,56,203,247
 DB	69,15,56,204,211
 	movdqa	xmm0,xmm1
-	movdqa	xmm2,XMMWORD PTR[((192-128))+rbp]
+	movdqa	xmm2,XMMWORD[((192-128))+rbp]
 	paddd	xmm9,xmm3
 	paddd	xmm2,xmm8
 DB	15,56,205,236
@@ -3029,19 +3032,19 @@ DB	69,15,56,203,236
 DB	102,15,58,15,220,4
 DB	69,15,56,203,254
 DB	69,15,56,205,200
-	pshufd	xmm0,xmm1,00eh
+	pshufd	xmm0,xmm1,0x0e
 	paddd	xmm6,xmm3
 	movdqa	xmm3,xmm9
 DB	102,65,15,58,15,216,4
 DB	15,56,204,252
 DB	69,15,56,203,229
-	pshufd	xmm0,xmm2,00eh
-	movdqa	xmm1,XMMWORD PTR[((208-128))+rbp]
+	pshufd	xmm0,xmm2,0x0e
+	movdqa	xmm1,XMMWORD[((208-128))+rbp]
 	paddd	xmm1,xmm5
 DB	69,15,56,203,247
 DB	69,15,56,204,216
 	movdqa	xmm0,xmm1
-	movdqa	xmm2,XMMWORD PTR[((208-128))+rbp]
+	movdqa	xmm2,XMMWORD[((208-128))+rbp]
 	paddd	xmm10,xmm3
 	paddd	xmm2,xmm9
 DB	15,56,205,245
@@ -3051,19 +3054,19 @@ DB	69,15,56,203,236
 DB	102,15,58,15,221,4
 DB	69,15,56,203,254
 DB	69,15,56,205,209
-	pshufd	xmm0,xmm1,00eh
+	pshufd	xmm0,xmm1,0x0e
 	paddd	xmm7,xmm3
 	movdqa	xmm3,xmm10
 DB	102,65,15,58,15,217,4
 	nop
 DB	69,15,56,203,229
-	pshufd	xmm0,xmm2,00eh
-	movdqa	xmm1,XMMWORD PTR[((224-128))+rbp]
+	pshufd	xmm0,xmm2,0x0e
+	movdqa	xmm1,XMMWORD[((224-128))+rbp]
 	paddd	xmm1,xmm6
 DB	69,15,56,203,247
 
 	movdqa	xmm0,xmm1
-	movdqa	xmm2,XMMWORD PTR[((224-128))+rbp]
+	movdqa	xmm2,XMMWORD[((224-128))+rbp]
 	paddd	xmm11,xmm3
 	paddd	xmm2,xmm10
 DB	15,56,205,254
@@ -3074,35 +3077,35 @@ DB	69,15,56,203,236
 	pxor	xmm6,xmm6
 DB	69,15,56,203,254
 DB	69,15,56,205,218
-	pshufd	xmm0,xmm1,00eh
-	movdqa	xmm1,XMMWORD PTR[((240-128))+rbp]
+	pshufd	xmm0,xmm1,0x0e
+	movdqa	xmm1,XMMWORD[((240-128))+rbp]
 	paddd	xmm1,xmm7
-	movq	xmm7,QWORD PTR[rbx]
+	movq	xmm7,QWORD[rbx]
 	nop
 DB	69,15,56,203,229
-	pshufd	xmm0,xmm2,00eh
-	movdqa	xmm2,XMMWORD PTR[((240-128))+rbp]
+	pshufd	xmm0,xmm2,0x0e
+	movdqa	xmm2,XMMWORD[((240-128))+rbp]
 	paddd	xmm2,xmm11
 DB	69,15,56,203,247
 
 	movdqa	xmm0,xmm1
-	cmp	ecx,DWORD PTR[rbx]
+	cmp	ecx,DWORD[rbx]
 	cmovge	r8,rsp
-	cmp	ecx,DWORD PTR[4+rbx]
+	cmp	ecx,DWORD[4+rbx]
 	cmovge	r9,rsp
-	pshufd	xmm9,xmm7,000h
+	pshufd	xmm9,xmm7,0x00
 DB	69,15,56,203,236
 	movdqa	xmm0,xmm2
-	pshufd	xmm10,xmm7,055h
+	pshufd	xmm10,xmm7,0x55
 	movdqa	xmm11,xmm7
 DB	69,15,56,203,254
-	pshufd	xmm0,xmm1,00eh
+	pshufd	xmm0,xmm1,0x0e
 	pcmpgtd	xmm9,xmm6
 	pcmpgtd	xmm10,xmm6
 DB	69,15,56,203,229
-	pshufd	xmm0,xmm2,00eh
+	pshufd	xmm0,xmm2,0x0e
 	pcmpgtd	xmm11,xmm6
-	movdqa	xmm3,XMMWORD PTR[((K256_shaext-16))]
+	movdqa	xmm3,XMMWORD[((K256_shaext-16))]
 DB	69,15,56,203,247
 
 	pand	xmm13,xmm9
@@ -3111,16 +3114,16 @@ DB	69,15,56,203,247
 	pand	xmm14,xmm10
 	paddd	xmm11,xmm7
 
-	paddd	xmm13,XMMWORD PTR[80+rsp]
-	paddd	xmm15,XMMWORD PTR[112+rsp]
-	paddd	xmm12,XMMWORD PTR[64+rsp]
-	paddd	xmm14,XMMWORD PTR[96+rsp]
+	paddd	xmm13,XMMWORD[80+rsp]
+	paddd	xmm15,XMMWORD[112+rsp]
+	paddd	xmm12,XMMWORD[64+rsp]
+	paddd	xmm14,XMMWORD[96+rsp]
 
-	movq	QWORD PTR[rbx],xmm11
+	movq	QWORD[rbx],xmm11
 	dec	edx
-	jnz	$L$oop_shaext
+	jnz	NEAR $L$oop_shaext
 
-	mov	edx,DWORD PTR[280+rsp]
+	mov	edx,DWORD[280+rsp]
 
 	pshufd	xmm12,xmm12,27
 	pshufd	xmm13,xmm13,27
@@ -3134,153 +3137,152 @@ DB	69,15,56,203,247
 	punpckldq	xmm13,xmm15
 	punpckhdq	xmm6,xmm15
 
-	movq	QWORD PTR[(0-128)+rdi],xmm12
+	movq	QWORD[(0-128)+rdi],xmm12
 	psrldq	xmm12,8
-	movq	QWORD PTR[(128-128)+rdi],xmm5
+	movq	QWORD[(128-128)+rdi],xmm5
 	psrldq	xmm5,8
-	movq	QWORD PTR[(32-128)+rdi],xmm12
-	movq	QWORD PTR[(160-128)+rdi],xmm5
+	movq	QWORD[(32-128)+rdi],xmm12
+	movq	QWORD[(160-128)+rdi],xmm5
 
-	movq	QWORD PTR[(64-128)+rdi],xmm13
+	movq	QWORD[(64-128)+rdi],xmm13
 	psrldq	xmm13,8
-	movq	QWORD PTR[(192-128)+rdi],xmm6
+	movq	QWORD[(192-128)+rdi],xmm6
 	psrldq	xmm6,8
-	movq	QWORD PTR[(96-128)+rdi],xmm13
-	movq	QWORD PTR[(224-128)+rdi],xmm6
+	movq	QWORD[(96-128)+rdi],xmm13
+	movq	QWORD[(224-128)+rdi],xmm6
 
-	lea	rdi,QWORD PTR[8+rdi]
-	lea	rsi,QWORD PTR[32+rsi]
+	lea	rdi,[8+rdi]
+	lea	rsi,[32+rsi]
 	dec	edx
-	jnz	$L$oop_grande_shaext
+	jnz	NEAR $L$oop_grande_shaext
 
-$L$done_shaext::
+$L$done_shaext:
 
-	movaps	xmm6,XMMWORD PTR[((-184))+rax]
-	movaps	xmm7,XMMWORD PTR[((-168))+rax]
-	movaps	xmm8,XMMWORD PTR[((-152))+rax]
-	movaps	xmm9,XMMWORD PTR[((-136))+rax]
-	movaps	xmm10,XMMWORD PTR[((-120))+rax]
-	movaps	xmm11,XMMWORD PTR[((-104))+rax]
-	movaps	xmm12,XMMWORD PTR[((-88))+rax]
-	movaps	xmm13,XMMWORD PTR[((-72))+rax]
-	movaps	xmm14,XMMWORD PTR[((-56))+rax]
-	movaps	xmm15,XMMWORD PTR[((-40))+rax]
-	mov	rbp,QWORD PTR[((-16))+rax]
-	mov	rbx,QWORD PTR[((-8))+rax]
-	lea	rsp,QWORD PTR[rax]
-$L$epilogue_shaext::
-	mov	rdi,QWORD PTR[8+rsp]	;WIN64 epilogue
-	mov	rsi,QWORD PTR[16+rsp]
+	movaps	xmm6,XMMWORD[((-184))+rax]
+	movaps	xmm7,XMMWORD[((-168))+rax]
+	movaps	xmm8,XMMWORD[((-152))+rax]
+	movaps	xmm9,XMMWORD[((-136))+rax]
+	movaps	xmm10,XMMWORD[((-120))+rax]
+	movaps	xmm11,XMMWORD[((-104))+rax]
+	movaps	xmm12,XMMWORD[((-88))+rax]
+	movaps	xmm13,XMMWORD[((-72))+rax]
+	movaps	xmm14,XMMWORD[((-56))+rax]
+	movaps	xmm15,XMMWORD[((-40))+rax]
+	mov	rbp,QWORD[((-16))+rax]
+	mov	rbx,QWORD[((-8))+rax]
+	lea	rsp,[rax]
+$L$epilogue_shaext:
+	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
+	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
-$L$SEH_end_sha256_multi_block_shaext::
-sha256_multi_block_shaext	ENDP
+$L$SEH_end_sha256_multi_block_shaext:
 
 ALIGN	32
-sha256_multi_block_avx	PROC PRIVATE
-	mov	QWORD PTR[8+rsp],rdi	;WIN64 prologue
-	mov	QWORD PTR[16+rsp],rsi
+sha256_multi_block_avx:
+	mov	QWORD[8+rsp],rdi	;WIN64 prologue
+	mov	QWORD[16+rsp],rsi
 	mov	rax,rsp
-$L$SEH_begin_sha256_multi_block_avx::
+$L$SEH_begin_sha256_multi_block_avx:
 	mov	rdi,rcx
 	mov	rsi,rdx
 	mov	rdx,r8
 
 
-_avx_shortcut::
+_avx_shortcut:
 	shr	rcx,32
 	cmp	edx,2
-	jb	$L$avx
+	jb	NEAR $L$avx
 	test	ecx,32
-	jnz	_avx2_shortcut
-	jmp	$L$avx
+	jnz	NEAR _avx2_shortcut
+	jmp	NEAR $L$avx
 ALIGN	32
-$L$avx::
+$L$avx:
 	mov	rax,rsp
 	push	rbx
 	push	rbp
-	lea	rsp,QWORD PTR[((-168))+rsp]
-	movaps	XMMWORD PTR[rsp],xmm6
-	movaps	XMMWORD PTR[16+rsp],xmm7
-	movaps	XMMWORD PTR[32+rsp],xmm8
-	movaps	XMMWORD PTR[48+rsp],xmm9
-	movaps	XMMWORD PTR[(-120)+rax],xmm10
-	movaps	XMMWORD PTR[(-104)+rax],xmm11
-	movaps	XMMWORD PTR[(-88)+rax],xmm12
-	movaps	XMMWORD PTR[(-72)+rax],xmm13
-	movaps	XMMWORD PTR[(-56)+rax],xmm14
-	movaps	XMMWORD PTR[(-40)+rax],xmm15
+	lea	rsp,[((-168))+rsp]
+	movaps	XMMWORD[rsp],xmm6
+	movaps	XMMWORD[16+rsp],xmm7
+	movaps	XMMWORD[32+rsp],xmm8
+	movaps	XMMWORD[48+rsp],xmm9
+	movaps	XMMWORD[(-120)+rax],xmm10
+	movaps	XMMWORD[(-104)+rax],xmm11
+	movaps	XMMWORD[(-88)+rax],xmm12
+	movaps	XMMWORD[(-72)+rax],xmm13
+	movaps	XMMWORD[(-56)+rax],xmm14
+	movaps	XMMWORD[(-40)+rax],xmm15
 	sub	rsp,288
 	and	rsp,-256
-	mov	QWORD PTR[272+rsp],rax
-$L$body_avx::
-	lea	rbp,QWORD PTR[((K256+128))]
-	lea	rbx,QWORD PTR[256+rsp]
-	lea	rdi,QWORD PTR[128+rdi]
+	mov	QWORD[272+rsp],rax
+$L$body_avx:
+	lea	rbp,[((K256+128))]
+	lea	rbx,[256+rsp]
+	lea	rdi,[128+rdi]
 
-$L$oop_grande_avx::
-	mov	DWORD PTR[280+rsp],edx
+$L$oop_grande_avx:
+	mov	DWORD[280+rsp],edx
 	xor	edx,edx
-	mov	r8,QWORD PTR[rsi]
-	mov	ecx,DWORD PTR[8+rsi]
+	mov	r8,QWORD[rsi]
+	mov	ecx,DWORD[8+rsi]
 	cmp	ecx,edx
 	cmovg	edx,ecx
 	test	ecx,ecx
-	mov	DWORD PTR[rbx],ecx
+	mov	DWORD[rbx],ecx
 	cmovle	r8,rbp
-	mov	r9,QWORD PTR[16+rsi]
-	mov	ecx,DWORD PTR[24+rsi]
+	mov	r9,QWORD[16+rsi]
+	mov	ecx,DWORD[24+rsi]
 	cmp	ecx,edx
 	cmovg	edx,ecx
 	test	ecx,ecx
-	mov	DWORD PTR[4+rbx],ecx
+	mov	DWORD[4+rbx],ecx
 	cmovle	r9,rbp
-	mov	r10,QWORD PTR[32+rsi]
-	mov	ecx,DWORD PTR[40+rsi]
+	mov	r10,QWORD[32+rsi]
+	mov	ecx,DWORD[40+rsi]
 	cmp	ecx,edx
 	cmovg	edx,ecx
 	test	ecx,ecx
-	mov	DWORD PTR[8+rbx],ecx
+	mov	DWORD[8+rbx],ecx
 	cmovle	r10,rbp
-	mov	r11,QWORD PTR[48+rsi]
-	mov	ecx,DWORD PTR[56+rsi]
+	mov	r11,QWORD[48+rsi]
+	mov	ecx,DWORD[56+rsi]
 	cmp	ecx,edx
 	cmovg	edx,ecx
 	test	ecx,ecx
-	mov	DWORD PTR[12+rbx],ecx
+	mov	DWORD[12+rbx],ecx
 	cmovle	r11,rbp
 	test	edx,edx
-	jz	$L$done_avx
+	jz	NEAR $L$done_avx
 
-	vmovdqu	xmm8,XMMWORD PTR[((0-128))+rdi]
-	lea	rax,QWORD PTR[128+rsp]
-	vmovdqu	xmm9,XMMWORD PTR[((32-128))+rdi]
-	vmovdqu	xmm10,XMMWORD PTR[((64-128))+rdi]
-	vmovdqu	xmm11,XMMWORD PTR[((96-128))+rdi]
-	vmovdqu	xmm12,XMMWORD PTR[((128-128))+rdi]
-	vmovdqu	xmm13,XMMWORD PTR[((160-128))+rdi]
-	vmovdqu	xmm14,XMMWORD PTR[((192-128))+rdi]
-	vmovdqu	xmm15,XMMWORD PTR[((224-128))+rdi]
-	vmovdqu	xmm6,XMMWORD PTR[$L$pbswap]
-	jmp	$L$oop_avx
+	vmovdqu	xmm8,XMMWORD[((0-128))+rdi]
+	lea	rax,[128+rsp]
+	vmovdqu	xmm9,XMMWORD[((32-128))+rdi]
+	vmovdqu	xmm10,XMMWORD[((64-128))+rdi]
+	vmovdqu	xmm11,XMMWORD[((96-128))+rdi]
+	vmovdqu	xmm12,XMMWORD[((128-128))+rdi]
+	vmovdqu	xmm13,XMMWORD[((160-128))+rdi]
+	vmovdqu	xmm14,XMMWORD[((192-128))+rdi]
+	vmovdqu	xmm15,XMMWORD[((224-128))+rdi]
+	vmovdqu	xmm6,XMMWORD[$L$pbswap]
+	jmp	NEAR $L$oop_avx
 
 ALIGN	32
-$L$oop_avx::
+$L$oop_avx:
 	vpxor	xmm4,xmm10,xmm9
-	vmovd	xmm5,DWORD PTR[r8]
-	vmovd	xmm0,DWORD PTR[r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[r10],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[r11],1
+	vmovd	xmm5,DWORD[r8]
+	vmovd	xmm0,DWORD[r9]
+	vpinsrd	xmm5,xmm5,DWORD[r10],1
+	vpinsrd	xmm0,xmm0,DWORD[r11],1
 	vpunpckldq	xmm5,xmm5,xmm0
 	vpshufb	xmm5,xmm5,xmm6
 	vpsrld	xmm7,xmm12,6
 	vpslld	xmm2,xmm12,26
-	vmovdqu	XMMWORD PTR[(0-128)+rax],xmm5
+	vmovdqu	XMMWORD[(0-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm15
 
 	vpsrld	xmm1,xmm12,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm12,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((-128))+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[((-128))+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm12,25
@@ -3322,21 +3324,21 @@ $L$oop_avx::
 
 	vpaddd	xmm15,xmm15,xmm5
 	vpaddd	xmm15,xmm15,xmm7
-	vmovd	xmm5,DWORD PTR[4+r8]
-	vmovd	xmm0,DWORD PTR[4+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[4+r10],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[4+r11],1
+	vmovd	xmm5,DWORD[4+r8]
+	vmovd	xmm0,DWORD[4+r9]
+	vpinsrd	xmm5,xmm5,DWORD[4+r10],1
+	vpinsrd	xmm0,xmm0,DWORD[4+r11],1
 	vpunpckldq	xmm5,xmm5,xmm0
 	vpshufb	xmm5,xmm5,xmm6
 	vpsrld	xmm7,xmm11,6
 	vpslld	xmm2,xmm11,26
-	vmovdqu	XMMWORD PTR[(16-128)+rax],xmm5
+	vmovdqu	XMMWORD[(16-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm14
 
 	vpsrld	xmm1,xmm11,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm11,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((-96))+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[((-96))+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm11,25
@@ -3378,21 +3380,21 @@ $L$oop_avx::
 
 	vpaddd	xmm14,xmm14,xmm5
 	vpaddd	xmm14,xmm14,xmm7
-	vmovd	xmm5,DWORD PTR[8+r8]
-	vmovd	xmm0,DWORD PTR[8+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[8+r10],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[8+r11],1
+	vmovd	xmm5,DWORD[8+r8]
+	vmovd	xmm0,DWORD[8+r9]
+	vpinsrd	xmm5,xmm5,DWORD[8+r10],1
+	vpinsrd	xmm0,xmm0,DWORD[8+r11],1
 	vpunpckldq	xmm5,xmm5,xmm0
 	vpshufb	xmm5,xmm5,xmm6
 	vpsrld	xmm7,xmm10,6
 	vpslld	xmm2,xmm10,26
-	vmovdqu	XMMWORD PTR[(32-128)+rax],xmm5
+	vmovdqu	XMMWORD[(32-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm13
 
 	vpsrld	xmm1,xmm10,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm10,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((-64))+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[((-64))+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm10,25
@@ -3434,21 +3436,21 @@ $L$oop_avx::
 
 	vpaddd	xmm13,xmm13,xmm5
 	vpaddd	xmm13,xmm13,xmm7
-	vmovd	xmm5,DWORD PTR[12+r8]
-	vmovd	xmm0,DWORD PTR[12+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[12+r10],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[12+r11],1
+	vmovd	xmm5,DWORD[12+r8]
+	vmovd	xmm0,DWORD[12+r9]
+	vpinsrd	xmm5,xmm5,DWORD[12+r10],1
+	vpinsrd	xmm0,xmm0,DWORD[12+r11],1
 	vpunpckldq	xmm5,xmm5,xmm0
 	vpshufb	xmm5,xmm5,xmm6
 	vpsrld	xmm7,xmm9,6
 	vpslld	xmm2,xmm9,26
-	vmovdqu	XMMWORD PTR[(48-128)+rax],xmm5
+	vmovdqu	XMMWORD[(48-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm12
 
 	vpsrld	xmm1,xmm9,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm9,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((-32))+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[((-32))+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm9,25
@@ -3490,21 +3492,21 @@ $L$oop_avx::
 
 	vpaddd	xmm12,xmm12,xmm5
 	vpaddd	xmm12,xmm12,xmm7
-	vmovd	xmm5,DWORD PTR[16+r8]
-	vmovd	xmm0,DWORD PTR[16+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[16+r10],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[16+r11],1
+	vmovd	xmm5,DWORD[16+r8]
+	vmovd	xmm0,DWORD[16+r9]
+	vpinsrd	xmm5,xmm5,DWORD[16+r10],1
+	vpinsrd	xmm0,xmm0,DWORD[16+r11],1
 	vpunpckldq	xmm5,xmm5,xmm0
 	vpshufb	xmm5,xmm5,xmm6
 	vpsrld	xmm7,xmm8,6
 	vpslld	xmm2,xmm8,26
-	vmovdqu	XMMWORD PTR[(64-128)+rax],xmm5
+	vmovdqu	XMMWORD[(64-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm11
 
 	vpsrld	xmm1,xmm8,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm8,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm8,25
@@ -3546,21 +3548,21 @@ $L$oop_avx::
 
 	vpaddd	xmm11,xmm11,xmm5
 	vpaddd	xmm11,xmm11,xmm7
-	vmovd	xmm5,DWORD PTR[20+r8]
-	vmovd	xmm0,DWORD PTR[20+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[20+r10],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[20+r11],1
+	vmovd	xmm5,DWORD[20+r8]
+	vmovd	xmm0,DWORD[20+r9]
+	vpinsrd	xmm5,xmm5,DWORD[20+r10],1
+	vpinsrd	xmm0,xmm0,DWORD[20+r11],1
 	vpunpckldq	xmm5,xmm5,xmm0
 	vpshufb	xmm5,xmm5,xmm6
 	vpsrld	xmm7,xmm15,6
 	vpslld	xmm2,xmm15,26
-	vmovdqu	XMMWORD PTR[(80-128)+rax],xmm5
+	vmovdqu	XMMWORD[(80-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm10
 
 	vpsrld	xmm1,xmm15,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm15,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[32+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[32+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm15,25
@@ -3602,21 +3604,21 @@ $L$oop_avx::
 
 	vpaddd	xmm10,xmm10,xmm5
 	vpaddd	xmm10,xmm10,xmm7
-	vmovd	xmm5,DWORD PTR[24+r8]
-	vmovd	xmm0,DWORD PTR[24+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[24+r10],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[24+r11],1
+	vmovd	xmm5,DWORD[24+r8]
+	vmovd	xmm0,DWORD[24+r9]
+	vpinsrd	xmm5,xmm5,DWORD[24+r10],1
+	vpinsrd	xmm0,xmm0,DWORD[24+r11],1
 	vpunpckldq	xmm5,xmm5,xmm0
 	vpshufb	xmm5,xmm5,xmm6
 	vpsrld	xmm7,xmm14,6
 	vpslld	xmm2,xmm14,26
-	vmovdqu	XMMWORD PTR[(96-128)+rax],xmm5
+	vmovdqu	XMMWORD[(96-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm9
 
 	vpsrld	xmm1,xmm14,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm14,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[64+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[64+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm14,25
@@ -3658,21 +3660,21 @@ $L$oop_avx::
 
 	vpaddd	xmm9,xmm9,xmm5
 	vpaddd	xmm9,xmm9,xmm7
-	vmovd	xmm5,DWORD PTR[28+r8]
-	vmovd	xmm0,DWORD PTR[28+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[28+r10],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[28+r11],1
+	vmovd	xmm5,DWORD[28+r8]
+	vmovd	xmm0,DWORD[28+r9]
+	vpinsrd	xmm5,xmm5,DWORD[28+r10],1
+	vpinsrd	xmm0,xmm0,DWORD[28+r11],1
 	vpunpckldq	xmm5,xmm5,xmm0
 	vpshufb	xmm5,xmm5,xmm6
 	vpsrld	xmm7,xmm13,6
 	vpslld	xmm2,xmm13,26
-	vmovdqu	XMMWORD PTR[(112-128)+rax],xmm5
+	vmovdqu	XMMWORD[(112-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm8
 
 	vpsrld	xmm1,xmm13,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm13,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[96+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[96+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm13,25
@@ -3715,21 +3717,21 @@ $L$oop_avx::
 	vpaddd	xmm8,xmm8,xmm5
 	vpaddd	xmm8,xmm8,xmm7
 	add	rbp,256
-	vmovd	xmm5,DWORD PTR[32+r8]
-	vmovd	xmm0,DWORD PTR[32+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[32+r10],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[32+r11],1
+	vmovd	xmm5,DWORD[32+r8]
+	vmovd	xmm0,DWORD[32+r9]
+	vpinsrd	xmm5,xmm5,DWORD[32+r10],1
+	vpinsrd	xmm0,xmm0,DWORD[32+r11],1
 	vpunpckldq	xmm5,xmm5,xmm0
 	vpshufb	xmm5,xmm5,xmm6
 	vpsrld	xmm7,xmm12,6
 	vpslld	xmm2,xmm12,26
-	vmovdqu	XMMWORD PTR[(128-128)+rax],xmm5
+	vmovdqu	XMMWORD[(128-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm15
 
 	vpsrld	xmm1,xmm12,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm12,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((-128))+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[((-128))+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm12,25
@@ -3771,21 +3773,21 @@ $L$oop_avx::
 
 	vpaddd	xmm15,xmm15,xmm5
 	vpaddd	xmm15,xmm15,xmm7
-	vmovd	xmm5,DWORD PTR[36+r8]
-	vmovd	xmm0,DWORD PTR[36+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[36+r10],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[36+r11],1
+	vmovd	xmm5,DWORD[36+r8]
+	vmovd	xmm0,DWORD[36+r9]
+	vpinsrd	xmm5,xmm5,DWORD[36+r10],1
+	vpinsrd	xmm0,xmm0,DWORD[36+r11],1
 	vpunpckldq	xmm5,xmm5,xmm0
 	vpshufb	xmm5,xmm5,xmm6
 	vpsrld	xmm7,xmm11,6
 	vpslld	xmm2,xmm11,26
-	vmovdqu	XMMWORD PTR[(144-128)+rax],xmm5
+	vmovdqu	XMMWORD[(144-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm14
 
 	vpsrld	xmm1,xmm11,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm11,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((-96))+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[((-96))+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm11,25
@@ -3827,21 +3829,21 @@ $L$oop_avx::
 
 	vpaddd	xmm14,xmm14,xmm5
 	vpaddd	xmm14,xmm14,xmm7
-	vmovd	xmm5,DWORD PTR[40+r8]
-	vmovd	xmm0,DWORD PTR[40+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[40+r10],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[40+r11],1
+	vmovd	xmm5,DWORD[40+r8]
+	vmovd	xmm0,DWORD[40+r9]
+	vpinsrd	xmm5,xmm5,DWORD[40+r10],1
+	vpinsrd	xmm0,xmm0,DWORD[40+r11],1
 	vpunpckldq	xmm5,xmm5,xmm0
 	vpshufb	xmm5,xmm5,xmm6
 	vpsrld	xmm7,xmm10,6
 	vpslld	xmm2,xmm10,26
-	vmovdqu	XMMWORD PTR[(160-128)+rax],xmm5
+	vmovdqu	XMMWORD[(160-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm13
 
 	vpsrld	xmm1,xmm10,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm10,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((-64))+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[((-64))+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm10,25
@@ -3883,21 +3885,21 @@ $L$oop_avx::
 
 	vpaddd	xmm13,xmm13,xmm5
 	vpaddd	xmm13,xmm13,xmm7
-	vmovd	xmm5,DWORD PTR[44+r8]
-	vmovd	xmm0,DWORD PTR[44+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[44+r10],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[44+r11],1
+	vmovd	xmm5,DWORD[44+r8]
+	vmovd	xmm0,DWORD[44+r9]
+	vpinsrd	xmm5,xmm5,DWORD[44+r10],1
+	vpinsrd	xmm0,xmm0,DWORD[44+r11],1
 	vpunpckldq	xmm5,xmm5,xmm0
 	vpshufb	xmm5,xmm5,xmm6
 	vpsrld	xmm7,xmm9,6
 	vpslld	xmm2,xmm9,26
-	vmovdqu	XMMWORD PTR[(176-128)+rax],xmm5
+	vmovdqu	XMMWORD[(176-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm12
 
 	vpsrld	xmm1,xmm9,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm9,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((-32))+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[((-32))+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm9,25
@@ -3939,21 +3941,21 @@ $L$oop_avx::
 
 	vpaddd	xmm12,xmm12,xmm5
 	vpaddd	xmm12,xmm12,xmm7
-	vmovd	xmm5,DWORD PTR[48+r8]
-	vmovd	xmm0,DWORD PTR[48+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[48+r10],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[48+r11],1
+	vmovd	xmm5,DWORD[48+r8]
+	vmovd	xmm0,DWORD[48+r9]
+	vpinsrd	xmm5,xmm5,DWORD[48+r10],1
+	vpinsrd	xmm0,xmm0,DWORD[48+r11],1
 	vpunpckldq	xmm5,xmm5,xmm0
 	vpshufb	xmm5,xmm5,xmm6
 	vpsrld	xmm7,xmm8,6
 	vpslld	xmm2,xmm8,26
-	vmovdqu	XMMWORD PTR[(192-128)+rax],xmm5
+	vmovdqu	XMMWORD[(192-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm11
 
 	vpsrld	xmm1,xmm8,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm8,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm8,25
@@ -3995,21 +3997,21 @@ $L$oop_avx::
 
 	vpaddd	xmm11,xmm11,xmm5
 	vpaddd	xmm11,xmm11,xmm7
-	vmovd	xmm5,DWORD PTR[52+r8]
-	vmovd	xmm0,DWORD PTR[52+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[52+r10],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[52+r11],1
+	vmovd	xmm5,DWORD[52+r8]
+	vmovd	xmm0,DWORD[52+r9]
+	vpinsrd	xmm5,xmm5,DWORD[52+r10],1
+	vpinsrd	xmm0,xmm0,DWORD[52+r11],1
 	vpunpckldq	xmm5,xmm5,xmm0
 	vpshufb	xmm5,xmm5,xmm6
 	vpsrld	xmm7,xmm15,6
 	vpslld	xmm2,xmm15,26
-	vmovdqu	XMMWORD PTR[(208-128)+rax],xmm5
+	vmovdqu	XMMWORD[(208-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm10
 
 	vpsrld	xmm1,xmm15,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm15,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[32+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[32+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm15,25
@@ -4051,21 +4053,21 @@ $L$oop_avx::
 
 	vpaddd	xmm10,xmm10,xmm5
 	vpaddd	xmm10,xmm10,xmm7
-	vmovd	xmm5,DWORD PTR[56+r8]
-	vmovd	xmm0,DWORD PTR[56+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[56+r10],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[56+r11],1
+	vmovd	xmm5,DWORD[56+r8]
+	vmovd	xmm0,DWORD[56+r9]
+	vpinsrd	xmm5,xmm5,DWORD[56+r10],1
+	vpinsrd	xmm0,xmm0,DWORD[56+r11],1
 	vpunpckldq	xmm5,xmm5,xmm0
 	vpshufb	xmm5,xmm5,xmm6
 	vpsrld	xmm7,xmm14,6
 	vpslld	xmm2,xmm14,26
-	vmovdqu	XMMWORD PTR[(224-128)+rax],xmm5
+	vmovdqu	XMMWORD[(224-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm9
 
 	vpsrld	xmm1,xmm14,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm14,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[64+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[64+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm14,25
@@ -4107,25 +4109,25 @@ $L$oop_avx::
 
 	vpaddd	xmm9,xmm9,xmm5
 	vpaddd	xmm9,xmm9,xmm7
-	vmovd	xmm5,DWORD PTR[60+r8]
-	lea	r8,QWORD PTR[64+r8]
-	vmovd	xmm0,DWORD PTR[60+r9]
-	lea	r9,QWORD PTR[64+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[60+r10],1
-	lea	r10,QWORD PTR[64+r10]
-	vpinsrd	xmm0,xmm0,DWORD PTR[60+r11],1
-	lea	r11,QWORD PTR[64+r11]
+	vmovd	xmm5,DWORD[60+r8]
+	lea	r8,[64+r8]
+	vmovd	xmm0,DWORD[60+r9]
+	lea	r9,[64+r9]
+	vpinsrd	xmm5,xmm5,DWORD[60+r10],1
+	lea	r10,[64+r10]
+	vpinsrd	xmm0,xmm0,DWORD[60+r11],1
+	lea	r11,[64+r11]
 	vpunpckldq	xmm5,xmm5,xmm0
 	vpshufb	xmm5,xmm5,xmm6
 	vpsrld	xmm7,xmm13,6
 	vpslld	xmm2,xmm13,26
-	vmovdqu	XMMWORD PTR[(240-128)+rax],xmm5
+	vmovdqu	XMMWORD[(240-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm8
 
 	vpsrld	xmm1,xmm13,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm13,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[96+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[96+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm13,25
@@ -4168,13 +4170,13 @@ $L$oop_avx::
 	vpaddd	xmm8,xmm8,xmm5
 	vpaddd	xmm8,xmm8,xmm7
 	add	rbp,256
-	vmovdqu	xmm5,XMMWORD PTR[((0-128))+rax]
+	vmovdqu	xmm5,XMMWORD[((0-128))+rax]
 	mov	ecx,3
-	jmp	$L$oop_16_xx_avx
+	jmp	NEAR $L$oop_16_xx_avx
 ALIGN	32
-$L$oop_16_xx_avx::
-	vmovdqu	xmm6,XMMWORD PTR[((16-128))+rax]
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((144-128))+rax]
+$L$oop_16_xx_avx:
+	vmovdqu	xmm6,XMMWORD[((16-128))+rax]
+	vpaddd	xmm5,xmm5,XMMWORD[((144-128))+rax]
 
 	vpsrld	xmm7,xmm6,3
 	vpsrld	xmm1,xmm6,7
@@ -4183,7 +4185,7 @@ $L$oop_16_xx_avx::
 	vpsrld	xmm1,xmm6,18
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm6,14
-	vmovdqu	xmm0,XMMWORD PTR[((224-128))+rax]
+	vmovdqu	xmm0,XMMWORD[((224-128))+rax]
 	vpsrld	xmm3,xmm0,10
 
 	vpxor	xmm7,xmm7,xmm1
@@ -4200,13 +4202,13 @@ $L$oop_16_xx_avx::
 	vpaddd	xmm5,xmm5,xmm7
 	vpsrld	xmm7,xmm12,6
 	vpslld	xmm2,xmm12,26
-	vmovdqu	XMMWORD PTR[(0-128)+rax],xmm5
+	vmovdqu	XMMWORD[(0-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm15
 
 	vpsrld	xmm1,xmm12,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm12,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((-128))+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[((-128))+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm12,25
@@ -4248,8 +4250,8 @@ $L$oop_16_xx_avx::
 
 	vpaddd	xmm15,xmm15,xmm5
 	vpaddd	xmm15,xmm15,xmm7
-	vmovdqu	xmm5,XMMWORD PTR[((32-128))+rax]
-	vpaddd	xmm6,xmm6,XMMWORD PTR[((160-128))+rax]
+	vmovdqu	xmm5,XMMWORD[((32-128))+rax]
+	vpaddd	xmm6,xmm6,XMMWORD[((160-128))+rax]
 
 	vpsrld	xmm7,xmm5,3
 	vpsrld	xmm1,xmm5,7
@@ -4258,7 +4260,7 @@ $L$oop_16_xx_avx::
 	vpsrld	xmm1,xmm5,18
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm5,14
-	vmovdqu	xmm0,XMMWORD PTR[((240-128))+rax]
+	vmovdqu	xmm0,XMMWORD[((240-128))+rax]
 	vpsrld	xmm4,xmm0,10
 
 	vpxor	xmm7,xmm7,xmm1
@@ -4275,13 +4277,13 @@ $L$oop_16_xx_avx::
 	vpaddd	xmm6,xmm6,xmm7
 	vpsrld	xmm7,xmm11,6
 	vpslld	xmm2,xmm11,26
-	vmovdqu	XMMWORD PTR[(16-128)+rax],xmm6
+	vmovdqu	XMMWORD[(16-128)+rax],xmm6
 	vpaddd	xmm6,xmm6,xmm14
 
 	vpsrld	xmm1,xmm11,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm11,21
-	vpaddd	xmm6,xmm6,XMMWORD PTR[((-96))+rbp]
+	vpaddd	xmm6,xmm6,XMMWORD[((-96))+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm11,25
@@ -4323,8 +4325,8 @@ $L$oop_16_xx_avx::
 
 	vpaddd	xmm14,xmm14,xmm6
 	vpaddd	xmm14,xmm14,xmm7
-	vmovdqu	xmm6,XMMWORD PTR[((48-128))+rax]
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((176-128))+rax]
+	vmovdqu	xmm6,XMMWORD[((48-128))+rax]
+	vpaddd	xmm5,xmm5,XMMWORD[((176-128))+rax]
 
 	vpsrld	xmm7,xmm6,3
 	vpsrld	xmm1,xmm6,7
@@ -4333,7 +4335,7 @@ $L$oop_16_xx_avx::
 	vpsrld	xmm1,xmm6,18
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm6,14
-	vmovdqu	xmm0,XMMWORD PTR[((0-128))+rax]
+	vmovdqu	xmm0,XMMWORD[((0-128))+rax]
 	vpsrld	xmm3,xmm0,10
 
 	vpxor	xmm7,xmm7,xmm1
@@ -4350,13 +4352,13 @@ $L$oop_16_xx_avx::
 	vpaddd	xmm5,xmm5,xmm7
 	vpsrld	xmm7,xmm10,6
 	vpslld	xmm2,xmm10,26
-	vmovdqu	XMMWORD PTR[(32-128)+rax],xmm5
+	vmovdqu	XMMWORD[(32-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm13
 
 	vpsrld	xmm1,xmm10,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm10,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((-64))+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[((-64))+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm10,25
@@ -4398,8 +4400,8 @@ $L$oop_16_xx_avx::
 
 	vpaddd	xmm13,xmm13,xmm5
 	vpaddd	xmm13,xmm13,xmm7
-	vmovdqu	xmm5,XMMWORD PTR[((64-128))+rax]
-	vpaddd	xmm6,xmm6,XMMWORD PTR[((192-128))+rax]
+	vmovdqu	xmm5,XMMWORD[((64-128))+rax]
+	vpaddd	xmm6,xmm6,XMMWORD[((192-128))+rax]
 
 	vpsrld	xmm7,xmm5,3
 	vpsrld	xmm1,xmm5,7
@@ -4408,7 +4410,7 @@ $L$oop_16_xx_avx::
 	vpsrld	xmm1,xmm5,18
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm5,14
-	vmovdqu	xmm0,XMMWORD PTR[((16-128))+rax]
+	vmovdqu	xmm0,XMMWORD[((16-128))+rax]
 	vpsrld	xmm4,xmm0,10
 
 	vpxor	xmm7,xmm7,xmm1
@@ -4425,13 +4427,13 @@ $L$oop_16_xx_avx::
 	vpaddd	xmm6,xmm6,xmm7
 	vpsrld	xmm7,xmm9,6
 	vpslld	xmm2,xmm9,26
-	vmovdqu	XMMWORD PTR[(48-128)+rax],xmm6
+	vmovdqu	XMMWORD[(48-128)+rax],xmm6
 	vpaddd	xmm6,xmm6,xmm12
 
 	vpsrld	xmm1,xmm9,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm9,21
-	vpaddd	xmm6,xmm6,XMMWORD PTR[((-32))+rbp]
+	vpaddd	xmm6,xmm6,XMMWORD[((-32))+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm9,25
@@ -4473,8 +4475,8 @@ $L$oop_16_xx_avx::
 
 	vpaddd	xmm12,xmm12,xmm6
 	vpaddd	xmm12,xmm12,xmm7
-	vmovdqu	xmm6,XMMWORD PTR[((80-128))+rax]
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((208-128))+rax]
+	vmovdqu	xmm6,XMMWORD[((80-128))+rax]
+	vpaddd	xmm5,xmm5,XMMWORD[((208-128))+rax]
 
 	vpsrld	xmm7,xmm6,3
 	vpsrld	xmm1,xmm6,7
@@ -4483,7 +4485,7 @@ $L$oop_16_xx_avx::
 	vpsrld	xmm1,xmm6,18
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm6,14
-	vmovdqu	xmm0,XMMWORD PTR[((32-128))+rax]
+	vmovdqu	xmm0,XMMWORD[((32-128))+rax]
 	vpsrld	xmm3,xmm0,10
 
 	vpxor	xmm7,xmm7,xmm1
@@ -4500,13 +4502,13 @@ $L$oop_16_xx_avx::
 	vpaddd	xmm5,xmm5,xmm7
 	vpsrld	xmm7,xmm8,6
 	vpslld	xmm2,xmm8,26
-	vmovdqu	XMMWORD PTR[(64-128)+rax],xmm5
+	vmovdqu	XMMWORD[(64-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm11
 
 	vpsrld	xmm1,xmm8,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm8,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm8,25
@@ -4548,8 +4550,8 @@ $L$oop_16_xx_avx::
 
 	vpaddd	xmm11,xmm11,xmm5
 	vpaddd	xmm11,xmm11,xmm7
-	vmovdqu	xmm5,XMMWORD PTR[((96-128))+rax]
-	vpaddd	xmm6,xmm6,XMMWORD PTR[((224-128))+rax]
+	vmovdqu	xmm5,XMMWORD[((96-128))+rax]
+	vpaddd	xmm6,xmm6,XMMWORD[((224-128))+rax]
 
 	vpsrld	xmm7,xmm5,3
 	vpsrld	xmm1,xmm5,7
@@ -4558,7 +4560,7 @@ $L$oop_16_xx_avx::
 	vpsrld	xmm1,xmm5,18
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm5,14
-	vmovdqu	xmm0,XMMWORD PTR[((48-128))+rax]
+	vmovdqu	xmm0,XMMWORD[((48-128))+rax]
 	vpsrld	xmm4,xmm0,10
 
 	vpxor	xmm7,xmm7,xmm1
@@ -4575,13 +4577,13 @@ $L$oop_16_xx_avx::
 	vpaddd	xmm6,xmm6,xmm7
 	vpsrld	xmm7,xmm15,6
 	vpslld	xmm2,xmm15,26
-	vmovdqu	XMMWORD PTR[(80-128)+rax],xmm6
+	vmovdqu	XMMWORD[(80-128)+rax],xmm6
 	vpaddd	xmm6,xmm6,xmm10
 
 	vpsrld	xmm1,xmm15,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm15,21
-	vpaddd	xmm6,xmm6,XMMWORD PTR[32+rbp]
+	vpaddd	xmm6,xmm6,XMMWORD[32+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm15,25
@@ -4623,8 +4625,8 @@ $L$oop_16_xx_avx::
 
 	vpaddd	xmm10,xmm10,xmm6
 	vpaddd	xmm10,xmm10,xmm7
-	vmovdqu	xmm6,XMMWORD PTR[((112-128))+rax]
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((240-128))+rax]
+	vmovdqu	xmm6,XMMWORD[((112-128))+rax]
+	vpaddd	xmm5,xmm5,XMMWORD[((240-128))+rax]
 
 	vpsrld	xmm7,xmm6,3
 	vpsrld	xmm1,xmm6,7
@@ -4633,7 +4635,7 @@ $L$oop_16_xx_avx::
 	vpsrld	xmm1,xmm6,18
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm6,14
-	vmovdqu	xmm0,XMMWORD PTR[((64-128))+rax]
+	vmovdqu	xmm0,XMMWORD[((64-128))+rax]
 	vpsrld	xmm3,xmm0,10
 
 	vpxor	xmm7,xmm7,xmm1
@@ -4650,13 +4652,13 @@ $L$oop_16_xx_avx::
 	vpaddd	xmm5,xmm5,xmm7
 	vpsrld	xmm7,xmm14,6
 	vpslld	xmm2,xmm14,26
-	vmovdqu	XMMWORD PTR[(96-128)+rax],xmm5
+	vmovdqu	XMMWORD[(96-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm9
 
 	vpsrld	xmm1,xmm14,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm14,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[64+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[64+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm14,25
@@ -4698,8 +4700,8 @@ $L$oop_16_xx_avx::
 
 	vpaddd	xmm9,xmm9,xmm5
 	vpaddd	xmm9,xmm9,xmm7
-	vmovdqu	xmm5,XMMWORD PTR[((128-128))+rax]
-	vpaddd	xmm6,xmm6,XMMWORD PTR[((0-128))+rax]
+	vmovdqu	xmm5,XMMWORD[((128-128))+rax]
+	vpaddd	xmm6,xmm6,XMMWORD[((0-128))+rax]
 
 	vpsrld	xmm7,xmm5,3
 	vpsrld	xmm1,xmm5,7
@@ -4708,7 +4710,7 @@ $L$oop_16_xx_avx::
 	vpsrld	xmm1,xmm5,18
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm5,14
-	vmovdqu	xmm0,XMMWORD PTR[((80-128))+rax]
+	vmovdqu	xmm0,XMMWORD[((80-128))+rax]
 	vpsrld	xmm4,xmm0,10
 
 	vpxor	xmm7,xmm7,xmm1
@@ -4725,13 +4727,13 @@ $L$oop_16_xx_avx::
 	vpaddd	xmm6,xmm6,xmm7
 	vpsrld	xmm7,xmm13,6
 	vpslld	xmm2,xmm13,26
-	vmovdqu	XMMWORD PTR[(112-128)+rax],xmm6
+	vmovdqu	XMMWORD[(112-128)+rax],xmm6
 	vpaddd	xmm6,xmm6,xmm8
 
 	vpsrld	xmm1,xmm13,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm13,21
-	vpaddd	xmm6,xmm6,XMMWORD PTR[96+rbp]
+	vpaddd	xmm6,xmm6,XMMWORD[96+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm13,25
@@ -4774,8 +4776,8 @@ $L$oop_16_xx_avx::
 	vpaddd	xmm8,xmm8,xmm6
 	vpaddd	xmm8,xmm8,xmm7
 	add	rbp,256
-	vmovdqu	xmm6,XMMWORD PTR[((144-128))+rax]
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((16-128))+rax]
+	vmovdqu	xmm6,XMMWORD[((144-128))+rax]
+	vpaddd	xmm5,xmm5,XMMWORD[((16-128))+rax]
 
 	vpsrld	xmm7,xmm6,3
 	vpsrld	xmm1,xmm6,7
@@ -4784,7 +4786,7 @@ $L$oop_16_xx_avx::
 	vpsrld	xmm1,xmm6,18
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm6,14
-	vmovdqu	xmm0,XMMWORD PTR[((96-128))+rax]
+	vmovdqu	xmm0,XMMWORD[((96-128))+rax]
 	vpsrld	xmm3,xmm0,10
 
 	vpxor	xmm7,xmm7,xmm1
@@ -4801,13 +4803,13 @@ $L$oop_16_xx_avx::
 	vpaddd	xmm5,xmm5,xmm7
 	vpsrld	xmm7,xmm12,6
 	vpslld	xmm2,xmm12,26
-	vmovdqu	XMMWORD PTR[(128-128)+rax],xmm5
+	vmovdqu	XMMWORD[(128-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm15
 
 	vpsrld	xmm1,xmm12,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm12,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((-128))+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[((-128))+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm12,25
@@ -4849,8 +4851,8 @@ $L$oop_16_xx_avx::
 
 	vpaddd	xmm15,xmm15,xmm5
 	vpaddd	xmm15,xmm15,xmm7
-	vmovdqu	xmm5,XMMWORD PTR[((160-128))+rax]
-	vpaddd	xmm6,xmm6,XMMWORD PTR[((32-128))+rax]
+	vmovdqu	xmm5,XMMWORD[((160-128))+rax]
+	vpaddd	xmm6,xmm6,XMMWORD[((32-128))+rax]
 
 	vpsrld	xmm7,xmm5,3
 	vpsrld	xmm1,xmm5,7
@@ -4859,7 +4861,7 @@ $L$oop_16_xx_avx::
 	vpsrld	xmm1,xmm5,18
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm5,14
-	vmovdqu	xmm0,XMMWORD PTR[((112-128))+rax]
+	vmovdqu	xmm0,XMMWORD[((112-128))+rax]
 	vpsrld	xmm4,xmm0,10
 
 	vpxor	xmm7,xmm7,xmm1
@@ -4876,13 +4878,13 @@ $L$oop_16_xx_avx::
 	vpaddd	xmm6,xmm6,xmm7
 	vpsrld	xmm7,xmm11,6
 	vpslld	xmm2,xmm11,26
-	vmovdqu	XMMWORD PTR[(144-128)+rax],xmm6
+	vmovdqu	XMMWORD[(144-128)+rax],xmm6
 	vpaddd	xmm6,xmm6,xmm14
 
 	vpsrld	xmm1,xmm11,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm11,21
-	vpaddd	xmm6,xmm6,XMMWORD PTR[((-96))+rbp]
+	vpaddd	xmm6,xmm6,XMMWORD[((-96))+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm11,25
@@ -4924,8 +4926,8 @@ $L$oop_16_xx_avx::
 
 	vpaddd	xmm14,xmm14,xmm6
 	vpaddd	xmm14,xmm14,xmm7
-	vmovdqu	xmm6,XMMWORD PTR[((176-128))+rax]
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((48-128))+rax]
+	vmovdqu	xmm6,XMMWORD[((176-128))+rax]
+	vpaddd	xmm5,xmm5,XMMWORD[((48-128))+rax]
 
 	vpsrld	xmm7,xmm6,3
 	vpsrld	xmm1,xmm6,7
@@ -4934,7 +4936,7 @@ $L$oop_16_xx_avx::
 	vpsrld	xmm1,xmm6,18
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm6,14
-	vmovdqu	xmm0,XMMWORD PTR[((128-128))+rax]
+	vmovdqu	xmm0,XMMWORD[((128-128))+rax]
 	vpsrld	xmm3,xmm0,10
 
 	vpxor	xmm7,xmm7,xmm1
@@ -4951,13 +4953,13 @@ $L$oop_16_xx_avx::
 	vpaddd	xmm5,xmm5,xmm7
 	vpsrld	xmm7,xmm10,6
 	vpslld	xmm2,xmm10,26
-	vmovdqu	XMMWORD PTR[(160-128)+rax],xmm5
+	vmovdqu	XMMWORD[(160-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm13
 
 	vpsrld	xmm1,xmm10,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm10,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((-64))+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[((-64))+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm10,25
@@ -4999,8 +5001,8 @@ $L$oop_16_xx_avx::
 
 	vpaddd	xmm13,xmm13,xmm5
 	vpaddd	xmm13,xmm13,xmm7
-	vmovdqu	xmm5,XMMWORD PTR[((192-128))+rax]
-	vpaddd	xmm6,xmm6,XMMWORD PTR[((64-128))+rax]
+	vmovdqu	xmm5,XMMWORD[((192-128))+rax]
+	vpaddd	xmm6,xmm6,XMMWORD[((64-128))+rax]
 
 	vpsrld	xmm7,xmm5,3
 	vpsrld	xmm1,xmm5,7
@@ -5009,7 +5011,7 @@ $L$oop_16_xx_avx::
 	vpsrld	xmm1,xmm5,18
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm5,14
-	vmovdqu	xmm0,XMMWORD PTR[((144-128))+rax]
+	vmovdqu	xmm0,XMMWORD[((144-128))+rax]
 	vpsrld	xmm4,xmm0,10
 
 	vpxor	xmm7,xmm7,xmm1
@@ -5026,13 +5028,13 @@ $L$oop_16_xx_avx::
 	vpaddd	xmm6,xmm6,xmm7
 	vpsrld	xmm7,xmm9,6
 	vpslld	xmm2,xmm9,26
-	vmovdqu	XMMWORD PTR[(176-128)+rax],xmm6
+	vmovdqu	XMMWORD[(176-128)+rax],xmm6
 	vpaddd	xmm6,xmm6,xmm12
 
 	vpsrld	xmm1,xmm9,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm9,21
-	vpaddd	xmm6,xmm6,XMMWORD PTR[((-32))+rbp]
+	vpaddd	xmm6,xmm6,XMMWORD[((-32))+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm9,25
@@ -5074,8 +5076,8 @@ $L$oop_16_xx_avx::
 
 	vpaddd	xmm12,xmm12,xmm6
 	vpaddd	xmm12,xmm12,xmm7
-	vmovdqu	xmm6,XMMWORD PTR[((208-128))+rax]
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((80-128))+rax]
+	vmovdqu	xmm6,XMMWORD[((208-128))+rax]
+	vpaddd	xmm5,xmm5,XMMWORD[((80-128))+rax]
 
 	vpsrld	xmm7,xmm6,3
 	vpsrld	xmm1,xmm6,7
@@ -5084,7 +5086,7 @@ $L$oop_16_xx_avx::
 	vpsrld	xmm1,xmm6,18
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm6,14
-	vmovdqu	xmm0,XMMWORD PTR[((160-128))+rax]
+	vmovdqu	xmm0,XMMWORD[((160-128))+rax]
 	vpsrld	xmm3,xmm0,10
 
 	vpxor	xmm7,xmm7,xmm1
@@ -5101,13 +5103,13 @@ $L$oop_16_xx_avx::
 	vpaddd	xmm5,xmm5,xmm7
 	vpsrld	xmm7,xmm8,6
 	vpslld	xmm2,xmm8,26
-	vmovdqu	XMMWORD PTR[(192-128)+rax],xmm5
+	vmovdqu	XMMWORD[(192-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm11
 
 	vpsrld	xmm1,xmm8,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm8,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm8,25
@@ -5149,8 +5151,8 @@ $L$oop_16_xx_avx::
 
 	vpaddd	xmm11,xmm11,xmm5
 	vpaddd	xmm11,xmm11,xmm7
-	vmovdqu	xmm5,XMMWORD PTR[((224-128))+rax]
-	vpaddd	xmm6,xmm6,XMMWORD PTR[((96-128))+rax]
+	vmovdqu	xmm5,XMMWORD[((224-128))+rax]
+	vpaddd	xmm6,xmm6,XMMWORD[((96-128))+rax]
 
 	vpsrld	xmm7,xmm5,3
 	vpsrld	xmm1,xmm5,7
@@ -5159,7 +5161,7 @@ $L$oop_16_xx_avx::
 	vpsrld	xmm1,xmm5,18
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm5,14
-	vmovdqu	xmm0,XMMWORD PTR[((176-128))+rax]
+	vmovdqu	xmm0,XMMWORD[((176-128))+rax]
 	vpsrld	xmm4,xmm0,10
 
 	vpxor	xmm7,xmm7,xmm1
@@ -5176,13 +5178,13 @@ $L$oop_16_xx_avx::
 	vpaddd	xmm6,xmm6,xmm7
 	vpsrld	xmm7,xmm15,6
 	vpslld	xmm2,xmm15,26
-	vmovdqu	XMMWORD PTR[(208-128)+rax],xmm6
+	vmovdqu	XMMWORD[(208-128)+rax],xmm6
 	vpaddd	xmm6,xmm6,xmm10
 
 	vpsrld	xmm1,xmm15,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm15,21
-	vpaddd	xmm6,xmm6,XMMWORD PTR[32+rbp]
+	vpaddd	xmm6,xmm6,XMMWORD[32+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm15,25
@@ -5224,8 +5226,8 @@ $L$oop_16_xx_avx::
 
 	vpaddd	xmm10,xmm10,xmm6
 	vpaddd	xmm10,xmm10,xmm7
-	vmovdqu	xmm6,XMMWORD PTR[((240-128))+rax]
-	vpaddd	xmm5,xmm5,XMMWORD PTR[((112-128))+rax]
+	vmovdqu	xmm6,XMMWORD[((240-128))+rax]
+	vpaddd	xmm5,xmm5,XMMWORD[((112-128))+rax]
 
 	vpsrld	xmm7,xmm6,3
 	vpsrld	xmm1,xmm6,7
@@ -5234,7 +5236,7 @@ $L$oop_16_xx_avx::
 	vpsrld	xmm1,xmm6,18
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm6,14
-	vmovdqu	xmm0,XMMWORD PTR[((192-128))+rax]
+	vmovdqu	xmm0,XMMWORD[((192-128))+rax]
 	vpsrld	xmm3,xmm0,10
 
 	vpxor	xmm7,xmm7,xmm1
@@ -5251,13 +5253,13 @@ $L$oop_16_xx_avx::
 	vpaddd	xmm5,xmm5,xmm7
 	vpsrld	xmm7,xmm14,6
 	vpslld	xmm2,xmm14,26
-	vmovdqu	XMMWORD PTR[(224-128)+rax],xmm5
+	vmovdqu	XMMWORD[(224-128)+rax],xmm5
 	vpaddd	xmm5,xmm5,xmm9
 
 	vpsrld	xmm1,xmm14,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm14,21
-	vpaddd	xmm5,xmm5,XMMWORD PTR[64+rbp]
+	vpaddd	xmm5,xmm5,XMMWORD[64+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm14,25
@@ -5299,8 +5301,8 @@ $L$oop_16_xx_avx::
 
 	vpaddd	xmm9,xmm9,xmm5
 	vpaddd	xmm9,xmm9,xmm7
-	vmovdqu	xmm5,XMMWORD PTR[((0-128))+rax]
-	vpaddd	xmm6,xmm6,XMMWORD PTR[((128-128))+rax]
+	vmovdqu	xmm5,XMMWORD[((0-128))+rax]
+	vpaddd	xmm6,xmm6,XMMWORD[((128-128))+rax]
 
 	vpsrld	xmm7,xmm5,3
 	vpsrld	xmm1,xmm5,7
@@ -5309,7 +5311,7 @@ $L$oop_16_xx_avx::
 	vpsrld	xmm1,xmm5,18
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm5,14
-	vmovdqu	xmm0,XMMWORD PTR[((208-128))+rax]
+	vmovdqu	xmm0,XMMWORD[((208-128))+rax]
 	vpsrld	xmm4,xmm0,10
 
 	vpxor	xmm7,xmm7,xmm1
@@ -5326,13 +5328,13 @@ $L$oop_16_xx_avx::
 	vpaddd	xmm6,xmm6,xmm7
 	vpsrld	xmm7,xmm13,6
 	vpslld	xmm2,xmm13,26
-	vmovdqu	XMMWORD PTR[(240-128)+rax],xmm6
+	vmovdqu	XMMWORD[(240-128)+rax],xmm6
 	vpaddd	xmm6,xmm6,xmm8
 
 	vpsrld	xmm1,xmm13,11
 	vpxor	xmm7,xmm7,xmm2
 	vpslld	xmm2,xmm13,21
-	vpaddd	xmm6,xmm6,XMMWORD PTR[96+rbp]
+	vpaddd	xmm6,xmm6,XMMWORD[96+rbp]
 	vpxor	xmm7,xmm7,xmm1
 
 	vpsrld	xmm1,xmm13,25
@@ -5376,103 +5378,102 @@ $L$oop_16_xx_avx::
 	vpaddd	xmm8,xmm8,xmm7
 	add	rbp,256
 	dec	ecx
-	jnz	$L$oop_16_xx_avx
+	jnz	NEAR $L$oop_16_xx_avx
 
 	mov	ecx,1
-	lea	rbp,QWORD PTR[((K256+128))]
-	cmp	ecx,DWORD PTR[rbx]
+	lea	rbp,[((K256+128))]
+	cmp	ecx,DWORD[rbx]
 	cmovge	r8,rbp
-	cmp	ecx,DWORD PTR[4+rbx]
+	cmp	ecx,DWORD[4+rbx]
 	cmovge	r9,rbp
-	cmp	ecx,DWORD PTR[8+rbx]
+	cmp	ecx,DWORD[8+rbx]
 	cmovge	r10,rbp
-	cmp	ecx,DWORD PTR[12+rbx]
+	cmp	ecx,DWORD[12+rbx]
 	cmovge	r11,rbp
-	vmovdqa	xmm7,XMMWORD PTR[rbx]
+	vmovdqa	xmm7,XMMWORD[rbx]
 	vpxor	xmm0,xmm0,xmm0
 	vmovdqa	xmm6,xmm7
 	vpcmpgtd	xmm6,xmm6,xmm0
 	vpaddd	xmm7,xmm7,xmm6
 
-	vmovdqu	xmm0,XMMWORD PTR[((0-128))+rdi]
+	vmovdqu	xmm0,XMMWORD[((0-128))+rdi]
 	vpand	xmm8,xmm8,xmm6
-	vmovdqu	xmm1,XMMWORD PTR[((32-128))+rdi]
+	vmovdqu	xmm1,XMMWORD[((32-128))+rdi]
 	vpand	xmm9,xmm9,xmm6
-	vmovdqu	xmm2,XMMWORD PTR[((64-128))+rdi]
+	vmovdqu	xmm2,XMMWORD[((64-128))+rdi]
 	vpand	xmm10,xmm10,xmm6
-	vmovdqu	xmm5,XMMWORD PTR[((96-128))+rdi]
+	vmovdqu	xmm5,XMMWORD[((96-128))+rdi]
 	vpand	xmm11,xmm11,xmm6
 	vpaddd	xmm8,xmm8,xmm0
-	vmovdqu	xmm0,XMMWORD PTR[((128-128))+rdi]
+	vmovdqu	xmm0,XMMWORD[((128-128))+rdi]
 	vpand	xmm12,xmm12,xmm6
 	vpaddd	xmm9,xmm9,xmm1
-	vmovdqu	xmm1,XMMWORD PTR[((160-128))+rdi]
+	vmovdqu	xmm1,XMMWORD[((160-128))+rdi]
 	vpand	xmm13,xmm13,xmm6
 	vpaddd	xmm10,xmm10,xmm2
-	vmovdqu	xmm2,XMMWORD PTR[((192-128))+rdi]
+	vmovdqu	xmm2,XMMWORD[((192-128))+rdi]
 	vpand	xmm14,xmm14,xmm6
 	vpaddd	xmm11,xmm11,xmm5
-	vmovdqu	xmm5,XMMWORD PTR[((224-128))+rdi]
+	vmovdqu	xmm5,XMMWORD[((224-128))+rdi]
 	vpand	xmm15,xmm15,xmm6
 	vpaddd	xmm12,xmm12,xmm0
 	vpaddd	xmm13,xmm13,xmm1
-	vmovdqu	XMMWORD PTR[(0-128)+rdi],xmm8
+	vmovdqu	XMMWORD[(0-128)+rdi],xmm8
 	vpaddd	xmm14,xmm14,xmm2
-	vmovdqu	XMMWORD PTR[(32-128)+rdi],xmm9
+	vmovdqu	XMMWORD[(32-128)+rdi],xmm9
 	vpaddd	xmm15,xmm15,xmm5
-	vmovdqu	XMMWORD PTR[(64-128)+rdi],xmm10
-	vmovdqu	XMMWORD PTR[(96-128)+rdi],xmm11
-	vmovdqu	XMMWORD PTR[(128-128)+rdi],xmm12
-	vmovdqu	XMMWORD PTR[(160-128)+rdi],xmm13
-	vmovdqu	XMMWORD PTR[(192-128)+rdi],xmm14
-	vmovdqu	XMMWORD PTR[(224-128)+rdi],xmm15
+	vmovdqu	XMMWORD[(64-128)+rdi],xmm10
+	vmovdqu	XMMWORD[(96-128)+rdi],xmm11
+	vmovdqu	XMMWORD[(128-128)+rdi],xmm12
+	vmovdqu	XMMWORD[(160-128)+rdi],xmm13
+	vmovdqu	XMMWORD[(192-128)+rdi],xmm14
+	vmovdqu	XMMWORD[(224-128)+rdi],xmm15
 
-	vmovdqu	XMMWORD PTR[rbx],xmm7
-	vmovdqu	xmm6,XMMWORD PTR[$L$pbswap]
+	vmovdqu	XMMWORD[rbx],xmm7
+	vmovdqu	xmm6,XMMWORD[$L$pbswap]
 	dec	edx
-	jnz	$L$oop_avx
+	jnz	NEAR $L$oop_avx
 
-	mov	edx,DWORD PTR[280+rsp]
-	lea	rdi,QWORD PTR[16+rdi]
-	lea	rsi,QWORD PTR[64+rsi]
+	mov	edx,DWORD[280+rsp]
+	lea	rdi,[16+rdi]
+	lea	rsi,[64+rsi]
 	dec	edx
-	jnz	$L$oop_grande_avx
+	jnz	NEAR $L$oop_grande_avx
 
-$L$done_avx::
-	mov	rax,QWORD PTR[272+rsp]
+$L$done_avx:
+	mov	rax,QWORD[272+rsp]
 	vzeroupper
-	movaps	xmm6,XMMWORD PTR[((-184))+rax]
-	movaps	xmm7,XMMWORD PTR[((-168))+rax]
-	movaps	xmm8,XMMWORD PTR[((-152))+rax]
-	movaps	xmm9,XMMWORD PTR[((-136))+rax]
-	movaps	xmm10,XMMWORD PTR[((-120))+rax]
-	movaps	xmm11,XMMWORD PTR[((-104))+rax]
-	movaps	xmm12,XMMWORD PTR[((-88))+rax]
-	movaps	xmm13,XMMWORD PTR[((-72))+rax]
-	movaps	xmm14,XMMWORD PTR[((-56))+rax]
-	movaps	xmm15,XMMWORD PTR[((-40))+rax]
-	mov	rbp,QWORD PTR[((-16))+rax]
-	mov	rbx,QWORD PTR[((-8))+rax]
-	lea	rsp,QWORD PTR[rax]
-$L$epilogue_avx::
-	mov	rdi,QWORD PTR[8+rsp]	;WIN64 epilogue
-	mov	rsi,QWORD PTR[16+rsp]
+	movaps	xmm6,XMMWORD[((-184))+rax]
+	movaps	xmm7,XMMWORD[((-168))+rax]
+	movaps	xmm8,XMMWORD[((-152))+rax]
+	movaps	xmm9,XMMWORD[((-136))+rax]
+	movaps	xmm10,XMMWORD[((-120))+rax]
+	movaps	xmm11,XMMWORD[((-104))+rax]
+	movaps	xmm12,XMMWORD[((-88))+rax]
+	movaps	xmm13,XMMWORD[((-72))+rax]
+	movaps	xmm14,XMMWORD[((-56))+rax]
+	movaps	xmm15,XMMWORD[((-40))+rax]
+	mov	rbp,QWORD[((-16))+rax]
+	mov	rbx,QWORD[((-8))+rax]
+	lea	rsp,[rax]
+$L$epilogue_avx:
+	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
+	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
-$L$SEH_end_sha256_multi_block_avx::
-sha256_multi_block_avx	ENDP
+$L$SEH_end_sha256_multi_block_avx:
 
 ALIGN	32
-sha256_multi_block_avx2	PROC PRIVATE
-	mov	QWORD PTR[8+rsp],rdi	;WIN64 prologue
-	mov	QWORD PTR[16+rsp],rsi
+sha256_multi_block_avx2:
+	mov	QWORD[8+rsp],rdi	;WIN64 prologue
+	mov	QWORD[16+rsp],rsi
 	mov	rax,rsp
-$L$SEH_begin_sha256_multi_block_avx2::
+$L$SEH_begin_sha256_multi_block_avx2:
 	mov	rdi,rcx
 	mov	rsi,rdx
 	mov	rdx,r8
 
 
-_avx2_shortcut::
+_avx2_shortcut:
 	mov	rax,rsp
 	push	rbx
 	push	rbp
@@ -5480,121 +5481,121 @@ _avx2_shortcut::
 	push	r13
 	push	r14
 	push	r15
-	lea	rsp,QWORD PTR[((-168))+rsp]
-	movaps	XMMWORD PTR[rsp],xmm6
-	movaps	XMMWORD PTR[16+rsp],xmm7
-	movaps	XMMWORD PTR[32+rsp],xmm8
-	movaps	XMMWORD PTR[48+rsp],xmm9
-	movaps	XMMWORD PTR[64+rsp],xmm10
-	movaps	XMMWORD PTR[80+rsp],xmm11
-	movaps	XMMWORD PTR[(-120)+rax],xmm12
-	movaps	XMMWORD PTR[(-104)+rax],xmm13
-	movaps	XMMWORD PTR[(-88)+rax],xmm14
-	movaps	XMMWORD PTR[(-72)+rax],xmm15
+	lea	rsp,[((-168))+rsp]
+	movaps	XMMWORD[rsp],xmm6
+	movaps	XMMWORD[16+rsp],xmm7
+	movaps	XMMWORD[32+rsp],xmm8
+	movaps	XMMWORD[48+rsp],xmm9
+	movaps	XMMWORD[64+rsp],xmm10
+	movaps	XMMWORD[80+rsp],xmm11
+	movaps	XMMWORD[(-120)+rax],xmm12
+	movaps	XMMWORD[(-104)+rax],xmm13
+	movaps	XMMWORD[(-88)+rax],xmm14
+	movaps	XMMWORD[(-72)+rax],xmm15
 	sub	rsp,576
 	and	rsp,-256
-	mov	QWORD PTR[544+rsp],rax
-$L$body_avx2::
-	lea	rbp,QWORD PTR[((K256+128))]
-	lea	rdi,QWORD PTR[128+rdi]
+	mov	QWORD[544+rsp],rax
+$L$body_avx2:
+	lea	rbp,[((K256+128))]
+	lea	rdi,[128+rdi]
 
-$L$oop_grande_avx2::
-	mov	DWORD PTR[552+rsp],edx
+$L$oop_grande_avx2:
+	mov	DWORD[552+rsp],edx
 	xor	edx,edx
-	lea	rbx,QWORD PTR[512+rsp]
-	mov	r12,QWORD PTR[rsi]
-	mov	ecx,DWORD PTR[8+rsi]
+	lea	rbx,[512+rsp]
+	mov	r12,QWORD[rsi]
+	mov	ecx,DWORD[8+rsi]
 	cmp	ecx,edx
 	cmovg	edx,ecx
 	test	ecx,ecx
-	mov	DWORD PTR[rbx],ecx
+	mov	DWORD[rbx],ecx
 	cmovle	r12,rbp
-	mov	r13,QWORD PTR[16+rsi]
-	mov	ecx,DWORD PTR[24+rsi]
+	mov	r13,QWORD[16+rsi]
+	mov	ecx,DWORD[24+rsi]
 	cmp	ecx,edx
 	cmovg	edx,ecx
 	test	ecx,ecx
-	mov	DWORD PTR[4+rbx],ecx
+	mov	DWORD[4+rbx],ecx
 	cmovle	r13,rbp
-	mov	r14,QWORD PTR[32+rsi]
-	mov	ecx,DWORD PTR[40+rsi]
+	mov	r14,QWORD[32+rsi]
+	mov	ecx,DWORD[40+rsi]
 	cmp	ecx,edx
 	cmovg	edx,ecx
 	test	ecx,ecx
-	mov	DWORD PTR[8+rbx],ecx
+	mov	DWORD[8+rbx],ecx
 	cmovle	r14,rbp
-	mov	r15,QWORD PTR[48+rsi]
-	mov	ecx,DWORD PTR[56+rsi]
+	mov	r15,QWORD[48+rsi]
+	mov	ecx,DWORD[56+rsi]
 	cmp	ecx,edx
 	cmovg	edx,ecx
 	test	ecx,ecx
-	mov	DWORD PTR[12+rbx],ecx
+	mov	DWORD[12+rbx],ecx
 	cmovle	r15,rbp
-	mov	r8,QWORD PTR[64+rsi]
-	mov	ecx,DWORD PTR[72+rsi]
+	mov	r8,QWORD[64+rsi]
+	mov	ecx,DWORD[72+rsi]
 	cmp	ecx,edx
 	cmovg	edx,ecx
 	test	ecx,ecx
-	mov	DWORD PTR[16+rbx],ecx
+	mov	DWORD[16+rbx],ecx
 	cmovle	r8,rbp
-	mov	r9,QWORD PTR[80+rsi]
-	mov	ecx,DWORD PTR[88+rsi]
+	mov	r9,QWORD[80+rsi]
+	mov	ecx,DWORD[88+rsi]
 	cmp	ecx,edx
 	cmovg	edx,ecx
 	test	ecx,ecx
-	mov	DWORD PTR[20+rbx],ecx
+	mov	DWORD[20+rbx],ecx
 	cmovle	r9,rbp
-	mov	r10,QWORD PTR[96+rsi]
-	mov	ecx,DWORD PTR[104+rsi]
+	mov	r10,QWORD[96+rsi]
+	mov	ecx,DWORD[104+rsi]
 	cmp	ecx,edx
 	cmovg	edx,ecx
 	test	ecx,ecx
-	mov	DWORD PTR[24+rbx],ecx
+	mov	DWORD[24+rbx],ecx
 	cmovle	r10,rbp
-	mov	r11,QWORD PTR[112+rsi]
-	mov	ecx,DWORD PTR[120+rsi]
+	mov	r11,QWORD[112+rsi]
+	mov	ecx,DWORD[120+rsi]
 	cmp	ecx,edx
 	cmovg	edx,ecx
 	test	ecx,ecx
-	mov	DWORD PTR[28+rbx],ecx
+	mov	DWORD[28+rbx],ecx
 	cmovle	r11,rbp
-	vmovdqu	ymm8,YMMWORD PTR[((0-128))+rdi]
-	lea	rax,QWORD PTR[128+rsp]
-	vmovdqu	ymm9,YMMWORD PTR[((32-128))+rdi]
-	lea	rbx,QWORD PTR[((256+128))+rsp]
-	vmovdqu	ymm10,YMMWORD PTR[((64-128))+rdi]
-	vmovdqu	ymm11,YMMWORD PTR[((96-128))+rdi]
-	vmovdqu	ymm12,YMMWORD PTR[((128-128))+rdi]
-	vmovdqu	ymm13,YMMWORD PTR[((160-128))+rdi]
-	vmovdqu	ymm14,YMMWORD PTR[((192-128))+rdi]
-	vmovdqu	ymm15,YMMWORD PTR[((224-128))+rdi]
-	vmovdqu	ymm6,YMMWORD PTR[$L$pbswap]
-	jmp	$L$oop_avx2
+	vmovdqu	ymm8,YMMWORD[((0-128))+rdi]
+	lea	rax,[128+rsp]
+	vmovdqu	ymm9,YMMWORD[((32-128))+rdi]
+	lea	rbx,[((256+128))+rsp]
+	vmovdqu	ymm10,YMMWORD[((64-128))+rdi]
+	vmovdqu	ymm11,YMMWORD[((96-128))+rdi]
+	vmovdqu	ymm12,YMMWORD[((128-128))+rdi]
+	vmovdqu	ymm13,YMMWORD[((160-128))+rdi]
+	vmovdqu	ymm14,YMMWORD[((192-128))+rdi]
+	vmovdqu	ymm15,YMMWORD[((224-128))+rdi]
+	vmovdqu	ymm6,YMMWORD[$L$pbswap]
+	jmp	NEAR $L$oop_avx2
 
 ALIGN	32
-$L$oop_avx2::
+$L$oop_avx2:
 	vpxor	ymm4,ymm10,ymm9
-	vmovd	xmm5,DWORD PTR[r12]
-	vmovd	xmm0,DWORD PTR[r8]
-	vmovd	xmm1,DWORD PTR[r13]
-	vmovd	xmm2,DWORD PTR[r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[r14],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[r10],1
-	vpinsrd	xmm1,xmm1,DWORD PTR[r15],1
+	vmovd	xmm5,DWORD[r12]
+	vmovd	xmm0,DWORD[r8]
+	vmovd	xmm1,DWORD[r13]
+	vmovd	xmm2,DWORD[r9]
+	vpinsrd	xmm5,xmm5,DWORD[r14],1
+	vpinsrd	xmm0,xmm0,DWORD[r10],1
+	vpinsrd	xmm1,xmm1,DWORD[r15],1
 	vpunpckldq	ymm5,ymm5,ymm1
-	vpinsrd	xmm2,xmm2,DWORD PTR[r11],1
+	vpinsrd	xmm2,xmm2,DWORD[r11],1
 	vpunpckldq	ymm0,ymm0,ymm2
 	vinserti128	ymm5,ymm5,xmm0,1
 	vpshufb	ymm5,ymm5,ymm6
 	vpsrld	ymm7,ymm12,6
 	vpslld	ymm2,ymm12,26
-	vmovdqu	YMMWORD PTR[(0-128)+rax],ymm5
+	vmovdqu	YMMWORD[(0-128)+rax],ymm5
 	vpaddd	ymm5,ymm5,ymm15
 
 	vpsrld	ymm1,ymm12,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm12,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((-128))+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[((-128))+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm12,25
@@ -5636,27 +5637,27 @@ $L$oop_avx2::
 
 	vpaddd	ymm15,ymm15,ymm5
 	vpaddd	ymm15,ymm15,ymm7
-	vmovd	xmm5,DWORD PTR[4+r12]
-	vmovd	xmm0,DWORD PTR[4+r8]
-	vmovd	xmm1,DWORD PTR[4+r13]
-	vmovd	xmm2,DWORD PTR[4+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[4+r14],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[4+r10],1
-	vpinsrd	xmm1,xmm1,DWORD PTR[4+r15],1
+	vmovd	xmm5,DWORD[4+r12]
+	vmovd	xmm0,DWORD[4+r8]
+	vmovd	xmm1,DWORD[4+r13]
+	vmovd	xmm2,DWORD[4+r9]
+	vpinsrd	xmm5,xmm5,DWORD[4+r14],1
+	vpinsrd	xmm0,xmm0,DWORD[4+r10],1
+	vpinsrd	xmm1,xmm1,DWORD[4+r15],1
 	vpunpckldq	ymm5,ymm5,ymm1
-	vpinsrd	xmm2,xmm2,DWORD PTR[4+r11],1
+	vpinsrd	xmm2,xmm2,DWORD[4+r11],1
 	vpunpckldq	ymm0,ymm0,ymm2
 	vinserti128	ymm5,ymm5,xmm0,1
 	vpshufb	ymm5,ymm5,ymm6
 	vpsrld	ymm7,ymm11,6
 	vpslld	ymm2,ymm11,26
-	vmovdqu	YMMWORD PTR[(32-128)+rax],ymm5
+	vmovdqu	YMMWORD[(32-128)+rax],ymm5
 	vpaddd	ymm5,ymm5,ymm14
 
 	vpsrld	ymm1,ymm11,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm11,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((-96))+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[((-96))+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm11,25
@@ -5698,27 +5699,27 @@ $L$oop_avx2::
 
 	vpaddd	ymm14,ymm14,ymm5
 	vpaddd	ymm14,ymm14,ymm7
-	vmovd	xmm5,DWORD PTR[8+r12]
-	vmovd	xmm0,DWORD PTR[8+r8]
-	vmovd	xmm1,DWORD PTR[8+r13]
-	vmovd	xmm2,DWORD PTR[8+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[8+r14],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[8+r10],1
-	vpinsrd	xmm1,xmm1,DWORD PTR[8+r15],1
+	vmovd	xmm5,DWORD[8+r12]
+	vmovd	xmm0,DWORD[8+r8]
+	vmovd	xmm1,DWORD[8+r13]
+	vmovd	xmm2,DWORD[8+r9]
+	vpinsrd	xmm5,xmm5,DWORD[8+r14],1
+	vpinsrd	xmm0,xmm0,DWORD[8+r10],1
+	vpinsrd	xmm1,xmm1,DWORD[8+r15],1
 	vpunpckldq	ymm5,ymm5,ymm1
-	vpinsrd	xmm2,xmm2,DWORD PTR[8+r11],1
+	vpinsrd	xmm2,xmm2,DWORD[8+r11],1
 	vpunpckldq	ymm0,ymm0,ymm2
 	vinserti128	ymm5,ymm5,xmm0,1
 	vpshufb	ymm5,ymm5,ymm6
 	vpsrld	ymm7,ymm10,6
 	vpslld	ymm2,ymm10,26
-	vmovdqu	YMMWORD PTR[(64-128)+rax],ymm5
+	vmovdqu	YMMWORD[(64-128)+rax],ymm5
 	vpaddd	ymm5,ymm5,ymm13
 
 	vpsrld	ymm1,ymm10,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm10,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((-64))+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[((-64))+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm10,25
@@ -5760,27 +5761,27 @@ $L$oop_avx2::
 
 	vpaddd	ymm13,ymm13,ymm5
 	vpaddd	ymm13,ymm13,ymm7
-	vmovd	xmm5,DWORD PTR[12+r12]
-	vmovd	xmm0,DWORD PTR[12+r8]
-	vmovd	xmm1,DWORD PTR[12+r13]
-	vmovd	xmm2,DWORD PTR[12+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[12+r14],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[12+r10],1
-	vpinsrd	xmm1,xmm1,DWORD PTR[12+r15],1
+	vmovd	xmm5,DWORD[12+r12]
+	vmovd	xmm0,DWORD[12+r8]
+	vmovd	xmm1,DWORD[12+r13]
+	vmovd	xmm2,DWORD[12+r9]
+	vpinsrd	xmm5,xmm5,DWORD[12+r14],1
+	vpinsrd	xmm0,xmm0,DWORD[12+r10],1
+	vpinsrd	xmm1,xmm1,DWORD[12+r15],1
 	vpunpckldq	ymm5,ymm5,ymm1
-	vpinsrd	xmm2,xmm2,DWORD PTR[12+r11],1
+	vpinsrd	xmm2,xmm2,DWORD[12+r11],1
 	vpunpckldq	ymm0,ymm0,ymm2
 	vinserti128	ymm5,ymm5,xmm0,1
 	vpshufb	ymm5,ymm5,ymm6
 	vpsrld	ymm7,ymm9,6
 	vpslld	ymm2,ymm9,26
-	vmovdqu	YMMWORD PTR[(96-128)+rax],ymm5
+	vmovdqu	YMMWORD[(96-128)+rax],ymm5
 	vpaddd	ymm5,ymm5,ymm12
 
 	vpsrld	ymm1,ymm9,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm9,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((-32))+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[((-32))+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm9,25
@@ -5822,27 +5823,27 @@ $L$oop_avx2::
 
 	vpaddd	ymm12,ymm12,ymm5
 	vpaddd	ymm12,ymm12,ymm7
-	vmovd	xmm5,DWORD PTR[16+r12]
-	vmovd	xmm0,DWORD PTR[16+r8]
-	vmovd	xmm1,DWORD PTR[16+r13]
-	vmovd	xmm2,DWORD PTR[16+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[16+r14],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[16+r10],1
-	vpinsrd	xmm1,xmm1,DWORD PTR[16+r15],1
+	vmovd	xmm5,DWORD[16+r12]
+	vmovd	xmm0,DWORD[16+r8]
+	vmovd	xmm1,DWORD[16+r13]
+	vmovd	xmm2,DWORD[16+r9]
+	vpinsrd	xmm5,xmm5,DWORD[16+r14],1
+	vpinsrd	xmm0,xmm0,DWORD[16+r10],1
+	vpinsrd	xmm1,xmm1,DWORD[16+r15],1
 	vpunpckldq	ymm5,ymm5,ymm1
-	vpinsrd	xmm2,xmm2,DWORD PTR[16+r11],1
+	vpinsrd	xmm2,xmm2,DWORD[16+r11],1
 	vpunpckldq	ymm0,ymm0,ymm2
 	vinserti128	ymm5,ymm5,xmm0,1
 	vpshufb	ymm5,ymm5,ymm6
 	vpsrld	ymm7,ymm8,6
 	vpslld	ymm2,ymm8,26
-	vmovdqu	YMMWORD PTR[(128-128)+rax],ymm5
+	vmovdqu	YMMWORD[(128-128)+rax],ymm5
 	vpaddd	ymm5,ymm5,ymm11
 
 	vpsrld	ymm1,ymm8,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm8,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm8,25
@@ -5884,27 +5885,27 @@ $L$oop_avx2::
 
 	vpaddd	ymm11,ymm11,ymm5
 	vpaddd	ymm11,ymm11,ymm7
-	vmovd	xmm5,DWORD PTR[20+r12]
-	vmovd	xmm0,DWORD PTR[20+r8]
-	vmovd	xmm1,DWORD PTR[20+r13]
-	vmovd	xmm2,DWORD PTR[20+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[20+r14],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[20+r10],1
-	vpinsrd	xmm1,xmm1,DWORD PTR[20+r15],1
+	vmovd	xmm5,DWORD[20+r12]
+	vmovd	xmm0,DWORD[20+r8]
+	vmovd	xmm1,DWORD[20+r13]
+	vmovd	xmm2,DWORD[20+r9]
+	vpinsrd	xmm5,xmm5,DWORD[20+r14],1
+	vpinsrd	xmm0,xmm0,DWORD[20+r10],1
+	vpinsrd	xmm1,xmm1,DWORD[20+r15],1
 	vpunpckldq	ymm5,ymm5,ymm1
-	vpinsrd	xmm2,xmm2,DWORD PTR[20+r11],1
+	vpinsrd	xmm2,xmm2,DWORD[20+r11],1
 	vpunpckldq	ymm0,ymm0,ymm2
 	vinserti128	ymm5,ymm5,xmm0,1
 	vpshufb	ymm5,ymm5,ymm6
 	vpsrld	ymm7,ymm15,6
 	vpslld	ymm2,ymm15,26
-	vmovdqu	YMMWORD PTR[(160-128)+rax],ymm5
+	vmovdqu	YMMWORD[(160-128)+rax],ymm5
 	vpaddd	ymm5,ymm5,ymm10
 
 	vpsrld	ymm1,ymm15,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm15,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[32+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[32+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm15,25
@@ -5946,27 +5947,27 @@ $L$oop_avx2::
 
 	vpaddd	ymm10,ymm10,ymm5
 	vpaddd	ymm10,ymm10,ymm7
-	vmovd	xmm5,DWORD PTR[24+r12]
-	vmovd	xmm0,DWORD PTR[24+r8]
-	vmovd	xmm1,DWORD PTR[24+r13]
-	vmovd	xmm2,DWORD PTR[24+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[24+r14],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[24+r10],1
-	vpinsrd	xmm1,xmm1,DWORD PTR[24+r15],1
+	vmovd	xmm5,DWORD[24+r12]
+	vmovd	xmm0,DWORD[24+r8]
+	vmovd	xmm1,DWORD[24+r13]
+	vmovd	xmm2,DWORD[24+r9]
+	vpinsrd	xmm5,xmm5,DWORD[24+r14],1
+	vpinsrd	xmm0,xmm0,DWORD[24+r10],1
+	vpinsrd	xmm1,xmm1,DWORD[24+r15],1
 	vpunpckldq	ymm5,ymm5,ymm1
-	vpinsrd	xmm2,xmm2,DWORD PTR[24+r11],1
+	vpinsrd	xmm2,xmm2,DWORD[24+r11],1
 	vpunpckldq	ymm0,ymm0,ymm2
 	vinserti128	ymm5,ymm5,xmm0,1
 	vpshufb	ymm5,ymm5,ymm6
 	vpsrld	ymm7,ymm14,6
 	vpslld	ymm2,ymm14,26
-	vmovdqu	YMMWORD PTR[(192-128)+rax],ymm5
+	vmovdqu	YMMWORD[(192-128)+rax],ymm5
 	vpaddd	ymm5,ymm5,ymm9
 
 	vpsrld	ymm1,ymm14,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm14,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[64+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[64+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm14,25
@@ -6008,27 +6009,27 @@ $L$oop_avx2::
 
 	vpaddd	ymm9,ymm9,ymm5
 	vpaddd	ymm9,ymm9,ymm7
-	vmovd	xmm5,DWORD PTR[28+r12]
-	vmovd	xmm0,DWORD PTR[28+r8]
-	vmovd	xmm1,DWORD PTR[28+r13]
-	vmovd	xmm2,DWORD PTR[28+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[28+r14],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[28+r10],1
-	vpinsrd	xmm1,xmm1,DWORD PTR[28+r15],1
+	vmovd	xmm5,DWORD[28+r12]
+	vmovd	xmm0,DWORD[28+r8]
+	vmovd	xmm1,DWORD[28+r13]
+	vmovd	xmm2,DWORD[28+r9]
+	vpinsrd	xmm5,xmm5,DWORD[28+r14],1
+	vpinsrd	xmm0,xmm0,DWORD[28+r10],1
+	vpinsrd	xmm1,xmm1,DWORD[28+r15],1
 	vpunpckldq	ymm5,ymm5,ymm1
-	vpinsrd	xmm2,xmm2,DWORD PTR[28+r11],1
+	vpinsrd	xmm2,xmm2,DWORD[28+r11],1
 	vpunpckldq	ymm0,ymm0,ymm2
 	vinserti128	ymm5,ymm5,xmm0,1
 	vpshufb	ymm5,ymm5,ymm6
 	vpsrld	ymm7,ymm13,6
 	vpslld	ymm2,ymm13,26
-	vmovdqu	YMMWORD PTR[(224-128)+rax],ymm5
+	vmovdqu	YMMWORD[(224-128)+rax],ymm5
 	vpaddd	ymm5,ymm5,ymm8
 
 	vpsrld	ymm1,ymm13,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm13,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[96+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[96+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm13,25
@@ -6071,27 +6072,27 @@ $L$oop_avx2::
 	vpaddd	ymm8,ymm8,ymm5
 	vpaddd	ymm8,ymm8,ymm7
 	add	rbp,256
-	vmovd	xmm5,DWORD PTR[32+r12]
-	vmovd	xmm0,DWORD PTR[32+r8]
-	vmovd	xmm1,DWORD PTR[32+r13]
-	vmovd	xmm2,DWORD PTR[32+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[32+r14],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[32+r10],1
-	vpinsrd	xmm1,xmm1,DWORD PTR[32+r15],1
+	vmovd	xmm5,DWORD[32+r12]
+	vmovd	xmm0,DWORD[32+r8]
+	vmovd	xmm1,DWORD[32+r13]
+	vmovd	xmm2,DWORD[32+r9]
+	vpinsrd	xmm5,xmm5,DWORD[32+r14],1
+	vpinsrd	xmm0,xmm0,DWORD[32+r10],1
+	vpinsrd	xmm1,xmm1,DWORD[32+r15],1
 	vpunpckldq	ymm5,ymm5,ymm1
-	vpinsrd	xmm2,xmm2,DWORD PTR[32+r11],1
+	vpinsrd	xmm2,xmm2,DWORD[32+r11],1
 	vpunpckldq	ymm0,ymm0,ymm2
 	vinserti128	ymm5,ymm5,xmm0,1
 	vpshufb	ymm5,ymm5,ymm6
 	vpsrld	ymm7,ymm12,6
 	vpslld	ymm2,ymm12,26
-	vmovdqu	YMMWORD PTR[(256-256-128)+rbx],ymm5
+	vmovdqu	YMMWORD[(256-256-128)+rbx],ymm5
 	vpaddd	ymm5,ymm5,ymm15
 
 	vpsrld	ymm1,ymm12,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm12,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((-128))+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[((-128))+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm12,25
@@ -6133,27 +6134,27 @@ $L$oop_avx2::
 
 	vpaddd	ymm15,ymm15,ymm5
 	vpaddd	ymm15,ymm15,ymm7
-	vmovd	xmm5,DWORD PTR[36+r12]
-	vmovd	xmm0,DWORD PTR[36+r8]
-	vmovd	xmm1,DWORD PTR[36+r13]
-	vmovd	xmm2,DWORD PTR[36+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[36+r14],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[36+r10],1
-	vpinsrd	xmm1,xmm1,DWORD PTR[36+r15],1
+	vmovd	xmm5,DWORD[36+r12]
+	vmovd	xmm0,DWORD[36+r8]
+	vmovd	xmm1,DWORD[36+r13]
+	vmovd	xmm2,DWORD[36+r9]
+	vpinsrd	xmm5,xmm5,DWORD[36+r14],1
+	vpinsrd	xmm0,xmm0,DWORD[36+r10],1
+	vpinsrd	xmm1,xmm1,DWORD[36+r15],1
 	vpunpckldq	ymm5,ymm5,ymm1
-	vpinsrd	xmm2,xmm2,DWORD PTR[36+r11],1
+	vpinsrd	xmm2,xmm2,DWORD[36+r11],1
 	vpunpckldq	ymm0,ymm0,ymm2
 	vinserti128	ymm5,ymm5,xmm0,1
 	vpshufb	ymm5,ymm5,ymm6
 	vpsrld	ymm7,ymm11,6
 	vpslld	ymm2,ymm11,26
-	vmovdqu	YMMWORD PTR[(288-256-128)+rbx],ymm5
+	vmovdqu	YMMWORD[(288-256-128)+rbx],ymm5
 	vpaddd	ymm5,ymm5,ymm14
 
 	vpsrld	ymm1,ymm11,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm11,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((-96))+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[((-96))+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm11,25
@@ -6195,27 +6196,27 @@ $L$oop_avx2::
 
 	vpaddd	ymm14,ymm14,ymm5
 	vpaddd	ymm14,ymm14,ymm7
-	vmovd	xmm5,DWORD PTR[40+r12]
-	vmovd	xmm0,DWORD PTR[40+r8]
-	vmovd	xmm1,DWORD PTR[40+r13]
-	vmovd	xmm2,DWORD PTR[40+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[40+r14],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[40+r10],1
-	vpinsrd	xmm1,xmm1,DWORD PTR[40+r15],1
+	vmovd	xmm5,DWORD[40+r12]
+	vmovd	xmm0,DWORD[40+r8]
+	vmovd	xmm1,DWORD[40+r13]
+	vmovd	xmm2,DWORD[40+r9]
+	vpinsrd	xmm5,xmm5,DWORD[40+r14],1
+	vpinsrd	xmm0,xmm0,DWORD[40+r10],1
+	vpinsrd	xmm1,xmm1,DWORD[40+r15],1
 	vpunpckldq	ymm5,ymm5,ymm1
-	vpinsrd	xmm2,xmm2,DWORD PTR[40+r11],1
+	vpinsrd	xmm2,xmm2,DWORD[40+r11],1
 	vpunpckldq	ymm0,ymm0,ymm2
 	vinserti128	ymm5,ymm5,xmm0,1
 	vpshufb	ymm5,ymm5,ymm6
 	vpsrld	ymm7,ymm10,6
 	vpslld	ymm2,ymm10,26
-	vmovdqu	YMMWORD PTR[(320-256-128)+rbx],ymm5
+	vmovdqu	YMMWORD[(320-256-128)+rbx],ymm5
 	vpaddd	ymm5,ymm5,ymm13
 
 	vpsrld	ymm1,ymm10,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm10,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((-64))+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[((-64))+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm10,25
@@ -6257,27 +6258,27 @@ $L$oop_avx2::
 
 	vpaddd	ymm13,ymm13,ymm5
 	vpaddd	ymm13,ymm13,ymm7
-	vmovd	xmm5,DWORD PTR[44+r12]
-	vmovd	xmm0,DWORD PTR[44+r8]
-	vmovd	xmm1,DWORD PTR[44+r13]
-	vmovd	xmm2,DWORD PTR[44+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[44+r14],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[44+r10],1
-	vpinsrd	xmm1,xmm1,DWORD PTR[44+r15],1
+	vmovd	xmm5,DWORD[44+r12]
+	vmovd	xmm0,DWORD[44+r8]
+	vmovd	xmm1,DWORD[44+r13]
+	vmovd	xmm2,DWORD[44+r9]
+	vpinsrd	xmm5,xmm5,DWORD[44+r14],1
+	vpinsrd	xmm0,xmm0,DWORD[44+r10],1
+	vpinsrd	xmm1,xmm1,DWORD[44+r15],1
 	vpunpckldq	ymm5,ymm5,ymm1
-	vpinsrd	xmm2,xmm2,DWORD PTR[44+r11],1
+	vpinsrd	xmm2,xmm2,DWORD[44+r11],1
 	vpunpckldq	ymm0,ymm0,ymm2
 	vinserti128	ymm5,ymm5,xmm0,1
 	vpshufb	ymm5,ymm5,ymm6
 	vpsrld	ymm7,ymm9,6
 	vpslld	ymm2,ymm9,26
-	vmovdqu	YMMWORD PTR[(352-256-128)+rbx],ymm5
+	vmovdqu	YMMWORD[(352-256-128)+rbx],ymm5
 	vpaddd	ymm5,ymm5,ymm12
 
 	vpsrld	ymm1,ymm9,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm9,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((-32))+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[((-32))+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm9,25
@@ -6319,27 +6320,27 @@ $L$oop_avx2::
 
 	vpaddd	ymm12,ymm12,ymm5
 	vpaddd	ymm12,ymm12,ymm7
-	vmovd	xmm5,DWORD PTR[48+r12]
-	vmovd	xmm0,DWORD PTR[48+r8]
-	vmovd	xmm1,DWORD PTR[48+r13]
-	vmovd	xmm2,DWORD PTR[48+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[48+r14],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[48+r10],1
-	vpinsrd	xmm1,xmm1,DWORD PTR[48+r15],1
+	vmovd	xmm5,DWORD[48+r12]
+	vmovd	xmm0,DWORD[48+r8]
+	vmovd	xmm1,DWORD[48+r13]
+	vmovd	xmm2,DWORD[48+r9]
+	vpinsrd	xmm5,xmm5,DWORD[48+r14],1
+	vpinsrd	xmm0,xmm0,DWORD[48+r10],1
+	vpinsrd	xmm1,xmm1,DWORD[48+r15],1
 	vpunpckldq	ymm5,ymm5,ymm1
-	vpinsrd	xmm2,xmm2,DWORD PTR[48+r11],1
+	vpinsrd	xmm2,xmm2,DWORD[48+r11],1
 	vpunpckldq	ymm0,ymm0,ymm2
 	vinserti128	ymm5,ymm5,xmm0,1
 	vpshufb	ymm5,ymm5,ymm6
 	vpsrld	ymm7,ymm8,6
 	vpslld	ymm2,ymm8,26
-	vmovdqu	YMMWORD PTR[(384-256-128)+rbx],ymm5
+	vmovdqu	YMMWORD[(384-256-128)+rbx],ymm5
 	vpaddd	ymm5,ymm5,ymm11
 
 	vpsrld	ymm1,ymm8,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm8,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm8,25
@@ -6381,27 +6382,27 @@ $L$oop_avx2::
 
 	vpaddd	ymm11,ymm11,ymm5
 	vpaddd	ymm11,ymm11,ymm7
-	vmovd	xmm5,DWORD PTR[52+r12]
-	vmovd	xmm0,DWORD PTR[52+r8]
-	vmovd	xmm1,DWORD PTR[52+r13]
-	vmovd	xmm2,DWORD PTR[52+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[52+r14],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[52+r10],1
-	vpinsrd	xmm1,xmm1,DWORD PTR[52+r15],1
+	vmovd	xmm5,DWORD[52+r12]
+	vmovd	xmm0,DWORD[52+r8]
+	vmovd	xmm1,DWORD[52+r13]
+	vmovd	xmm2,DWORD[52+r9]
+	vpinsrd	xmm5,xmm5,DWORD[52+r14],1
+	vpinsrd	xmm0,xmm0,DWORD[52+r10],1
+	vpinsrd	xmm1,xmm1,DWORD[52+r15],1
 	vpunpckldq	ymm5,ymm5,ymm1
-	vpinsrd	xmm2,xmm2,DWORD PTR[52+r11],1
+	vpinsrd	xmm2,xmm2,DWORD[52+r11],1
 	vpunpckldq	ymm0,ymm0,ymm2
 	vinserti128	ymm5,ymm5,xmm0,1
 	vpshufb	ymm5,ymm5,ymm6
 	vpsrld	ymm7,ymm15,6
 	vpslld	ymm2,ymm15,26
-	vmovdqu	YMMWORD PTR[(416-256-128)+rbx],ymm5
+	vmovdqu	YMMWORD[(416-256-128)+rbx],ymm5
 	vpaddd	ymm5,ymm5,ymm10
 
 	vpsrld	ymm1,ymm15,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm15,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[32+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[32+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm15,25
@@ -6443,27 +6444,27 @@ $L$oop_avx2::
 
 	vpaddd	ymm10,ymm10,ymm5
 	vpaddd	ymm10,ymm10,ymm7
-	vmovd	xmm5,DWORD PTR[56+r12]
-	vmovd	xmm0,DWORD PTR[56+r8]
-	vmovd	xmm1,DWORD PTR[56+r13]
-	vmovd	xmm2,DWORD PTR[56+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[56+r14],1
-	vpinsrd	xmm0,xmm0,DWORD PTR[56+r10],1
-	vpinsrd	xmm1,xmm1,DWORD PTR[56+r15],1
+	vmovd	xmm5,DWORD[56+r12]
+	vmovd	xmm0,DWORD[56+r8]
+	vmovd	xmm1,DWORD[56+r13]
+	vmovd	xmm2,DWORD[56+r9]
+	vpinsrd	xmm5,xmm5,DWORD[56+r14],1
+	vpinsrd	xmm0,xmm0,DWORD[56+r10],1
+	vpinsrd	xmm1,xmm1,DWORD[56+r15],1
 	vpunpckldq	ymm5,ymm5,ymm1
-	vpinsrd	xmm2,xmm2,DWORD PTR[56+r11],1
+	vpinsrd	xmm2,xmm2,DWORD[56+r11],1
 	vpunpckldq	ymm0,ymm0,ymm2
 	vinserti128	ymm5,ymm5,xmm0,1
 	vpshufb	ymm5,ymm5,ymm6
 	vpsrld	ymm7,ymm14,6
 	vpslld	ymm2,ymm14,26
-	vmovdqu	YMMWORD PTR[(448-256-128)+rbx],ymm5
+	vmovdqu	YMMWORD[(448-256-128)+rbx],ymm5
 	vpaddd	ymm5,ymm5,ymm9
 
 	vpsrld	ymm1,ymm14,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm14,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[64+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[64+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm14,25
@@ -6505,35 +6506,35 @@ $L$oop_avx2::
 
 	vpaddd	ymm9,ymm9,ymm5
 	vpaddd	ymm9,ymm9,ymm7
-	vmovd	xmm5,DWORD PTR[60+r12]
-	lea	r12,QWORD PTR[64+r12]
-	vmovd	xmm0,DWORD PTR[60+r8]
-	lea	r8,QWORD PTR[64+r8]
-	vmovd	xmm1,DWORD PTR[60+r13]
-	lea	r13,QWORD PTR[64+r13]
-	vmovd	xmm2,DWORD PTR[60+r9]
-	lea	r9,QWORD PTR[64+r9]
-	vpinsrd	xmm5,xmm5,DWORD PTR[60+r14],1
-	lea	r14,QWORD PTR[64+r14]
-	vpinsrd	xmm0,xmm0,DWORD PTR[60+r10],1
-	lea	r10,QWORD PTR[64+r10]
-	vpinsrd	xmm1,xmm1,DWORD PTR[60+r15],1
-	lea	r15,QWORD PTR[64+r15]
+	vmovd	xmm5,DWORD[60+r12]
+	lea	r12,[64+r12]
+	vmovd	xmm0,DWORD[60+r8]
+	lea	r8,[64+r8]
+	vmovd	xmm1,DWORD[60+r13]
+	lea	r13,[64+r13]
+	vmovd	xmm2,DWORD[60+r9]
+	lea	r9,[64+r9]
+	vpinsrd	xmm5,xmm5,DWORD[60+r14],1
+	lea	r14,[64+r14]
+	vpinsrd	xmm0,xmm0,DWORD[60+r10],1
+	lea	r10,[64+r10]
+	vpinsrd	xmm1,xmm1,DWORD[60+r15],1
+	lea	r15,[64+r15]
 	vpunpckldq	ymm5,ymm5,ymm1
-	vpinsrd	xmm2,xmm2,DWORD PTR[60+r11],1
-	lea	r11,QWORD PTR[64+r11]
+	vpinsrd	xmm2,xmm2,DWORD[60+r11],1
+	lea	r11,[64+r11]
 	vpunpckldq	ymm0,ymm0,ymm2
 	vinserti128	ymm5,ymm5,xmm0,1
 	vpshufb	ymm5,ymm5,ymm6
 	vpsrld	ymm7,ymm13,6
 	vpslld	ymm2,ymm13,26
-	vmovdqu	YMMWORD PTR[(480-256-128)+rbx],ymm5
+	vmovdqu	YMMWORD[(480-256-128)+rbx],ymm5
 	vpaddd	ymm5,ymm5,ymm8
 
 	vpsrld	ymm1,ymm13,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm13,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[96+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[96+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm13,25
@@ -6576,13 +6577,13 @@ $L$oop_avx2::
 	vpaddd	ymm8,ymm8,ymm5
 	vpaddd	ymm8,ymm8,ymm7
 	add	rbp,256
-	vmovdqu	ymm5,YMMWORD PTR[((0-128))+rax]
+	vmovdqu	ymm5,YMMWORD[((0-128))+rax]
 	mov	ecx,3
-	jmp	$L$oop_16_xx_avx2
+	jmp	NEAR $L$oop_16_xx_avx2
 ALIGN	32
-$L$oop_16_xx_avx2::
-	vmovdqu	ymm6,YMMWORD PTR[((32-128))+rax]
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((288-256-128))+rbx]
+$L$oop_16_xx_avx2:
+	vmovdqu	ymm6,YMMWORD[((32-128))+rax]
+	vpaddd	ymm5,ymm5,YMMWORD[((288-256-128))+rbx]
 
 	vpsrld	ymm7,ymm6,3
 	vpsrld	ymm1,ymm6,7
@@ -6591,7 +6592,7 @@ $L$oop_16_xx_avx2::
 	vpsrld	ymm1,ymm6,18
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm6,14
-	vmovdqu	ymm0,YMMWORD PTR[((448-256-128))+rbx]
+	vmovdqu	ymm0,YMMWORD[((448-256-128))+rbx]
 	vpsrld	ymm3,ymm0,10
 
 	vpxor	ymm7,ymm7,ymm1
@@ -6608,13 +6609,13 @@ $L$oop_16_xx_avx2::
 	vpaddd	ymm5,ymm5,ymm7
 	vpsrld	ymm7,ymm12,6
 	vpslld	ymm2,ymm12,26
-	vmovdqu	YMMWORD PTR[(0-128)+rax],ymm5
+	vmovdqu	YMMWORD[(0-128)+rax],ymm5
 	vpaddd	ymm5,ymm5,ymm15
 
 	vpsrld	ymm1,ymm12,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm12,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((-128))+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[((-128))+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm12,25
@@ -6656,8 +6657,8 @@ $L$oop_16_xx_avx2::
 
 	vpaddd	ymm15,ymm15,ymm5
 	vpaddd	ymm15,ymm15,ymm7
-	vmovdqu	ymm5,YMMWORD PTR[((64-128))+rax]
-	vpaddd	ymm6,ymm6,YMMWORD PTR[((320-256-128))+rbx]
+	vmovdqu	ymm5,YMMWORD[((64-128))+rax]
+	vpaddd	ymm6,ymm6,YMMWORD[((320-256-128))+rbx]
 
 	vpsrld	ymm7,ymm5,3
 	vpsrld	ymm1,ymm5,7
@@ -6666,7 +6667,7 @@ $L$oop_16_xx_avx2::
 	vpsrld	ymm1,ymm5,18
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm5,14
-	vmovdqu	ymm0,YMMWORD PTR[((480-256-128))+rbx]
+	vmovdqu	ymm0,YMMWORD[((480-256-128))+rbx]
 	vpsrld	ymm4,ymm0,10
 
 	vpxor	ymm7,ymm7,ymm1
@@ -6683,13 +6684,13 @@ $L$oop_16_xx_avx2::
 	vpaddd	ymm6,ymm6,ymm7
 	vpsrld	ymm7,ymm11,6
 	vpslld	ymm2,ymm11,26
-	vmovdqu	YMMWORD PTR[(32-128)+rax],ymm6
+	vmovdqu	YMMWORD[(32-128)+rax],ymm6
 	vpaddd	ymm6,ymm6,ymm14
 
 	vpsrld	ymm1,ymm11,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm11,21
-	vpaddd	ymm6,ymm6,YMMWORD PTR[((-96))+rbp]
+	vpaddd	ymm6,ymm6,YMMWORD[((-96))+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm11,25
@@ -6731,8 +6732,8 @@ $L$oop_16_xx_avx2::
 
 	vpaddd	ymm14,ymm14,ymm6
 	vpaddd	ymm14,ymm14,ymm7
-	vmovdqu	ymm6,YMMWORD PTR[((96-128))+rax]
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((352-256-128))+rbx]
+	vmovdqu	ymm6,YMMWORD[((96-128))+rax]
+	vpaddd	ymm5,ymm5,YMMWORD[((352-256-128))+rbx]
 
 	vpsrld	ymm7,ymm6,3
 	vpsrld	ymm1,ymm6,7
@@ -6741,7 +6742,7 @@ $L$oop_16_xx_avx2::
 	vpsrld	ymm1,ymm6,18
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm6,14
-	vmovdqu	ymm0,YMMWORD PTR[((0-128))+rax]
+	vmovdqu	ymm0,YMMWORD[((0-128))+rax]
 	vpsrld	ymm3,ymm0,10
 
 	vpxor	ymm7,ymm7,ymm1
@@ -6758,13 +6759,13 @@ $L$oop_16_xx_avx2::
 	vpaddd	ymm5,ymm5,ymm7
 	vpsrld	ymm7,ymm10,6
 	vpslld	ymm2,ymm10,26
-	vmovdqu	YMMWORD PTR[(64-128)+rax],ymm5
+	vmovdqu	YMMWORD[(64-128)+rax],ymm5
 	vpaddd	ymm5,ymm5,ymm13
 
 	vpsrld	ymm1,ymm10,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm10,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((-64))+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[((-64))+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm10,25
@@ -6806,8 +6807,8 @@ $L$oop_16_xx_avx2::
 
 	vpaddd	ymm13,ymm13,ymm5
 	vpaddd	ymm13,ymm13,ymm7
-	vmovdqu	ymm5,YMMWORD PTR[((128-128))+rax]
-	vpaddd	ymm6,ymm6,YMMWORD PTR[((384-256-128))+rbx]
+	vmovdqu	ymm5,YMMWORD[((128-128))+rax]
+	vpaddd	ymm6,ymm6,YMMWORD[((384-256-128))+rbx]
 
 	vpsrld	ymm7,ymm5,3
 	vpsrld	ymm1,ymm5,7
@@ -6816,7 +6817,7 @@ $L$oop_16_xx_avx2::
 	vpsrld	ymm1,ymm5,18
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm5,14
-	vmovdqu	ymm0,YMMWORD PTR[((32-128))+rax]
+	vmovdqu	ymm0,YMMWORD[((32-128))+rax]
 	vpsrld	ymm4,ymm0,10
 
 	vpxor	ymm7,ymm7,ymm1
@@ -6833,13 +6834,13 @@ $L$oop_16_xx_avx2::
 	vpaddd	ymm6,ymm6,ymm7
 	vpsrld	ymm7,ymm9,6
 	vpslld	ymm2,ymm9,26
-	vmovdqu	YMMWORD PTR[(96-128)+rax],ymm6
+	vmovdqu	YMMWORD[(96-128)+rax],ymm6
 	vpaddd	ymm6,ymm6,ymm12
 
 	vpsrld	ymm1,ymm9,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm9,21
-	vpaddd	ymm6,ymm6,YMMWORD PTR[((-32))+rbp]
+	vpaddd	ymm6,ymm6,YMMWORD[((-32))+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm9,25
@@ -6881,8 +6882,8 @@ $L$oop_16_xx_avx2::
 
 	vpaddd	ymm12,ymm12,ymm6
 	vpaddd	ymm12,ymm12,ymm7
-	vmovdqu	ymm6,YMMWORD PTR[((160-128))+rax]
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((416-256-128))+rbx]
+	vmovdqu	ymm6,YMMWORD[((160-128))+rax]
+	vpaddd	ymm5,ymm5,YMMWORD[((416-256-128))+rbx]
 
 	vpsrld	ymm7,ymm6,3
 	vpsrld	ymm1,ymm6,7
@@ -6891,7 +6892,7 @@ $L$oop_16_xx_avx2::
 	vpsrld	ymm1,ymm6,18
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm6,14
-	vmovdqu	ymm0,YMMWORD PTR[((64-128))+rax]
+	vmovdqu	ymm0,YMMWORD[((64-128))+rax]
 	vpsrld	ymm3,ymm0,10
 
 	vpxor	ymm7,ymm7,ymm1
@@ -6908,13 +6909,13 @@ $L$oop_16_xx_avx2::
 	vpaddd	ymm5,ymm5,ymm7
 	vpsrld	ymm7,ymm8,6
 	vpslld	ymm2,ymm8,26
-	vmovdqu	YMMWORD PTR[(128-128)+rax],ymm5
+	vmovdqu	YMMWORD[(128-128)+rax],ymm5
 	vpaddd	ymm5,ymm5,ymm11
 
 	vpsrld	ymm1,ymm8,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm8,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm8,25
@@ -6956,8 +6957,8 @@ $L$oop_16_xx_avx2::
 
 	vpaddd	ymm11,ymm11,ymm5
 	vpaddd	ymm11,ymm11,ymm7
-	vmovdqu	ymm5,YMMWORD PTR[((192-128))+rax]
-	vpaddd	ymm6,ymm6,YMMWORD PTR[((448-256-128))+rbx]
+	vmovdqu	ymm5,YMMWORD[((192-128))+rax]
+	vpaddd	ymm6,ymm6,YMMWORD[((448-256-128))+rbx]
 
 	vpsrld	ymm7,ymm5,3
 	vpsrld	ymm1,ymm5,7
@@ -6966,7 +6967,7 @@ $L$oop_16_xx_avx2::
 	vpsrld	ymm1,ymm5,18
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm5,14
-	vmovdqu	ymm0,YMMWORD PTR[((96-128))+rax]
+	vmovdqu	ymm0,YMMWORD[((96-128))+rax]
 	vpsrld	ymm4,ymm0,10
 
 	vpxor	ymm7,ymm7,ymm1
@@ -6983,13 +6984,13 @@ $L$oop_16_xx_avx2::
 	vpaddd	ymm6,ymm6,ymm7
 	vpsrld	ymm7,ymm15,6
 	vpslld	ymm2,ymm15,26
-	vmovdqu	YMMWORD PTR[(160-128)+rax],ymm6
+	vmovdqu	YMMWORD[(160-128)+rax],ymm6
 	vpaddd	ymm6,ymm6,ymm10
 
 	vpsrld	ymm1,ymm15,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm15,21
-	vpaddd	ymm6,ymm6,YMMWORD PTR[32+rbp]
+	vpaddd	ymm6,ymm6,YMMWORD[32+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm15,25
@@ -7031,8 +7032,8 @@ $L$oop_16_xx_avx2::
 
 	vpaddd	ymm10,ymm10,ymm6
 	vpaddd	ymm10,ymm10,ymm7
-	vmovdqu	ymm6,YMMWORD PTR[((224-128))+rax]
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((480-256-128))+rbx]
+	vmovdqu	ymm6,YMMWORD[((224-128))+rax]
+	vpaddd	ymm5,ymm5,YMMWORD[((480-256-128))+rbx]
 
 	vpsrld	ymm7,ymm6,3
 	vpsrld	ymm1,ymm6,7
@@ -7041,7 +7042,7 @@ $L$oop_16_xx_avx2::
 	vpsrld	ymm1,ymm6,18
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm6,14
-	vmovdqu	ymm0,YMMWORD PTR[((128-128))+rax]
+	vmovdqu	ymm0,YMMWORD[((128-128))+rax]
 	vpsrld	ymm3,ymm0,10
 
 	vpxor	ymm7,ymm7,ymm1
@@ -7058,13 +7059,13 @@ $L$oop_16_xx_avx2::
 	vpaddd	ymm5,ymm5,ymm7
 	vpsrld	ymm7,ymm14,6
 	vpslld	ymm2,ymm14,26
-	vmovdqu	YMMWORD PTR[(192-128)+rax],ymm5
+	vmovdqu	YMMWORD[(192-128)+rax],ymm5
 	vpaddd	ymm5,ymm5,ymm9
 
 	vpsrld	ymm1,ymm14,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm14,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[64+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[64+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm14,25
@@ -7106,8 +7107,8 @@ $L$oop_16_xx_avx2::
 
 	vpaddd	ymm9,ymm9,ymm5
 	vpaddd	ymm9,ymm9,ymm7
-	vmovdqu	ymm5,YMMWORD PTR[((256-256-128))+rbx]
-	vpaddd	ymm6,ymm6,YMMWORD PTR[((0-128))+rax]
+	vmovdqu	ymm5,YMMWORD[((256-256-128))+rbx]
+	vpaddd	ymm6,ymm6,YMMWORD[((0-128))+rax]
 
 	vpsrld	ymm7,ymm5,3
 	vpsrld	ymm1,ymm5,7
@@ -7116,7 +7117,7 @@ $L$oop_16_xx_avx2::
 	vpsrld	ymm1,ymm5,18
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm5,14
-	vmovdqu	ymm0,YMMWORD PTR[((160-128))+rax]
+	vmovdqu	ymm0,YMMWORD[((160-128))+rax]
 	vpsrld	ymm4,ymm0,10
 
 	vpxor	ymm7,ymm7,ymm1
@@ -7133,13 +7134,13 @@ $L$oop_16_xx_avx2::
 	vpaddd	ymm6,ymm6,ymm7
 	vpsrld	ymm7,ymm13,6
 	vpslld	ymm2,ymm13,26
-	vmovdqu	YMMWORD PTR[(224-128)+rax],ymm6
+	vmovdqu	YMMWORD[(224-128)+rax],ymm6
 	vpaddd	ymm6,ymm6,ymm8
 
 	vpsrld	ymm1,ymm13,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm13,21
-	vpaddd	ymm6,ymm6,YMMWORD PTR[96+rbp]
+	vpaddd	ymm6,ymm6,YMMWORD[96+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm13,25
@@ -7182,8 +7183,8 @@ $L$oop_16_xx_avx2::
 	vpaddd	ymm8,ymm8,ymm6
 	vpaddd	ymm8,ymm8,ymm7
 	add	rbp,256
-	vmovdqu	ymm6,YMMWORD PTR[((288-256-128))+rbx]
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((32-128))+rax]
+	vmovdqu	ymm6,YMMWORD[((288-256-128))+rbx]
+	vpaddd	ymm5,ymm5,YMMWORD[((32-128))+rax]
 
 	vpsrld	ymm7,ymm6,3
 	vpsrld	ymm1,ymm6,7
@@ -7192,7 +7193,7 @@ $L$oop_16_xx_avx2::
 	vpsrld	ymm1,ymm6,18
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm6,14
-	vmovdqu	ymm0,YMMWORD PTR[((192-128))+rax]
+	vmovdqu	ymm0,YMMWORD[((192-128))+rax]
 	vpsrld	ymm3,ymm0,10
 
 	vpxor	ymm7,ymm7,ymm1
@@ -7209,13 +7210,13 @@ $L$oop_16_xx_avx2::
 	vpaddd	ymm5,ymm5,ymm7
 	vpsrld	ymm7,ymm12,6
 	vpslld	ymm2,ymm12,26
-	vmovdqu	YMMWORD PTR[(256-256-128)+rbx],ymm5
+	vmovdqu	YMMWORD[(256-256-128)+rbx],ymm5
 	vpaddd	ymm5,ymm5,ymm15
 
 	vpsrld	ymm1,ymm12,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm12,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((-128))+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[((-128))+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm12,25
@@ -7257,8 +7258,8 @@ $L$oop_16_xx_avx2::
 
 	vpaddd	ymm15,ymm15,ymm5
 	vpaddd	ymm15,ymm15,ymm7
-	vmovdqu	ymm5,YMMWORD PTR[((320-256-128))+rbx]
-	vpaddd	ymm6,ymm6,YMMWORD PTR[((64-128))+rax]
+	vmovdqu	ymm5,YMMWORD[((320-256-128))+rbx]
+	vpaddd	ymm6,ymm6,YMMWORD[((64-128))+rax]
 
 	vpsrld	ymm7,ymm5,3
 	vpsrld	ymm1,ymm5,7
@@ -7267,7 +7268,7 @@ $L$oop_16_xx_avx2::
 	vpsrld	ymm1,ymm5,18
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm5,14
-	vmovdqu	ymm0,YMMWORD PTR[((224-128))+rax]
+	vmovdqu	ymm0,YMMWORD[((224-128))+rax]
 	vpsrld	ymm4,ymm0,10
 
 	vpxor	ymm7,ymm7,ymm1
@@ -7284,13 +7285,13 @@ $L$oop_16_xx_avx2::
 	vpaddd	ymm6,ymm6,ymm7
 	vpsrld	ymm7,ymm11,6
 	vpslld	ymm2,ymm11,26
-	vmovdqu	YMMWORD PTR[(288-256-128)+rbx],ymm6
+	vmovdqu	YMMWORD[(288-256-128)+rbx],ymm6
 	vpaddd	ymm6,ymm6,ymm14
 
 	vpsrld	ymm1,ymm11,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm11,21
-	vpaddd	ymm6,ymm6,YMMWORD PTR[((-96))+rbp]
+	vpaddd	ymm6,ymm6,YMMWORD[((-96))+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm11,25
@@ -7332,8 +7333,8 @@ $L$oop_16_xx_avx2::
 
 	vpaddd	ymm14,ymm14,ymm6
 	vpaddd	ymm14,ymm14,ymm7
-	vmovdqu	ymm6,YMMWORD PTR[((352-256-128))+rbx]
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((96-128))+rax]
+	vmovdqu	ymm6,YMMWORD[((352-256-128))+rbx]
+	vpaddd	ymm5,ymm5,YMMWORD[((96-128))+rax]
 
 	vpsrld	ymm7,ymm6,3
 	vpsrld	ymm1,ymm6,7
@@ -7342,7 +7343,7 @@ $L$oop_16_xx_avx2::
 	vpsrld	ymm1,ymm6,18
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm6,14
-	vmovdqu	ymm0,YMMWORD PTR[((256-256-128))+rbx]
+	vmovdqu	ymm0,YMMWORD[((256-256-128))+rbx]
 	vpsrld	ymm3,ymm0,10
 
 	vpxor	ymm7,ymm7,ymm1
@@ -7359,13 +7360,13 @@ $L$oop_16_xx_avx2::
 	vpaddd	ymm5,ymm5,ymm7
 	vpsrld	ymm7,ymm10,6
 	vpslld	ymm2,ymm10,26
-	vmovdqu	YMMWORD PTR[(320-256-128)+rbx],ymm5
+	vmovdqu	YMMWORD[(320-256-128)+rbx],ymm5
 	vpaddd	ymm5,ymm5,ymm13
 
 	vpsrld	ymm1,ymm10,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm10,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((-64))+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[((-64))+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm10,25
@@ -7407,8 +7408,8 @@ $L$oop_16_xx_avx2::
 
 	vpaddd	ymm13,ymm13,ymm5
 	vpaddd	ymm13,ymm13,ymm7
-	vmovdqu	ymm5,YMMWORD PTR[((384-256-128))+rbx]
-	vpaddd	ymm6,ymm6,YMMWORD PTR[((128-128))+rax]
+	vmovdqu	ymm5,YMMWORD[((384-256-128))+rbx]
+	vpaddd	ymm6,ymm6,YMMWORD[((128-128))+rax]
 
 	vpsrld	ymm7,ymm5,3
 	vpsrld	ymm1,ymm5,7
@@ -7417,7 +7418,7 @@ $L$oop_16_xx_avx2::
 	vpsrld	ymm1,ymm5,18
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm5,14
-	vmovdqu	ymm0,YMMWORD PTR[((288-256-128))+rbx]
+	vmovdqu	ymm0,YMMWORD[((288-256-128))+rbx]
 	vpsrld	ymm4,ymm0,10
 
 	vpxor	ymm7,ymm7,ymm1
@@ -7434,13 +7435,13 @@ $L$oop_16_xx_avx2::
 	vpaddd	ymm6,ymm6,ymm7
 	vpsrld	ymm7,ymm9,6
 	vpslld	ymm2,ymm9,26
-	vmovdqu	YMMWORD PTR[(352-256-128)+rbx],ymm6
+	vmovdqu	YMMWORD[(352-256-128)+rbx],ymm6
 	vpaddd	ymm6,ymm6,ymm12
 
 	vpsrld	ymm1,ymm9,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm9,21
-	vpaddd	ymm6,ymm6,YMMWORD PTR[((-32))+rbp]
+	vpaddd	ymm6,ymm6,YMMWORD[((-32))+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm9,25
@@ -7482,8 +7483,8 @@ $L$oop_16_xx_avx2::
 
 	vpaddd	ymm12,ymm12,ymm6
 	vpaddd	ymm12,ymm12,ymm7
-	vmovdqu	ymm6,YMMWORD PTR[((416-256-128))+rbx]
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((160-128))+rax]
+	vmovdqu	ymm6,YMMWORD[((416-256-128))+rbx]
+	vpaddd	ymm5,ymm5,YMMWORD[((160-128))+rax]
 
 	vpsrld	ymm7,ymm6,3
 	vpsrld	ymm1,ymm6,7
@@ -7492,7 +7493,7 @@ $L$oop_16_xx_avx2::
 	vpsrld	ymm1,ymm6,18
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm6,14
-	vmovdqu	ymm0,YMMWORD PTR[((320-256-128))+rbx]
+	vmovdqu	ymm0,YMMWORD[((320-256-128))+rbx]
 	vpsrld	ymm3,ymm0,10
 
 	vpxor	ymm7,ymm7,ymm1
@@ -7509,13 +7510,13 @@ $L$oop_16_xx_avx2::
 	vpaddd	ymm5,ymm5,ymm7
 	vpsrld	ymm7,ymm8,6
 	vpslld	ymm2,ymm8,26
-	vmovdqu	YMMWORD PTR[(384-256-128)+rbx],ymm5
+	vmovdqu	YMMWORD[(384-256-128)+rbx],ymm5
 	vpaddd	ymm5,ymm5,ymm11
 
 	vpsrld	ymm1,ymm8,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm8,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm8,25
@@ -7557,8 +7558,8 @@ $L$oop_16_xx_avx2::
 
 	vpaddd	ymm11,ymm11,ymm5
 	vpaddd	ymm11,ymm11,ymm7
-	vmovdqu	ymm5,YMMWORD PTR[((448-256-128))+rbx]
-	vpaddd	ymm6,ymm6,YMMWORD PTR[((192-128))+rax]
+	vmovdqu	ymm5,YMMWORD[((448-256-128))+rbx]
+	vpaddd	ymm6,ymm6,YMMWORD[((192-128))+rax]
 
 	vpsrld	ymm7,ymm5,3
 	vpsrld	ymm1,ymm5,7
@@ -7567,7 +7568,7 @@ $L$oop_16_xx_avx2::
 	vpsrld	ymm1,ymm5,18
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm5,14
-	vmovdqu	ymm0,YMMWORD PTR[((352-256-128))+rbx]
+	vmovdqu	ymm0,YMMWORD[((352-256-128))+rbx]
 	vpsrld	ymm4,ymm0,10
 
 	vpxor	ymm7,ymm7,ymm1
@@ -7584,13 +7585,13 @@ $L$oop_16_xx_avx2::
 	vpaddd	ymm6,ymm6,ymm7
 	vpsrld	ymm7,ymm15,6
 	vpslld	ymm2,ymm15,26
-	vmovdqu	YMMWORD PTR[(416-256-128)+rbx],ymm6
+	vmovdqu	YMMWORD[(416-256-128)+rbx],ymm6
 	vpaddd	ymm6,ymm6,ymm10
 
 	vpsrld	ymm1,ymm15,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm15,21
-	vpaddd	ymm6,ymm6,YMMWORD PTR[32+rbp]
+	vpaddd	ymm6,ymm6,YMMWORD[32+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm15,25
@@ -7632,8 +7633,8 @@ $L$oop_16_xx_avx2::
 
 	vpaddd	ymm10,ymm10,ymm6
 	vpaddd	ymm10,ymm10,ymm7
-	vmovdqu	ymm6,YMMWORD PTR[((480-256-128))+rbx]
-	vpaddd	ymm5,ymm5,YMMWORD PTR[((224-128))+rax]
+	vmovdqu	ymm6,YMMWORD[((480-256-128))+rbx]
+	vpaddd	ymm5,ymm5,YMMWORD[((224-128))+rax]
 
 	vpsrld	ymm7,ymm6,3
 	vpsrld	ymm1,ymm6,7
@@ -7642,7 +7643,7 @@ $L$oop_16_xx_avx2::
 	vpsrld	ymm1,ymm6,18
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm6,14
-	vmovdqu	ymm0,YMMWORD PTR[((384-256-128))+rbx]
+	vmovdqu	ymm0,YMMWORD[((384-256-128))+rbx]
 	vpsrld	ymm3,ymm0,10
 
 	vpxor	ymm7,ymm7,ymm1
@@ -7659,13 +7660,13 @@ $L$oop_16_xx_avx2::
 	vpaddd	ymm5,ymm5,ymm7
 	vpsrld	ymm7,ymm14,6
 	vpslld	ymm2,ymm14,26
-	vmovdqu	YMMWORD PTR[(448-256-128)+rbx],ymm5
+	vmovdqu	YMMWORD[(448-256-128)+rbx],ymm5
 	vpaddd	ymm5,ymm5,ymm9
 
 	vpsrld	ymm1,ymm14,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm14,21
-	vpaddd	ymm5,ymm5,YMMWORD PTR[64+rbp]
+	vpaddd	ymm5,ymm5,YMMWORD[64+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm14,25
@@ -7707,8 +7708,8 @@ $L$oop_16_xx_avx2::
 
 	vpaddd	ymm9,ymm9,ymm5
 	vpaddd	ymm9,ymm9,ymm7
-	vmovdqu	ymm5,YMMWORD PTR[((0-128))+rax]
-	vpaddd	ymm6,ymm6,YMMWORD PTR[((256-256-128))+rbx]
+	vmovdqu	ymm5,YMMWORD[((0-128))+rax]
+	vpaddd	ymm6,ymm6,YMMWORD[((256-256-128))+rbx]
 
 	vpsrld	ymm7,ymm5,3
 	vpsrld	ymm1,ymm5,7
@@ -7717,7 +7718,7 @@ $L$oop_16_xx_avx2::
 	vpsrld	ymm1,ymm5,18
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm5,14
-	vmovdqu	ymm0,YMMWORD PTR[((416-256-128))+rbx]
+	vmovdqu	ymm0,YMMWORD[((416-256-128))+rbx]
 	vpsrld	ymm4,ymm0,10
 
 	vpxor	ymm7,ymm7,ymm1
@@ -7734,13 +7735,13 @@ $L$oop_16_xx_avx2::
 	vpaddd	ymm6,ymm6,ymm7
 	vpsrld	ymm7,ymm13,6
 	vpslld	ymm2,ymm13,26
-	vmovdqu	YMMWORD PTR[(480-256-128)+rbx],ymm6
+	vmovdqu	YMMWORD[(480-256-128)+rbx],ymm6
 	vpaddd	ymm6,ymm6,ymm8
 
 	vpsrld	ymm1,ymm13,11
 	vpxor	ymm7,ymm7,ymm2
 	vpslld	ymm2,ymm13,21
-	vpaddd	ymm6,ymm6,YMMWORD PTR[96+rbp]
+	vpaddd	ymm6,ymm6,YMMWORD[96+rbp]
 	vpxor	ymm7,ymm7,ymm1
 
 	vpsrld	ymm1,ymm13,25
@@ -7784,71 +7785,71 @@ $L$oop_16_xx_avx2::
 	vpaddd	ymm8,ymm8,ymm7
 	add	rbp,256
 	dec	ecx
-	jnz	$L$oop_16_xx_avx2
+	jnz	NEAR $L$oop_16_xx_avx2
 
 	mov	ecx,1
-	lea	rbx,QWORD PTR[512+rsp]
-	lea	rbp,QWORD PTR[((K256+128))]
-	cmp	ecx,DWORD PTR[rbx]
+	lea	rbx,[512+rsp]
+	lea	rbp,[((K256+128))]
+	cmp	ecx,DWORD[rbx]
 	cmovge	r12,rbp
-	cmp	ecx,DWORD PTR[4+rbx]
+	cmp	ecx,DWORD[4+rbx]
 	cmovge	r13,rbp
-	cmp	ecx,DWORD PTR[8+rbx]
+	cmp	ecx,DWORD[8+rbx]
 	cmovge	r14,rbp
-	cmp	ecx,DWORD PTR[12+rbx]
+	cmp	ecx,DWORD[12+rbx]
 	cmovge	r15,rbp
-	cmp	ecx,DWORD PTR[16+rbx]
+	cmp	ecx,DWORD[16+rbx]
 	cmovge	r8,rbp
-	cmp	ecx,DWORD PTR[20+rbx]
+	cmp	ecx,DWORD[20+rbx]
 	cmovge	r9,rbp
-	cmp	ecx,DWORD PTR[24+rbx]
+	cmp	ecx,DWORD[24+rbx]
 	cmovge	r10,rbp
-	cmp	ecx,DWORD PTR[28+rbx]
+	cmp	ecx,DWORD[28+rbx]
 	cmovge	r11,rbp
-	vmovdqa	ymm7,YMMWORD PTR[rbx]
+	vmovdqa	ymm7,YMMWORD[rbx]
 	vpxor	ymm0,ymm0,ymm0
 	vmovdqa	ymm6,ymm7
 	vpcmpgtd	ymm6,ymm6,ymm0
 	vpaddd	ymm7,ymm7,ymm6
 
-	vmovdqu	ymm0,YMMWORD PTR[((0-128))+rdi]
+	vmovdqu	ymm0,YMMWORD[((0-128))+rdi]
 	vpand	ymm8,ymm8,ymm6
-	vmovdqu	ymm1,YMMWORD PTR[((32-128))+rdi]
+	vmovdqu	ymm1,YMMWORD[((32-128))+rdi]
 	vpand	ymm9,ymm9,ymm6
-	vmovdqu	ymm2,YMMWORD PTR[((64-128))+rdi]
+	vmovdqu	ymm2,YMMWORD[((64-128))+rdi]
 	vpand	ymm10,ymm10,ymm6
-	vmovdqu	ymm5,YMMWORD PTR[((96-128))+rdi]
+	vmovdqu	ymm5,YMMWORD[((96-128))+rdi]
 	vpand	ymm11,ymm11,ymm6
 	vpaddd	ymm8,ymm8,ymm0
-	vmovdqu	ymm0,YMMWORD PTR[((128-128))+rdi]
+	vmovdqu	ymm0,YMMWORD[((128-128))+rdi]
 	vpand	ymm12,ymm12,ymm6
 	vpaddd	ymm9,ymm9,ymm1
-	vmovdqu	ymm1,YMMWORD PTR[((160-128))+rdi]
+	vmovdqu	ymm1,YMMWORD[((160-128))+rdi]
 	vpand	ymm13,ymm13,ymm6
 	vpaddd	ymm10,ymm10,ymm2
-	vmovdqu	ymm2,YMMWORD PTR[((192-128))+rdi]
+	vmovdqu	ymm2,YMMWORD[((192-128))+rdi]
 	vpand	ymm14,ymm14,ymm6
 	vpaddd	ymm11,ymm11,ymm5
-	vmovdqu	ymm5,YMMWORD PTR[((224-128))+rdi]
+	vmovdqu	ymm5,YMMWORD[((224-128))+rdi]
 	vpand	ymm15,ymm15,ymm6
 	vpaddd	ymm12,ymm12,ymm0
 	vpaddd	ymm13,ymm13,ymm1
-	vmovdqu	YMMWORD PTR[(0-128)+rdi],ymm8
+	vmovdqu	YMMWORD[(0-128)+rdi],ymm8
 	vpaddd	ymm14,ymm14,ymm2
-	vmovdqu	YMMWORD PTR[(32-128)+rdi],ymm9
+	vmovdqu	YMMWORD[(32-128)+rdi],ymm9
 	vpaddd	ymm15,ymm15,ymm5
-	vmovdqu	YMMWORD PTR[(64-128)+rdi],ymm10
-	vmovdqu	YMMWORD PTR[(96-128)+rdi],ymm11
-	vmovdqu	YMMWORD PTR[(128-128)+rdi],ymm12
-	vmovdqu	YMMWORD PTR[(160-128)+rdi],ymm13
-	vmovdqu	YMMWORD PTR[(192-128)+rdi],ymm14
-	vmovdqu	YMMWORD PTR[(224-128)+rdi],ymm15
+	vmovdqu	YMMWORD[(64-128)+rdi],ymm10
+	vmovdqu	YMMWORD[(96-128)+rdi],ymm11
+	vmovdqu	YMMWORD[(128-128)+rdi],ymm12
+	vmovdqu	YMMWORD[(160-128)+rdi],ymm13
+	vmovdqu	YMMWORD[(192-128)+rdi],ymm14
+	vmovdqu	YMMWORD[(224-128)+rdi],ymm15
 
-	vmovdqu	YMMWORD PTR[rbx],ymm7
-	lea	rbx,QWORD PTR[((256+128))+rsp]
-	vmovdqu	ymm6,YMMWORD PTR[$L$pbswap]
+	vmovdqu	YMMWORD[rbx],ymm7
+	lea	rbx,[((256+128))+rsp]
+	vmovdqu	ymm6,YMMWORD[$L$pbswap]
 	dec	edx
-	jnz	$L$oop_avx2
+	jnz	NEAR $L$oop_avx2
 
 
 
@@ -7856,34 +7857,33 @@ $L$oop_16_xx_avx2::
 
 
 
-$L$done_avx2::
-	mov	rax,QWORD PTR[544+rsp]
+$L$done_avx2:
+	mov	rax,QWORD[544+rsp]
 	vzeroupper
-	movaps	xmm6,XMMWORD PTR[((-216))+rax]
-	movaps	xmm7,XMMWORD PTR[((-200))+rax]
-	movaps	xmm8,XMMWORD PTR[((-184))+rax]
-	movaps	xmm9,XMMWORD PTR[((-168))+rax]
-	movaps	xmm10,XMMWORD PTR[((-152))+rax]
-	movaps	xmm11,XMMWORD PTR[((-136))+rax]
-	movaps	xmm12,XMMWORD PTR[((-120))+rax]
-	movaps	xmm13,XMMWORD PTR[((-104))+rax]
-	movaps	xmm14,XMMWORD PTR[((-88))+rax]
-	movaps	xmm15,XMMWORD PTR[((-72))+rax]
-	mov	r15,QWORD PTR[((-48))+rax]
-	mov	r14,QWORD PTR[((-40))+rax]
-	mov	r13,QWORD PTR[((-32))+rax]
-	mov	r12,QWORD PTR[((-24))+rax]
-	mov	rbp,QWORD PTR[((-16))+rax]
-	mov	rbx,QWORD PTR[((-8))+rax]
-	lea	rsp,QWORD PTR[rax]
-$L$epilogue_avx2::
-	mov	rdi,QWORD PTR[8+rsp]	;WIN64 epilogue
-	mov	rsi,QWORD PTR[16+rsp]
+	movaps	xmm6,XMMWORD[((-216))+rax]
+	movaps	xmm7,XMMWORD[((-200))+rax]
+	movaps	xmm8,XMMWORD[((-184))+rax]
+	movaps	xmm9,XMMWORD[((-168))+rax]
+	movaps	xmm10,XMMWORD[((-152))+rax]
+	movaps	xmm11,XMMWORD[((-136))+rax]
+	movaps	xmm12,XMMWORD[((-120))+rax]
+	movaps	xmm13,XMMWORD[((-104))+rax]
+	movaps	xmm14,XMMWORD[((-88))+rax]
+	movaps	xmm15,XMMWORD[((-72))+rax]
+	mov	r15,QWORD[((-48))+rax]
+	mov	r14,QWORD[((-40))+rax]
+	mov	r13,QWORD[((-32))+rax]
+	mov	r12,QWORD[((-24))+rax]
+	mov	rbp,QWORD[((-16))+rax]
+	mov	rbx,QWORD[((-8))+rax]
+	lea	rsp,[rax]
+$L$epilogue_avx2:
+	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
+	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
-$L$SEH_end_sha256_multi_block_avx2::
-sha256_multi_block_avx2	ENDP
+$L$SEH_end_sha256_multi_block_avx2:
 ALIGN	256
-K256::
+K256:
 	DD	1116352408,1116352408,1116352408,1116352408
 	DD	1116352408,1116352408,1116352408,1116352408
 	DD	1899447441,1899447441,1899447441,1899447441
@@ -8012,35 +8012,35 @@ K256::
 	DD	3204031479,3204031479,3204031479,3204031479
 	DD	3329325298,3329325298,3329325298,3329325298
 	DD	3329325298,3329325298,3329325298,3329325298
-$L$pbswap::
-	DD	000010203h,004050607h,008090a0bh,00c0d0e0fh
-	DD	000010203h,004050607h,008090a0bh,00c0d0e0fh
-K256_shaext::
-	DD	0428a2f98h,071374491h,0b5c0fbcfh,0e9b5dba5h
-	DD	03956c25bh,059f111f1h,0923f82a4h,0ab1c5ed5h
-	DD	0d807aa98h,012835b01h,0243185beh,0550c7dc3h
-	DD	072be5d74h,080deb1feh,09bdc06a7h,0c19bf174h
-	DD	0e49b69c1h,0efbe4786h,00fc19dc6h,0240ca1cch
-	DD	02de92c6fh,04a7484aah,05cb0a9dch,076f988dah
-	DD	0983e5152h,0a831c66dh,0b00327c8h,0bf597fc7h
-	DD	0c6e00bf3h,0d5a79147h,006ca6351h,014292967h
-	DD	027b70a85h,02e1b2138h,04d2c6dfch,053380d13h
-	DD	0650a7354h,0766a0abbh,081c2c92eh,092722c85h
-	DD	0a2bfe8a1h,0a81a664bh,0c24b8b70h,0c76c51a3h
-	DD	0d192e819h,0d6990624h,0f40e3585h,0106aa070h
-	DD	019a4c116h,01e376c08h,02748774ch,034b0bcb5h
-	DD	0391c0cb3h,04ed8aa4ah,05b9cca4fh,0682e6ff3h
-	DD	0748f82eeh,078a5636fh,084c87814h,08cc70208h
-	DD	090befffah,0a4506cebh,0bef9a3f7h,0c67178f2h
+$L$pbswap:
+	DD	0x00010203,0x04050607,0x08090a0b,0x0c0d0e0f
+	DD	0x00010203,0x04050607,0x08090a0b,0x0c0d0e0f
+K256_shaext:
+	DD	0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5
+	DD	0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5
+	DD	0xd807aa98,0x12835b01,0x243185be,0x550c7dc3
+	DD	0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174
+	DD	0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc
+	DD	0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da
+	DD	0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7
+	DD	0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967
+	DD	0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13
+	DD	0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85
+	DD	0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3
+	DD	0xd192e819,0xd6990624,0xf40e3585,0x106aa070
+	DD	0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5
+	DD	0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3
+	DD	0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208
+	DD	0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
 DB	83,72,65,50,53,54,32,109,117,108,116,105,45,98,108,111
 DB	99,107,32,116,114,97,110,115,102,111,114,109,32,102,111,114
 DB	32,120,56,54,95,54,52,44,32,67,82,89,80,84,79,71
 DB	65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112
 DB	101,110,115,115,108,46,111,114,103,62,0
-EXTERN	__imp_RtlVirtualUnwind:NEAR
+EXTERN	__imp_RtlVirtualUnwind
 
 ALIGN	16
-se_handler	PROC PRIVATE
+se_handler:
 	push	rsi
 	push	rdi
 	push	rbx
@@ -8052,61 +8052,61 @@ se_handler	PROC PRIVATE
 	pushfq
 	sub	rsp,64
 
-	mov	rax,QWORD PTR[120+r8]
-	mov	rbx,QWORD PTR[248+r8]
+	mov	rax,QWORD[120+r8]
+	mov	rbx,QWORD[248+r8]
 
-	mov	rsi,QWORD PTR[8+r9]
-	mov	r11,QWORD PTR[56+r9]
+	mov	rsi,QWORD[8+r9]
+	mov	r11,QWORD[56+r9]
 
-	mov	r10d,DWORD PTR[r11]
-	lea	r10,QWORD PTR[r10*1+rsi]
+	mov	r10d,DWORD[r11]
+	lea	r10,[r10*1+rsi]
 	cmp	rbx,r10
-	jb	$L$in_prologue
+	jb	NEAR $L$in_prologue
 
-	mov	rax,QWORD PTR[152+r8]
+	mov	rax,QWORD[152+r8]
 
-	mov	r10d,DWORD PTR[4+r11]
-	lea	r10,QWORD PTR[r10*1+rsi]
+	mov	r10d,DWORD[4+r11]
+	lea	r10,[r10*1+rsi]
 	cmp	rbx,r10
-	jae	$L$in_prologue
+	jae	NEAR $L$in_prologue
 
-	mov	rax,QWORD PTR[272+rax]
+	mov	rax,QWORD[272+rax]
 
-	mov	rbx,QWORD PTR[((-8))+rax]
-	mov	rbp,QWORD PTR[((-16))+rax]
-	mov	QWORD PTR[144+r8],rbx
-	mov	QWORD PTR[160+r8],rbp
+	mov	rbx,QWORD[((-8))+rax]
+	mov	rbp,QWORD[((-16))+rax]
+	mov	QWORD[144+r8],rbx
+	mov	QWORD[160+r8],rbp
 
-	lea	rsi,QWORD PTR[((-24-160))+rax]
-	lea	rdi,QWORD PTR[512+r8]
+	lea	rsi,[((-24-160))+rax]
+	lea	rdi,[512+r8]
 	mov	ecx,20
-	DD	0a548f3fch
+	DD	0xa548f3fc
 
-$L$in_prologue::
-	mov	rdi,QWORD PTR[8+rax]
-	mov	rsi,QWORD PTR[16+rax]
-	mov	QWORD PTR[152+r8],rax
-	mov	QWORD PTR[168+r8],rsi
-	mov	QWORD PTR[176+r8],rdi
+$L$in_prologue:
+	mov	rdi,QWORD[8+rax]
+	mov	rsi,QWORD[16+rax]
+	mov	QWORD[152+r8],rax
+	mov	QWORD[168+r8],rsi
+	mov	QWORD[176+r8],rdi
 
-	mov	rdi,QWORD PTR[40+r9]
+	mov	rdi,QWORD[40+r9]
 	mov	rsi,r8
 	mov	ecx,154
-	DD	0a548f3fch
+	DD	0xa548f3fc
 
 	mov	rsi,r9
 	xor	rcx,rcx
-	mov	rdx,QWORD PTR[8+rsi]
-	mov	r8,QWORD PTR[rsi]
-	mov	r9,QWORD PTR[16+rsi]
-	mov	r10,QWORD PTR[40+rsi]
-	lea	r11,QWORD PTR[56+rsi]
-	lea	r12,QWORD PTR[24+rsi]
-	mov	QWORD PTR[32+rsp],r10
-	mov	QWORD PTR[40+rsp],r11
-	mov	QWORD PTR[48+rsp],r12
-	mov	QWORD PTR[56+rsp],rcx
-	call	QWORD PTR[__imp_RtlVirtualUnwind]
+	mov	rdx,QWORD[8+rsi]
+	mov	r8,QWORD[rsi]
+	mov	r9,QWORD[16+rsi]
+	mov	r10,QWORD[40+rsi]
+	lea	r11,[56+rsi]
+	lea	r12,[24+rsi]
+	mov	QWORD[32+rsp],r10
+	mov	QWORD[40+rsp],r11
+	mov	QWORD[48+rsp],r12
+	mov	QWORD[56+rsp],rcx
+	call	QWORD[__imp_RtlVirtualUnwind]
 
 	mov	eax,1
 	add	rsp,64
@@ -8120,10 +8120,10 @@ $L$in_prologue::
 	pop	rdi
 	pop	rsi
 	DB	0F3h,0C3h		;repret
-se_handler	ENDP
+
 
 ALIGN	16
-avx2_handler	PROC PRIVATE
+avx2_handler:
 	push	rsi
 	push	rdi
 	push	rbx
@@ -8135,80 +8135,75 @@ avx2_handler	PROC PRIVATE
 	pushfq
 	sub	rsp,64
 
-	mov	rax,QWORD PTR[120+r8]
-	mov	rbx,QWORD PTR[248+r8]
+	mov	rax,QWORD[120+r8]
+	mov	rbx,QWORD[248+r8]
 
-	mov	rsi,QWORD PTR[8+r9]
-	mov	r11,QWORD PTR[56+r9]
+	mov	rsi,QWORD[8+r9]
+	mov	r11,QWORD[56+r9]
 
-	mov	r10d,DWORD PTR[r11]
-	lea	r10,QWORD PTR[r10*1+rsi]
+	mov	r10d,DWORD[r11]
+	lea	r10,[r10*1+rsi]
 	cmp	rbx,r10
-	jb	$L$in_prologue
+	jb	NEAR $L$in_prologue
 
-	mov	rax,QWORD PTR[152+r8]
+	mov	rax,QWORD[152+r8]
 
-	mov	r10d,DWORD PTR[4+r11]
-	lea	r10,QWORD PTR[r10*1+rsi]
+	mov	r10d,DWORD[4+r11]
+	lea	r10,[r10*1+rsi]
 	cmp	rbx,r10
-	jae	$L$in_prologue
+	jae	NEAR $L$in_prologue
 
-	mov	rax,QWORD PTR[544+r8]
+	mov	rax,QWORD[544+r8]
 
-	mov	rbx,QWORD PTR[((-8))+rax]
-	mov	rbp,QWORD PTR[((-16))+rax]
-	mov	r12,QWORD PTR[((-24))+rax]
-	mov	r13,QWORD PTR[((-32))+rax]
-	mov	r14,QWORD PTR[((-40))+rax]
-	mov	r15,QWORD PTR[((-48))+rax]
-	mov	QWORD PTR[144+r8],rbx
-	mov	QWORD PTR[160+r8],rbp
-	mov	QWORD PTR[216+r8],r12
-	mov	QWORD PTR[224+r8],r13
-	mov	QWORD PTR[232+r8],r14
-	mov	QWORD PTR[240+r8],r15
+	mov	rbx,QWORD[((-8))+rax]
+	mov	rbp,QWORD[((-16))+rax]
+	mov	r12,QWORD[((-24))+rax]
+	mov	r13,QWORD[((-32))+rax]
+	mov	r14,QWORD[((-40))+rax]
+	mov	r15,QWORD[((-48))+rax]
+	mov	QWORD[144+r8],rbx
+	mov	QWORD[160+r8],rbp
+	mov	QWORD[216+r8],r12
+	mov	QWORD[224+r8],r13
+	mov	QWORD[232+r8],r14
+	mov	QWORD[240+r8],r15
 
-	lea	rsi,QWORD PTR[((-56-160))+rax]
-	lea	rdi,QWORD PTR[512+r8]
+	lea	rsi,[((-56-160))+rax]
+	lea	rdi,[512+r8]
 	mov	ecx,20
-	DD	0a548f3fch
+	DD	0xa548f3fc
 
-	jmp	$L$in_prologue
-avx2_handler	ENDP
-.text$	ENDS
-.pdata	SEGMENT READONLY ALIGN(4)
+	jmp	NEAR $L$in_prologue
+
+section	.pdata rdata align=4
 ALIGN	4
-	DD	imagerel $L$SEH_begin_sha256_multi_block
-	DD	imagerel $L$SEH_end_sha256_multi_block
-	DD	imagerel $L$SEH_info_sha256_multi_block
-	DD	imagerel $L$SEH_begin_sha256_multi_block_shaext
-	DD	imagerel $L$SEH_end_sha256_multi_block_shaext
-	DD	imagerel $L$SEH_info_sha256_multi_block_shaext
-	DD	imagerel $L$SEH_begin_sha256_multi_block_avx
-	DD	imagerel $L$SEH_end_sha256_multi_block_avx
-	DD	imagerel $L$SEH_info_sha256_multi_block_avx
-	DD	imagerel $L$SEH_begin_sha256_multi_block_avx2
-	DD	imagerel $L$SEH_end_sha256_multi_block_avx2
-	DD	imagerel $L$SEH_info_sha256_multi_block_avx2
-.pdata	ENDS
-.xdata	SEGMENT READONLY ALIGN(8)
+	DD	$L$SEH_begin_sha256_multi_block wrt ..imagebase
+	DD	$L$SEH_end_sha256_multi_block wrt ..imagebase
+	DD	$L$SEH_info_sha256_multi_block wrt ..imagebase
+	DD	$L$SEH_begin_sha256_multi_block_shaext wrt ..imagebase
+	DD	$L$SEH_end_sha256_multi_block_shaext wrt ..imagebase
+	DD	$L$SEH_info_sha256_multi_block_shaext wrt ..imagebase
+	DD	$L$SEH_begin_sha256_multi_block_avx wrt ..imagebase
+	DD	$L$SEH_end_sha256_multi_block_avx wrt ..imagebase
+	DD	$L$SEH_info_sha256_multi_block_avx wrt ..imagebase
+	DD	$L$SEH_begin_sha256_multi_block_avx2 wrt ..imagebase
+	DD	$L$SEH_end_sha256_multi_block_avx2 wrt ..imagebase
+	DD	$L$SEH_info_sha256_multi_block_avx2 wrt ..imagebase
+section	.xdata rdata align=8
 ALIGN	8
-$L$SEH_info_sha256_multi_block::
+$L$SEH_info_sha256_multi_block:
 DB	9,0,0,0
-	DD	imagerel se_handler
-	DD	imagerel $L$body,imagerel $L$epilogue
-$L$SEH_info_sha256_multi_block_shaext::
+	DD	se_handler wrt ..imagebase
+	DD	$L$body wrt ..imagebase,$L$epilogue wrt ..imagebase
+$L$SEH_info_sha256_multi_block_shaext:
 DB	9,0,0,0
-	DD	imagerel se_handler
-	DD	imagerel $L$body_shaext,imagerel $L$epilogue_shaext
-$L$SEH_info_sha256_multi_block_avx::
+	DD	se_handler wrt ..imagebase
+	DD	$L$body_shaext wrt ..imagebase,$L$epilogue_shaext wrt ..imagebase
+$L$SEH_info_sha256_multi_block_avx:
 DB	9,0,0,0
-	DD	imagerel se_handler
-	DD	imagerel $L$body_avx,imagerel $L$epilogue_avx
-$L$SEH_info_sha256_multi_block_avx2::
+	DD	se_handler wrt ..imagebase
+	DD	$L$body_avx wrt ..imagebase,$L$epilogue_avx wrt ..imagebase
+$L$SEH_info_sha256_multi_block_avx2:
 DB	9,0,0,0
-	DD	imagerel avx2_handler
-	DD	imagerel $L$body_avx2,imagerel $L$epilogue_avx2
-
-.xdata	ENDS
-END
+	DD	avx2_handler wrt ..imagebase
+	DD	$L$body_avx2 wrt ..imagebase,$L$epilogue_avx2 wrt ..imagebase

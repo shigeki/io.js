@@ -188,10 +188,10 @@ x64-macosx-gas/%.s:
 	$(PERL) $< macosx > $@
 
 x64-win32-masm/sha/sha512-%.asm:
-	$(PERL) $< masm $@
+	$(PERL) $< nasm $@
 
 x64-win32-masm/%.asm:
-	$(PERL) $< masm > $@
+	$(PERL) $< nasm > $@
 
 x86-elf-gas/%.s:
 	$(PERL) $< elf $(SSE2) > $@
