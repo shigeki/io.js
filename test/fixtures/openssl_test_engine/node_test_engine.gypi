@@ -1,5 +1,6 @@
 {
   'sources': ['node_test_engine.c'],
+  'include_dirs': ['<(PRODUCT_DIR)/../../deps/openssl/openssl/include',],
   'conditions': [
     ['OS=="win"', {
       'library_dirs': ['<(LIB_DIR)'],
