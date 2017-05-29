@@ -17,7 +17,7 @@ const path = require('path');
 
 let found = 0;
 
-// check builtin engine exists.
+// Check builtin engine exists.
 // A dynamic engine is loaded by ENGINE_load_builtin_engines()
 // in InitCryptoOnce().
 crypto.getEngines().forEach((e) => {
@@ -27,7 +27,7 @@ crypto.getEngines().forEach((e) => {
 
 assert.strictEqual(found, 1);
 
-// check set and get node test engine of
+// Check set and get node test engine of
 // test/fixtures/openssl_test_engine/node_test_engine.c
 
 if (process.config.variables.node_shared_openssl) {
@@ -40,30 +40,30 @@ if (process.config.variables.openssl_fips) {
   return;
 }
 
-let engine_lib;
+let engineLib;
 
 if (common.isWindows) {
-  engine_lib = 'node_test_engine.dll';
+  engineLib = 'node_test_engine.dll';
 } else if (common.isAix) {
-  engine_lib = 'libnode_test_engine.a';
-} else if (process.platform === 'darwin') {
-  engine_lib = 'node_test_engine.so';
+  engineLib = 'libnode_test_engine.a';
+} else if (common.isOSX) {
+  engineLib = 'node_test_engine.so';
 } else {
-  engine_lib = 'libnode_test_engine.so';
+  engineLib = 'libnode_test_engine.so';
 }
 
-const test_engine_id = 'node_test_engine';
-const test_engine_name = 'Node Test Engine for OpenSSL';
-const test_engine = path.join(path.dirname(process.execPath), engine_lib);
+const testEngineId = 'node_test_engine';
+const testEngineName = 'Node Test Engine for OpenSSL';
+const testEngine = path.join(path.dirname(process.execPath), engineLib);
 
 assert.doesNotThrow(function() {
-  fs.accessSync(test_engine);
-}, 'node test engine ' + test_engine + ' is not found.');
+  fs.accessSync(testEngine);
+}, 'node test engine ' + testEngine + ' is not found.');
 
-crypto.setEngine(test_engine);
+crypto.setEngine(testEngine);
 
 crypto.getEngines().forEach((e) => {
-  if (e.id === test_engine_id && e.name === test_engine_name &&
+  if (e.id === testEngineId && e.name === testEngineName &&
       e.flags === crypto.constants.ENGINE_METHOD_ALL)
     found++;
 });

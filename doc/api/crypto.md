@@ -1812,7 +1812,7 @@ added: REPLACEME
 
 Returns an array of objects with id, name and flags of loaded engines.
 The flags value represents an integer of one of or a mix of the crypto
-constants described above.
+constants described in the [crypto.setEngine()](#crypto_crypto_setengine_engine_flags).
 
 ```js
 const crypto = require('crypto');

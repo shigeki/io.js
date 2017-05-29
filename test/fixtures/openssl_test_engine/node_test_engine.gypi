@@ -1,15 +1,7 @@
 {
   'sources': ['node_test_engine.c'],
   'conditions': [
-    ['OS=="mac"', {
-      'include_dirs': ['<(PRODUCT_DIR)/../../deps/openssl/openssl/include',],
-      'library_dirs': ['<(LIB_DIR)'],
-      'libraries': ['-lopenssl'],
-    }, 'OS=="win"', {
-      'dependencies': [
-        './deps/openssl/openssl.gyp:openssl',
-      ],
-      'include_dirs': ['<(PRODUCT_DIR)/../deps/openssl/openssl/include',],
+    ['OS=="win"', {
       'library_dirs': ['<(LIB_DIR)'],
       'libraries': [
         '-lkernel32.lib',
@@ -24,16 +16,11 @@
         '-luuid.lib',
         '-lodbc32.lib',
         '-lDelayImp.lib',
-        '-lopenssl.lib',
       ],
-    }, {
-      'library_dirs': ['<(LIB_DIR)/deps/openssl'],
-      'ldflags': ['-lopenssl'],
-      'include_dirs': ['<(PRODUCT_DIR)/../../deps/openssl/openssl/include',],
-    }],
+    },],
     [ 'OS in "freebsd openbsd netbsd solaris" or \
     (OS=="linux" and target_arch!="ia32")', {
-      'cflags': ['-fPIC'],
+      'cflags': ['-fPIC']
     }],
   ],
 }

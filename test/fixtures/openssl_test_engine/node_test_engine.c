@@ -1,9 +1,9 @@
 #include <openssl/engine.h>
 
-static const char *engine_id = "node_test_engine";
-static const char *engine_name = "Node Test Engine for OpenSSL";
+static const char engine_id[] = "node_test_engine";
+static const char engine_name[] = "Node Test Engine for OpenSSL";
 
-static int bind(ENGINE *e, const char *id)
+static int bind(ENGINE* e, const char* id)
 {
   ENGINE_set_id(e, engine_id);
   ENGINE_set_name(e, engine_name);
