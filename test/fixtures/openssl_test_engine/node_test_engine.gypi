@@ -25,7 +25,7 @@
         '-lopenssl.lib',
       ],
     }, 'OS=="aix"', {
-      'ldflags': ['-brtl'],
+      'ldflags': ['-Wl,-G'],
     }, ],
     [ 'OS in "freebsd openbsd netbsd solaris" or \
     (OS=="linux" and target_arch!="ia32")', {
