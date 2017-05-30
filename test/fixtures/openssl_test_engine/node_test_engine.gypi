@@ -21,8 +21,7 @@
         '-loleaut32.lib',
         '-luuid.lib',
         '-lodbc32.lib',
-        '-lDelayImp.lib',
-        '-lopenssl.lib',
+        '-lDelayImp.lib'
       ],
     }, 'OS=="aix"', {
       'ldflags': ['-Wl,-G'],
