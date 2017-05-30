@@ -1,15 +1,13 @@
 {
   'sources': ['node_test_engine.c'],
+  'include_dirs': ['<(PRODUCT_DIR)/../../deps/openssl/openssl/include',],
   'conditions': [
     ['OS=="mac"', {
-      'include_dirs': ['<(PRODUCT_DIR)/../../deps/openssl/openssl/include',],
-      'library_dirs': ['<(LIB_DIR)'],
-      'libraries': ['-lopenssl'],
+      'xcode_settings': {'OTHER_LDFLAGS': ['-undefined dynamic_lookup']},
     }, 'OS=="win"', {
       'dependencies': [
         './deps/openssl/openssl.gyp:openssl',
       ],
-      'include_dirs': ['<(PRODUCT_DIR)/../deps/openssl/openssl/include',],
       'library_dirs': ['<(LIB_DIR)'],
       'libraries': [
         '-lkernel32.lib',
@@ -26,12 +24,13 @@
         '-lDelayImp.lib',
         '-lopenssl.lib',
       ],
-    }, {
-      'include_dirs': ['<(PRODUCT_DIR)/../../deps/openssl/openssl/include',],
-    }],
+    }, 'OS=="aix"', {
+      'library_dirs': ['<(LIB_DIR)/deps/openssl'],
+      'ldflags': ['-lopenssl'],
+    }, ],
     [ 'OS in "freebsd openbsd netbsd solaris" or \
     (OS=="linux" and target_arch!="ia32")', {
       'cflags': ['-fPIC']
     }],
-  ],
+  ]
 }
