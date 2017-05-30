@@ -25,8 +25,7 @@
         '-lopenssl.lib',
       ],
     }, 'OS=="aix"', {
-      'library_dirs': ['<(LIB_DIR)/deps/openssl'],
-      'ldflags': ['-lopenssl'],
+      'ldflags': ['-brtl'],
     }, ],
     [ 'OS in "freebsd openbsd netbsd solaris" or \
     (OS=="linux" and target_arch!="ia32")', {
