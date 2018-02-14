@@ -1,71 +1,17 @@
-/* crypto/rand/rand_vms.c */
 /*
- * Written by Richard Levitte <richard@levitte.org> for the OpenSSL project
- * 2000.
- */
-/*
- * Modified by VMS Software, Inc (2016)
- *    Eliminate looping through all processes (performance)
- *    Add additional randomizations using rand() function
- */
-/* ====================================================================
- * Copyright (c) 1998-2000 The OpenSSL Project.  All rights reserved.
+ * Copyright 2001-2017 The OpenSSL Project Authors. All Rights Reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
- *
- * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
- *    endorse or promote products derived from this software without
- *    prior written permission. For written permission, please contact
- *    openssl-core@openssl.org.
- *
- * 5. Products derived from this software may not be called "OpenSSL"
- *    nor may "OpenSSL" appear in their names without prior written
- *    permission of the OpenSSL Project.
- *
- * 6. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit (http://www.openssl.org/)"
- *
- * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
- *
- * This product includes cryptographic software written by Eric Young
- * (eay@cryptsoft.com).  This product includes software written by Tim
- * Hudson (tjh@cryptsoft.com).
- *
+ * Licensed under the OpenSSL license (the "License").  You may not use
+ * this file except in compliance with the License.  You can obtain a copy
+ * in the file LICENSE in the source distribution or at
+ * https://www.openssl.org/source/license.html
  */
 
-#include <openssl/rand.h>
-#include "rand_lcl.h"
+#include "e_os.h"
 
 #if defined(OPENSSL_SYS_VMS)
+# include <openssl/rand.h>
+# include "rand_lcl.h"
 # include <descrip.h>
 # include <jpidef.h>
 # include <ssdef.h>
@@ -73,6 +19,10 @@
 # include <efndef>
 # ifdef __DECC
 #  pragma message disable DOLLARID
+# endif
+
+# ifndef OPENSSL_RAND_SEED_OS
+#  error "Unsupported seeding method configured; must be os"
 # endif
 
 /*
@@ -83,9 +33,9 @@
 #  define PTR_T __void_ptr64
 #  pragma pointer_size save
 #  pragma pointer_size 32
-# else                          /* __INITIAL_POINTER_SIZE == 64 */
+# else
 #  define PTR_T void *
-# endif                         /* __INITIAL_POINTER_SIZE == 64 [else] */
+# endif
 
 static struct items_data_st {
     short length, code;         /* length is number of bytes */
@@ -101,29 +51,22 @@ static struct items_data_st {
     {4, JPI$_PPGCNT},
     {4, JPI$_WSPEAK},
     {4, JPI$_FINALEXC},
-    {0, 0}                      /* zero terminated */
+    {0, 0}
 };
 
-int RAND_poll(void)
+size_t RAND_POOL_acquire_entropy(RAND_POOL *pool)
 {
-
     /* determine the number of items in the JPI array */
-
     struct items_data_st item_entry;
-    int item_entry_count = sizeof(items_data)/sizeof(item_entry);
-
+    int item_entry_count = OSSL_NELEM(items_data);
     /* Create the JPI itemlist array to hold item_data content */
-
     struct {
         short length, code;
         int *buffer;
         int *retlen;
-    } item[item_entry_count], *pitem; /* number of entries in items_data */
-
+    } item[item_entry_count], *pitem;
     struct items_data_st *pitems_data;
-    pitems_data = items_data;
-    pitem = item;
-    int data_buffer[(item_entry_count*2)+4]; /* 8 bytes per entry max */
+    int data_buffer[(item_entry_count * 2) + 4]; /* 8 bytes per entry max */
     int iosb[2];
     int sys_time[2];
     int *ptr;
@@ -132,49 +75,51 @@ int RAND_poll(void)
     int total_length = 0;
 
     /* Setup itemlist for GETJPI */
-
-    while (pitems_data->length) {
+    pitems_data = items_data;
+    for (pitem = item; pitems_data->length != 0; pitem++) {
         pitem->length = pitems_data->length;
         pitem->code   = pitems_data->code;
         pitem->buffer = &data_buffer[total_length];
         pitem->retlen = 0;
         /* total_length is in longwords */
-        total_length += pitems_data->length/4;
+        total_length += pitems_data->length / 4;
         pitems_data++;
-        pitem ++;
     }
     pitem->length = pitem->code = 0;
 
     /* Fill data_buffer with various info bits from this process */
-    /* and twist that data to seed the SSL random number init    */
-
-    if (sys$getjpiw(EFN$C_ENF, NULL, NULL, item, &iosb, 0, 0) == SS$_NORMAL) {
-        for (i = 0; i < total_length; i++) {
-            sys$gettim((struct _generic_64 *)&sys_time[0]);
-            srand(sys_time[0] * data_buffer[0] * data_buffer[1] + i);
-
-            if (i == (total_length - 1)) { /* for JPI$_FINALEXC */
-                ptr = &data_buffer[i];
-                for (j = 0; j < 4; j++) {
-                    data_buffer[i + j] = ptr[j];
-                    /* OK to use rand() just to scramble the seed */
-                    data_buffer[i + j] ^= (sys_time[0] ^ rand());
-                    tmp_length++;
-                }
-            } else {
-                /* OK to use rand() just to scramble the seed */
-                data_buffer[i] ^= (sys_time[0] ^ rand());
-            }
-        }
-
-        total_length += (tmp_length - 1);
-
-        /* size of seed is total_length*4 bytes (64bytes) */
-        RAND_add((PTR_T) data_buffer, total_length*4, total_length * 2);
-    } else {
+    if (sys$getjpiw(EFN$C_ENF, NULL, NULL, item, &iosb, 0, 0) != SS$_NORMAL)
         return 0;
+
+    /* Now twist that data to seed the SSL random number init */
+    for (i = 0; i < total_length; i++) {
+        sys$gettim((struct _generic_64 *)&sys_time[0]);
+        srand(sys_time[0] * data_buffer[0] * data_buffer[1] + i);
+
+        if (i == (total_length - 1)) { /* for JPI$_FINALEXC */
+            ptr = &data_buffer[i];
+            for (j = 0; j < 4; j++) {
+                data_buffer[i + j] = ptr[j];
+                /* OK to use rand() just to scramble the seed */
+                data_buffer[i + j] ^= (sys_time[0] ^ rand());
+                tmp_length++;
+            }
+        } else {
+            /* OK to use rand() just to scramble the seed */
+            data_buffer[i] ^= (sys_time[0] ^ rand());
+        }
     }
 
-    return 1;
+    total_length += (tmp_length - 1);
+
+    /*
+     * Size of seed is total_length*4 bytes (64bytes). The original assumption
+     * was that it contains 4 bits of entropy per byte. This makes a total
+     * amount of total_length*16 bits (256bits).
+     */
+    return RAND_POOL_add(pool,
+                         (PTR_T)data_buffer, total_length * 4,
+                         total_length * 16);
 }
+
 #endif

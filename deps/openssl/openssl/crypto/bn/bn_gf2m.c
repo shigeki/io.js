@@ -1,98 +1,17 @@
-/* crypto/bn/bn_gf2m.c */
-/* ====================================================================
- * Copyright 2002 Sun Microsystems, Inc. ALL RIGHTS RESERVED.
- *
- * The Elliptic Curve Public-Key Crypto Library (ECC Code) included
- * herein is developed by SUN MICROSYSTEMS, INC., and is contributed
- * to the OpenSSL project.
- *
- * The ECC Code is licensed pursuant to the OpenSSL open source
- * license provided below.
- *
- * In addition, Sun covenants to all licensees who provide a reciprocal
- * covenant with respect to their own patents if any, not to sue under
- * current and future patent claims necessarily infringed by the making,
- * using, practicing, selling, offering for sale and/or otherwise
- * disposing of the ECC Code as delivered hereunder (or portions thereof),
- * provided that such covenant shall not apply:
- *  1) for code that a licensee deletes from the ECC Code;
- *  2) separates from the ECC Code; or
- *  3) for infringements caused by:
- *       i) the modification of the ECC Code or
- *      ii) the combination of the ECC Code with other software or
- *          devices where such combination causes the infringement.
- *
- * The software is originally written by Sheueling Chang Shantz and
- * Douglas Stebila of Sun Microsystems Laboratories.
- *
- */
-
 /*
- * NOTE: This file is licensed pursuant to the OpenSSL license below and may
- * be modified; but after modifications, the above covenant may no longer
- * apply! In such cases, the corresponding paragraph ["In addition, Sun
- * covenants ... causes the infringement."] and this note can be edited out;
- * but please keep the Sun copyright notice and attribution.
- */
-
-/* ====================================================================
- * Copyright (c) 1998-2002 The OpenSSL Project.  All rights reserved.
+ * Copyright 2002-2017 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
- *
- * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
- *    endorse or promote products derived from this software without
- *    prior written permission. For written permission, please contact
- *    openssl-core@openssl.org.
- *
- * 5. Products derived from this software may not be called "OpenSSL"
- *    nor may "OpenSSL" appear in their names without prior written
- *    permission of the OpenSSL Project.
- *
- * 6. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit (http://www.openssl.org/)"
- *
- * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
- *
- * This product includes cryptographic software written by Eric Young
- * (eay@cryptsoft.com).  This product includes software written by Tim
- * Hudson (tjh@cryptsoft.com).
- *
+ * Licensed under the OpenSSL license (the "License").  You may not use
+ * this file except in compliance with the License.  You can obtain a copy
+ * in the file LICENSE in the source distribution or at
+ * https://www.openssl.org/source/license.html
  */
 
 #include <assert.h>
 #include <limits.h>
 #include <stdio.h>
-#include "cryptlib.h"
+#include "internal/cryptlib.h"
 #include "bn_lcl.h"
 
 #ifndef OPENSSL_NO_EC2M
@@ -472,8 +391,8 @@ int BN_GF2m_mod(BIGNUM *r, const BIGNUM *a, const BIGNUM *p)
     int arr[6];
     bn_check_top(a);
     bn_check_top(p);
-    ret = BN_GF2m_poly2arr(p, arr, sizeof(arr) / sizeof(arr[0]));
-    if (!ret || ret > (int)(sizeof(arr) / sizeof(arr[0]))) {
+    ret = BN_GF2m_poly2arr(p, arr, OSSL_NELEM(arr));
+    if (!ret || ret > (int)OSSL_NELEM(arr)) {
         BNerr(BN_F_BN_GF2M_MOD, BN_R_INVALID_LENGTH);
         return 0;
     }
@@ -550,7 +469,7 @@ int BN_GF2m_mod_mul(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
     bn_check_top(a);
     bn_check_top(b);
     bn_check_top(p);
-    if ((arr = (int *)OPENSSL_malloc(sizeof(int) * max)) == NULL)
+    if ((arr = OPENSSL_malloc(sizeof(*arr) * max)) == NULL)
         goto err;
     ret = BN_GF2m_poly2arr(p, arr, max);
     if (!ret || ret > max) {
@@ -560,8 +479,7 @@ int BN_GF2m_mod_mul(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
     ret = BN_GF2m_mod_mul_arr(r, a, b, arr, ctx);
     bn_check_top(r);
  err:
-    if (arr)
-        OPENSSL_free(arr);
+    OPENSSL_free(arr);
     return ret;
 }
 
@@ -609,7 +527,7 @@ int BN_GF2m_mod_sqr(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx)
 
     bn_check_top(a);
     bn_check_top(p);
-    if ((arr = (int *)OPENSSL_malloc(sizeof(int) * max)) == NULL)
+    if ((arr = OPENSSL_malloc(sizeof(*arr) * max)) == NULL)
         goto err;
     ret = BN_GF2m_poly2arr(p, arr, max);
     if (!ret || ret > max) {
@@ -619,8 +537,7 @@ int BN_GF2m_mod_sqr(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx)
     ret = BN_GF2m_mod_sqr_arr(r, a, arr, ctx);
     bn_check_top(r);
  err:
-    if (arr)
-        OPENSSL_free(arr);
+    OPENSSL_free(arr);
     return ret;
 }
 
@@ -640,13 +557,11 @@ int BN_GF2m_mod_inv(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx)
 
     BN_CTX_start(ctx);
 
-    if ((b = BN_CTX_get(ctx)) == NULL)
-        goto err;
-    if ((c = BN_CTX_get(ctx)) == NULL)
-        goto err;
-    if ((u = BN_CTX_get(ctx)) == NULL)
-        goto err;
-    if ((v = BN_CTX_get(ctx)) == NULL)
+    b = BN_CTX_get(ctx);
+    c = BN_CTX_get(ctx);
+    u = BN_CTX_get(ctx);
+    v = BN_CTX_get(ctx);
+    if (v == NULL)
         goto err;
 
     if (!BN_GF2m_mod(u, a, p))
@@ -989,7 +904,7 @@ int BN_GF2m_mod_exp_arr(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
     bn_check_top(b);
 
     if (BN_is_zero(b))
-        return (BN_one(r));
+        return BN_one(r);
 
     if (BN_abs_is_word(b, 1))
         return (BN_copy(r, a) != NULL);
@@ -1034,7 +949,7 @@ int BN_GF2m_mod_exp(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
     bn_check_top(a);
     bn_check_top(b);
     bn_check_top(p);
-    if ((arr = (int *)OPENSSL_malloc(sizeof(int) * max)) == NULL)
+    if ((arr = OPENSSL_malloc(sizeof(*arr) * max)) == NULL)
         goto err;
     ret = BN_GF2m_poly2arr(p, arr, max);
     if (!ret || ret > max) {
@@ -1044,8 +959,7 @@ int BN_GF2m_mod_exp(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
     ret = BN_GF2m_mod_exp_arr(r, a, b, arr, ctx);
     bn_check_top(r);
  err:
-    if (arr)
-        OPENSSL_free(arr);
+    OPENSSL_free(arr);
     return ret;
 }
 
@@ -1094,7 +1008,7 @@ int BN_GF2m_mod_sqrt(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx)
     int *arr = NULL;
     bn_check_top(a);
     bn_check_top(p);
-    if ((arr = (int *)OPENSSL_malloc(sizeof(int) * max)) == NULL)
+    if ((arr = OPENSSL_malloc(sizeof(*arr) * max)) == NULL)
         goto err;
     ret = BN_GF2m_poly2arr(p, arr, max);
     if (!ret || ret > max) {
@@ -1104,8 +1018,7 @@ int BN_GF2m_mod_sqrt(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx)
     ret = BN_GF2m_mod_sqrt_arr(r, a, arr, ctx);
     bn_check_top(r);
  err:
-    if (arr)
-        OPENSSL_free(arr);
+    OPENSSL_free(arr);
     return ret;
 }
 
@@ -1164,7 +1077,7 @@ int BN_GF2m_mod_solve_quad_arr(BIGNUM *r, const BIGNUM *a_, const int p[],
         if (tmp == NULL)
             goto err;
         do {
-            if (!BN_rand(rho, p[0], 0, 0))
+            if (!BN_priv_rand(rho, p[0], BN_RAND_TOP_ONE, BN_RAND_BOTTOM_ANY))
                 goto err;
             if (!BN_GF2m_mod_arr(rho, rho, p))
                 goto err;
@@ -1225,7 +1138,7 @@ int BN_GF2m_mod_solve_quad(BIGNUM *r, const BIGNUM *a, const BIGNUM *p,
     int *arr = NULL;
     bn_check_top(a);
     bn_check_top(p);
-    if ((arr = (int *)OPENSSL_malloc(sizeof(int) * max)) == NULL)
+    if ((arr = OPENSSL_malloc(sizeof(*arr) * max)) == NULL)
         goto err;
     ret = BN_GF2m_poly2arr(p, arr, max);
     if (!ret || ret > max) {
@@ -1235,8 +1148,7 @@ int BN_GF2m_mod_solve_quad(BIGNUM *r, const BIGNUM *a, const BIGNUM *p,
     ret = BN_GF2m_mod_solve_quad_arr(r, a, arr, ctx);
     bn_check_top(r);
  err:
-    if (arr)
-        OPENSSL_free(arr);
+    OPENSSL_free(arr);
     return ret;
 }
 
