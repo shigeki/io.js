@@ -95,5 +95,8 @@
     ],
   },
   'defines': ['<@(openssl_defines_VC-WIN32)'],
+  'include_dirs': [
+    './include',
+  ],
   'sources': ['<@(openssl_cli_srcs_VC-WIN32)'],
 }

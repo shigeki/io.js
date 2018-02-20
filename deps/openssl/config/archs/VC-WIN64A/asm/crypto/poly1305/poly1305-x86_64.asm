@@ -45,6 +45,11 @@ $L$SEH_begin_poly1305_init:
 	lea	rax,[poly1305_blocks_avx2]
 	bt	r9,37
 	cmovc	r10,rax
+	mov	rax,2149646336
+	shr	r9,32
+	and	r9,rax
+	cmp	r9,rax
+	je	NEAR $L$init_base2_44
 	mov	rax,0x0ffffffc0fffffff
 	mov	rcx,0x0ffffffc0ffffffc
 	and	rax,QWORD[rsi]
@@ -1626,6 +1631,12 @@ $L$even_avx2:
 	vmovd	xmm4,DWORD[16+rdi]
 
 $L$do_avx2:
+	cmp	rdx,512
+	jb	NEAR $L$skip_avx512
+	and	r10d,r11d
+	test	r10d,65536
+	jnz	NEAR $L$blocks_avx512
+$L$skip_avx512:
 	lea	r11,[((-248))+rsp]
 	sub	rsp,0x1c8
 	vmovdqa	XMMWORD[80+r11],xmm6
@@ -2010,6 +2021,1591 @@ $L$do_avx2_epilogue:
 	DB	0F3h,0C3h		;repret
 
 $L$SEH_end_poly1305_blocks_avx2:
+
+ALIGN	32
+poly1305_blocks_avx512:
+	mov	QWORD[8+rsp],rdi	;WIN64 prologue
+	mov	QWORD[16+rsp],rsi
+	mov	rax,rsp
+$L$SEH_begin_poly1305_blocks_avx512:
+	mov	rdi,rcx
+	mov	rsi,rdx
+	mov	rdx,r8
+	mov	rcx,r9
+
+
+
+$L$blocks_avx512:
+	mov	eax,15
+	kmovw	k2,eax
+	lea	r11,[((-248))+rsp]
+	sub	rsp,0x1c8
+	vmovdqa	XMMWORD[80+r11],xmm6
+	vmovdqa	XMMWORD[96+r11],xmm7
+	vmovdqa	XMMWORD[112+r11],xmm8
+	vmovdqa	XMMWORD[128+r11],xmm9
+	vmovdqa	XMMWORD[144+r11],xmm10
+	vmovdqa	XMMWORD[160+r11],xmm11
+	vmovdqa	XMMWORD[176+r11],xmm12
+	vmovdqa	XMMWORD[192+r11],xmm13
+	vmovdqa	XMMWORD[208+r11],xmm14
+	vmovdqa	XMMWORD[224+r11],xmm15
+$L$do_avx512_body:
+	lea	rcx,[$L$const]
+	lea	rdi,[((48+64))+rdi]
+	vmovdqa	ymm9,YMMWORD[96+rcx]
+
+
+	vmovdqu	xmm11,XMMWORD[((-64))+rdi]
+	and	rsp,-512
+	vmovdqu	xmm12,XMMWORD[((-48))+rdi]
+	mov	rax,0x20
+	vmovdqu	xmm7,XMMWORD[((-32))+rdi]
+	vmovdqu	xmm13,XMMWORD[((-16))+rdi]
+	vmovdqu	xmm8,XMMWORD[rdi]
+	vmovdqu	xmm14,XMMWORD[16+rdi]
+	vmovdqu	xmm10,XMMWORD[32+rdi]
+	vmovdqu	xmm15,XMMWORD[48+rdi]
+	vmovdqu	xmm6,XMMWORD[64+rdi]
+	vpermd	zmm16,zmm9,zmm11
+	vpbroadcastq	zmm5,QWORD[64+rcx]
+	vpermd	zmm17,zmm9,zmm12
+	vpermd	zmm21,zmm9,zmm7
+	vpermd	zmm18,zmm9,zmm13
+	vmovdqa64	ZMMWORD[rsp]{k2},zmm16
+	vpsrlq	zmm7,zmm16,32
+	vpermd	zmm22,zmm9,zmm8
+	vmovdqu64	ZMMWORD[rax*1+rsp]{k2},zmm17
+	vpsrlq	zmm8,zmm17,32
+	vpermd	zmm19,zmm9,zmm14
+	vmovdqa64	ZMMWORD[64+rsp]{k2},zmm21
+	vpermd	zmm23,zmm9,zmm10
+	vpermd	zmm20,zmm9,zmm15
+	vmovdqu64	ZMMWORD[64+rax*1+rsp]{k2},zmm18
+	vpermd	zmm24,zmm9,zmm6
+	vmovdqa64	ZMMWORD[128+rsp]{k2},zmm22
+	vmovdqu64	ZMMWORD[128+rax*1+rsp]{k2},zmm19
+	vmovdqa64	ZMMWORD[192+rsp]{k2},zmm23
+	vmovdqu64	ZMMWORD[192+rax*1+rsp]{k2},zmm20
+	vmovdqa64	ZMMWORD[256+rsp]{k2},zmm24
+
+
+
+
+
+
+
+
+
+
+	vpmuludq	zmm11,zmm16,zmm7
+	vpmuludq	zmm12,zmm17,zmm7
+	vpmuludq	zmm13,zmm18,zmm7
+	vpmuludq	zmm14,zmm19,zmm7
+	vpmuludq	zmm15,zmm20,zmm7
+	vpsrlq	zmm9,zmm18,32
+
+	vpmuludq	zmm25,zmm24,zmm8
+	vpmuludq	zmm26,zmm16,zmm8
+	vpmuludq	zmm27,zmm17,zmm8
+	vpmuludq	zmm28,zmm18,zmm8
+	vpmuludq	zmm29,zmm19,zmm8
+	vpsrlq	zmm10,zmm19,32
+	vpaddq	zmm11,zmm11,zmm25
+	vpaddq	zmm12,zmm12,zmm26
+	vpaddq	zmm13,zmm13,zmm27
+	vpaddq	zmm14,zmm14,zmm28
+	vpaddq	zmm15,zmm15,zmm29
+
+	vpmuludq	zmm25,zmm23,zmm9
+	vpmuludq	zmm26,zmm24,zmm9
+	vpmuludq	zmm28,zmm17,zmm9
+	vpmuludq	zmm29,zmm18,zmm9
+	vpmuludq	zmm27,zmm16,zmm9
+	vpsrlq	zmm6,zmm20,32
+	vpaddq	zmm11,zmm11,zmm25
+	vpaddq	zmm12,zmm12,zmm26
+	vpaddq	zmm14,zmm14,zmm28
+	vpaddq	zmm15,zmm15,zmm29
+	vpaddq	zmm13,zmm13,zmm27
+
+	vpmuludq	zmm25,zmm22,zmm10
+	vpmuludq	zmm28,zmm16,zmm10
+	vpmuludq	zmm29,zmm17,zmm10
+	vpmuludq	zmm26,zmm23,zmm10
+	vpmuludq	zmm27,zmm24,zmm10
+	vpaddq	zmm11,zmm11,zmm25
+	vpaddq	zmm14,zmm14,zmm28
+	vpaddq	zmm15,zmm15,zmm29
+	vpaddq	zmm12,zmm12,zmm26
+	vpaddq	zmm13,zmm13,zmm27
+
+	vpmuludq	zmm28,zmm24,zmm6
+	vpmuludq	zmm29,zmm16,zmm6
+	vpmuludq	zmm25,zmm21,zmm6
+	vpmuludq	zmm26,zmm22,zmm6
+	vpmuludq	zmm27,zmm23,zmm6
+	vpaddq	zmm14,zmm14,zmm28
+	vpaddq	zmm15,zmm15,zmm29
+	vpaddq	zmm11,zmm11,zmm25
+	vpaddq	zmm12,zmm12,zmm26
+	vpaddq	zmm13,zmm13,zmm27
+
+
+
+	vmovdqu64	zmm10,ZMMWORD[rsi]
+	vmovdqu64	zmm6,ZMMWORD[64+rsi]
+	lea	rsi,[128+rsi]
+
+
+
+
+	vpsrlq	zmm28,zmm14,26
+	vpandq	zmm14,zmm14,zmm5
+	vpaddq	zmm15,zmm15,zmm28
+
+	vpsrlq	zmm25,zmm11,26
+	vpandq	zmm11,zmm11,zmm5
+	vpaddq	zmm12,zmm12,zmm25
+
+	vpsrlq	zmm29,zmm15,26
+	vpandq	zmm15,zmm15,zmm5
+
+	vpsrlq	zmm26,zmm12,26
+	vpandq	zmm12,zmm12,zmm5
+	vpaddq	zmm13,zmm13,zmm26
+
+	vpaddq	zmm11,zmm11,zmm29
+	vpsllq	zmm29,zmm29,2
+	vpaddq	zmm11,zmm11,zmm29
+
+	vpsrlq	zmm27,zmm13,26
+	vpandq	zmm13,zmm13,zmm5
+	vpaddq	zmm14,zmm14,zmm27
+
+	vpsrlq	zmm25,zmm11,26
+	vpandq	zmm11,zmm11,zmm5
+	vpaddq	zmm12,zmm12,zmm25
+
+	vpsrlq	zmm28,zmm14,26
+	vpandq	zmm14,zmm14,zmm5
+	vpaddq	zmm15,zmm15,zmm28
+
+
+
+
+
+	vpunpcklqdq	zmm7,zmm10,zmm6
+	vpunpckhqdq	zmm6,zmm10,zmm6
+
+
+
+
+
+
+	vmovdqa32	zmm25,ZMMWORD[128+rcx]
+	mov	eax,0x7777
+	kmovw	k1,eax
+
+	vpermd	zmm16,zmm25,zmm16
+	vpermd	zmm17,zmm25,zmm17
+	vpermd	zmm18,zmm25,zmm18
+	vpermd	zmm19,zmm25,zmm19
+	vpermd	zmm20,zmm25,zmm20
+
+	vpermd	zmm16{k1},zmm25,zmm11
+	vpermd	zmm17{k1},zmm25,zmm12
+	vpermd	zmm18{k1},zmm25,zmm13
+	vpermd	zmm19{k1},zmm25,zmm14
+	vpermd	zmm20{k1},zmm25,zmm15
+
+	vpslld	zmm21,zmm17,2
+	vpslld	zmm22,zmm18,2
+	vpslld	zmm23,zmm19,2
+	vpslld	zmm24,zmm20,2
+	vpaddd	zmm21,zmm21,zmm17
+	vpaddd	zmm22,zmm22,zmm18
+	vpaddd	zmm23,zmm23,zmm19
+	vpaddd	zmm24,zmm24,zmm20
+
+	vpbroadcastq	zmm30,QWORD[32+rcx]
+
+	vpsrlq	zmm9,zmm7,52
+	vpsllq	zmm10,zmm6,12
+	vporq	zmm9,zmm9,zmm10
+	vpsrlq	zmm8,zmm7,26
+	vpsrlq	zmm10,zmm6,14
+	vpsrlq	zmm6,zmm6,40
+	vpandq	zmm9,zmm9,zmm5
+	vpandq	zmm7,zmm7,zmm5
+
+
+
+
+	vpaddq	zmm2,zmm9,zmm2
+	sub	rdx,192
+	jbe	NEAR $L$tail_avx512
+	jmp	NEAR $L$oop_avx512
+
+ALIGN	32
+$L$oop_avx512:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	vpmuludq	zmm14,zmm17,zmm2
+	vpaddq	zmm0,zmm7,zmm0
+	vpmuludq	zmm15,zmm18,zmm2
+	vpandq	zmm8,zmm8,zmm5
+	vpmuludq	zmm11,zmm23,zmm2
+	vpandq	zmm10,zmm10,zmm5
+	vpmuludq	zmm12,zmm24,zmm2
+	vporq	zmm6,zmm6,zmm30
+	vpmuludq	zmm13,zmm16,zmm2
+	vpaddq	zmm1,zmm8,zmm1
+	vpaddq	zmm3,zmm10,zmm3
+	vpaddq	zmm4,zmm6,zmm4
+
+	vmovdqu64	zmm10,ZMMWORD[rsi]
+	vmovdqu64	zmm6,ZMMWORD[64+rsi]
+	lea	rsi,[128+rsi]
+	vpmuludq	zmm28,zmm19,zmm0
+	vpmuludq	zmm29,zmm20,zmm0
+	vpmuludq	zmm25,zmm16,zmm0
+	vpmuludq	zmm26,zmm17,zmm0
+	vpaddq	zmm14,zmm14,zmm28
+	vpaddq	zmm15,zmm15,zmm29
+	vpaddq	zmm11,zmm11,zmm25
+	vpaddq	zmm12,zmm12,zmm26
+
+	vpmuludq	zmm28,zmm18,zmm1
+	vpmuludq	zmm29,zmm19,zmm1
+	vpmuludq	zmm25,zmm24,zmm1
+	vpmuludq	zmm27,zmm18,zmm0
+	vpaddq	zmm14,zmm14,zmm28
+	vpaddq	zmm15,zmm15,zmm29
+	vpaddq	zmm11,zmm11,zmm25
+	vpaddq	zmm13,zmm13,zmm27
+
+	vpunpcklqdq	zmm7,zmm10,zmm6
+	vpunpckhqdq	zmm6,zmm10,zmm6
+
+	vpmuludq	zmm28,zmm16,zmm3
+	vpmuludq	zmm29,zmm17,zmm3
+	vpmuludq	zmm26,zmm16,zmm1
+	vpmuludq	zmm27,zmm17,zmm1
+	vpaddq	zmm14,zmm14,zmm28
+	vpaddq	zmm15,zmm15,zmm29
+	vpaddq	zmm12,zmm12,zmm26
+	vpaddq	zmm13,zmm13,zmm27
+
+	vpmuludq	zmm28,zmm24,zmm4
+	vpmuludq	zmm29,zmm16,zmm4
+	vpmuludq	zmm25,zmm22,zmm3
+	vpmuludq	zmm26,zmm23,zmm3
+	vpaddq	zmm14,zmm14,zmm28
+	vpmuludq	zmm27,zmm24,zmm3
+	vpaddq	zmm15,zmm15,zmm29
+	vpaddq	zmm11,zmm11,zmm25
+	vpaddq	zmm12,zmm12,zmm26
+	vpaddq	zmm13,zmm13,zmm27
+
+	vpmuludq	zmm25,zmm21,zmm4
+	vpmuludq	zmm26,zmm22,zmm4
+	vpmuludq	zmm27,zmm23,zmm4
+	vpaddq	zmm0,zmm11,zmm25
+	vpaddq	zmm1,zmm12,zmm26
+	vpaddq	zmm2,zmm13,zmm27
+
+
+
+
+	vpsrlq	zmm9,zmm7,52
+	vpsllq	zmm10,zmm6,12
+
+	vpsrlq	zmm3,zmm14,26
+	vpandq	zmm14,zmm14,zmm5
+	vpaddq	zmm4,zmm15,zmm3
+
+	vporq	zmm9,zmm9,zmm10
+
+	vpsrlq	zmm11,zmm0,26
+	vpandq	zmm0,zmm0,zmm5
+	vpaddq	zmm1,zmm1,zmm11
+
+	vpandq	zmm9,zmm9,zmm5
+
+	vpsrlq	zmm15,zmm4,26
+	vpandq	zmm4,zmm4,zmm5
+
+	vpsrlq	zmm12,zmm1,26
+	vpandq	zmm1,zmm1,zmm5
+	vpaddq	zmm2,zmm2,zmm12
+
+	vpaddq	zmm0,zmm0,zmm15
+	vpsllq	zmm15,zmm15,2
+	vpaddq	zmm0,zmm0,zmm15
+
+	vpaddq	zmm2,zmm2,zmm9
+	vpsrlq	zmm8,zmm7,26
+
+	vpsrlq	zmm13,zmm2,26
+	vpandq	zmm2,zmm2,zmm5
+	vpaddq	zmm3,zmm14,zmm13
+
+	vpsrlq	zmm10,zmm6,14
+
+	vpsrlq	zmm11,zmm0,26
+	vpandq	zmm0,zmm0,zmm5
+	vpaddq	zmm1,zmm1,zmm11
+
+	vpsrlq	zmm6,zmm6,40
+
+	vpsrlq	zmm14,zmm3,26
+	vpandq	zmm3,zmm3,zmm5
+	vpaddq	zmm4,zmm4,zmm14
+
+	vpandq	zmm7,zmm7,zmm5
+
+
+
+
+	sub	rdx,128
+	ja	NEAR $L$oop_avx512
+
+$L$tail_avx512:
+
+
+
+
+
+	vpsrlq	zmm16,zmm16,32
+	vpsrlq	zmm17,zmm17,32
+	vpsrlq	zmm18,zmm18,32
+	vpsrlq	zmm23,zmm23,32
+	vpsrlq	zmm24,zmm24,32
+	vpsrlq	zmm19,zmm19,32
+	vpsrlq	zmm20,zmm20,32
+	vpsrlq	zmm21,zmm21,32
+	vpsrlq	zmm22,zmm22,32
+
+
+
+	lea	rsi,[rdx*1+rsi]
+
+
+	vpaddq	zmm0,zmm7,zmm0
+
+	vpmuludq	zmm14,zmm17,zmm2
+	vpmuludq	zmm15,zmm18,zmm2
+	vpmuludq	zmm11,zmm23,zmm2
+	vpandq	zmm8,zmm8,zmm5
+	vpmuludq	zmm12,zmm24,zmm2
+	vpandq	zmm10,zmm10,zmm5
+	vpmuludq	zmm13,zmm16,zmm2
+	vporq	zmm6,zmm6,zmm30
+	vpaddq	zmm1,zmm8,zmm1
+	vpaddq	zmm3,zmm10,zmm3
+	vpaddq	zmm4,zmm6,zmm4
+
+	vmovdqu	xmm7,XMMWORD[rsi]
+	vpmuludq	zmm28,zmm19,zmm0
+	vpmuludq	zmm29,zmm20,zmm0
+	vpmuludq	zmm25,zmm16,zmm0
+	vpmuludq	zmm26,zmm17,zmm0
+	vpaddq	zmm14,zmm14,zmm28
+	vpaddq	zmm15,zmm15,zmm29
+	vpaddq	zmm11,zmm11,zmm25
+	vpaddq	zmm12,zmm12,zmm26
+
+	vmovdqu	xmm8,XMMWORD[16+rsi]
+	vpmuludq	zmm28,zmm18,zmm1
+	vpmuludq	zmm29,zmm19,zmm1
+	vpmuludq	zmm25,zmm24,zmm1
+	vpmuludq	zmm27,zmm18,zmm0
+	vpaddq	zmm14,zmm14,zmm28
+	vpaddq	zmm15,zmm15,zmm29
+	vpaddq	zmm11,zmm11,zmm25
+	vpaddq	zmm13,zmm13,zmm27
+
+	vinserti128	ymm7,ymm7,XMMWORD[32+rsi],1
+	vpmuludq	zmm28,zmm16,zmm3
+	vpmuludq	zmm29,zmm17,zmm3
+	vpmuludq	zmm26,zmm16,zmm1
+	vpmuludq	zmm27,zmm17,zmm1
+	vpaddq	zmm14,zmm14,zmm28
+	vpaddq	zmm15,zmm15,zmm29
+	vpaddq	zmm12,zmm12,zmm26
+	vpaddq	zmm13,zmm13,zmm27
+
+	vinserti128	ymm8,ymm8,XMMWORD[48+rsi],1
+	vpmuludq	zmm28,zmm24,zmm4
+	vpmuludq	zmm29,zmm16,zmm4
+	vpmuludq	zmm25,zmm22,zmm3
+	vpmuludq	zmm26,zmm23,zmm3
+	vpmuludq	zmm27,zmm24,zmm3
+	vpaddq	zmm3,zmm14,zmm28
+	vpaddq	zmm15,zmm15,zmm29
+	vpaddq	zmm11,zmm11,zmm25
+	vpaddq	zmm12,zmm12,zmm26
+	vpaddq	zmm13,zmm13,zmm27
+
+	vpmuludq	zmm25,zmm21,zmm4
+	vpmuludq	zmm26,zmm22,zmm4
+	vpmuludq	zmm27,zmm23,zmm4
+	vpaddq	zmm0,zmm11,zmm25
+	vpaddq	zmm1,zmm12,zmm26
+	vpaddq	zmm2,zmm13,zmm27
+
+
+
+
+	mov	eax,1
+	vpermq	zmm14,zmm3,0xb1
+	vpermq	zmm4,zmm15,0xb1
+	vpermq	zmm11,zmm0,0xb1
+	vpermq	zmm12,zmm1,0xb1
+	vpermq	zmm13,zmm2,0xb1
+	vpaddq	zmm3,zmm3,zmm14
+	vpaddq	zmm4,zmm4,zmm15
+	vpaddq	zmm0,zmm0,zmm11
+	vpaddq	zmm1,zmm1,zmm12
+	vpaddq	zmm2,zmm2,zmm13
+
+	kmovw	k3,eax
+	vpermq	zmm14,zmm3,0x2
+	vpermq	zmm15,zmm4,0x2
+	vpermq	zmm11,zmm0,0x2
+	vpermq	zmm12,zmm1,0x2
+	vpermq	zmm13,zmm2,0x2
+	vpaddq	zmm3,zmm3,zmm14
+	vpaddq	zmm4,zmm4,zmm15
+	vpaddq	zmm0,zmm0,zmm11
+	vpaddq	zmm1,zmm1,zmm12
+	vpaddq	zmm2,zmm2,zmm13
+
+	vextracti64x4	ymm14,zmm3,0x1
+	vextracti64x4	ymm15,zmm4,0x1
+	vextracti64x4	ymm11,zmm0,0x1
+	vextracti64x4	ymm12,zmm1,0x1
+	vextracti64x4	ymm13,zmm2,0x1
+	vpaddq	zmm3{k3}{z},zmm3,zmm14
+	vpaddq	zmm4{k3}{z},zmm4,zmm15
+	vpaddq	zmm0{k3}{z},zmm0,zmm11
+	vpaddq	zmm1{k3}{z},zmm1,zmm12
+	vpaddq	zmm2{k3}{z},zmm2,zmm13
+
+
+
+	vpsrlq	ymm14,ymm3,26
+	vpand	ymm3,ymm3,ymm5
+	vpsrldq	ymm9,ymm7,6
+	vpsrldq	ymm10,ymm8,6
+	vpunpckhqdq	ymm6,ymm7,ymm8
+	vpaddq	ymm4,ymm4,ymm14
+
+	vpsrlq	ymm11,ymm0,26
+	vpand	ymm0,ymm0,ymm5
+	vpunpcklqdq	ymm9,ymm9,ymm10
+	vpunpcklqdq	ymm7,ymm7,ymm8
+	vpaddq	ymm1,ymm1,ymm11
+
+	vpsrlq	ymm15,ymm4,26
+	vpand	ymm4,ymm4,ymm5
+
+	vpsrlq	ymm12,ymm1,26
+	vpand	ymm1,ymm1,ymm5
+	vpsrlq	ymm10,ymm9,30
+	vpsrlq	ymm9,ymm9,4
+	vpaddq	ymm2,ymm2,ymm12
+
+	vpaddq	ymm0,ymm0,ymm15
+	vpsllq	ymm15,ymm15,2
+	vpsrlq	ymm8,ymm7,26
+	vpsrlq	ymm6,ymm6,40
+	vpaddq	ymm0,ymm0,ymm15
+
+	vpsrlq	ymm13,ymm2,26
+	vpand	ymm2,ymm2,ymm5
+	vpand	ymm9,ymm9,ymm5
+	vpand	ymm7,ymm7,ymm5
+	vpaddq	ymm3,ymm3,ymm13
+
+	vpsrlq	ymm11,ymm0,26
+	vpand	ymm0,ymm0,ymm5
+	vpaddq	ymm2,ymm9,ymm2
+	vpand	ymm8,ymm8,ymm5
+	vpaddq	ymm1,ymm1,ymm11
+
+	vpsrlq	ymm14,ymm3,26
+	vpand	ymm3,ymm3,ymm5
+	vpand	ymm10,ymm10,ymm5
+	vpor	ymm6,ymm6,YMMWORD[32+rcx]
+	vpaddq	ymm4,ymm4,ymm14
+
+	lea	rax,[144+rsp]
+	add	rdx,64
+	jnz	NEAR $L$tail_avx2
+
+	vpsubq	ymm2,ymm2,ymm9
+	vmovd	DWORD[(-112)+rdi],xmm0
+	vmovd	DWORD[(-108)+rdi],xmm1
+	vmovd	DWORD[(-104)+rdi],xmm2
+	vmovd	DWORD[(-100)+rdi],xmm3
+	vmovd	DWORD[(-96)+rdi],xmm4
+	vzeroall
+	movdqa	xmm6,XMMWORD[80+r11]
+	movdqa	xmm7,XMMWORD[96+r11]
+	movdqa	xmm8,XMMWORD[112+r11]
+	movdqa	xmm9,XMMWORD[128+r11]
+	movdqa	xmm10,XMMWORD[144+r11]
+	movdqa	xmm11,XMMWORD[160+r11]
+	movdqa	xmm12,XMMWORD[176+r11]
+	movdqa	xmm13,XMMWORD[192+r11]
+	movdqa	xmm14,XMMWORD[208+r11]
+	movdqa	xmm15,XMMWORD[224+r11]
+	lea	rsp,[248+r11]
+$L$do_avx512_epilogue:
+	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
+	mov	rsi,QWORD[16+rsp]
+	DB	0F3h,0C3h		;repret
+
+$L$SEH_end_poly1305_blocks_avx512:
+
+ALIGN	32
+poly1305_init_base2_44:
+	mov	QWORD[8+rsp],rdi	;WIN64 prologue
+	mov	QWORD[16+rsp],rsi
+	mov	rax,rsp
+$L$SEH_begin_poly1305_init_base2_44:
+	mov	rdi,rcx
+	mov	rsi,rdx
+	mov	rdx,r8
+
+
+	xor	rax,rax
+	mov	QWORD[rdi],rax
+	mov	QWORD[8+rdi],rax
+	mov	QWORD[16+rdi],rax
+
+$L$init_base2_44:
+	lea	r10,[poly1305_blocks_vpmadd52]
+	lea	r11,[poly1305_emit_base2_44]
+
+	mov	rax,0x0ffffffc0fffffff
+	mov	rcx,0x0ffffffc0ffffffc
+	and	rax,QWORD[rsi]
+	mov	r8,0x00000fffffffffff
+	and	rcx,QWORD[8+rsi]
+	mov	r9,0x00000fffffffffff
+	and	r8,rax
+	shrd	rax,rcx,44
+	mov	QWORD[40+rdi],r8
+	and	rax,r9
+	shr	rcx,24
+	mov	QWORD[48+rdi],rax
+	lea	rax,[rax*4+rax]
+	mov	QWORD[56+rdi],rcx
+	shl	rax,2
+	lea	rcx,[rcx*4+rcx]
+	shl	rcx,2
+	mov	QWORD[24+rdi],rax
+	mov	QWORD[32+rdi],rcx
+	mov	QWORD[64+rdi],-1
+	mov	QWORD[rdx],r10
+	mov	QWORD[8+rdx],r11
+	mov	eax,1
+	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
+	mov	rsi,QWORD[16+rsp]
+	DB	0F3h,0C3h		;repret
+$L$SEH_end_poly1305_init_base2_44:
+
+ALIGN	32
+poly1305_blocks_vpmadd52:
+	mov	QWORD[8+rsp],rdi	;WIN64 prologue
+	mov	QWORD[16+rsp],rsi
+	mov	rax,rsp
+$L$SEH_begin_poly1305_blocks_vpmadd52:
+	mov	rdi,rcx
+	mov	rsi,rdx
+	mov	rdx,r8
+	mov	rcx,r9
+
+
+	shr	rdx,4
+	jz	NEAR $L$no_data_vpmadd52
+
+	shl	rcx,40
+	mov	r8,QWORD[64+rdi]
+
+
+
+
+
+
+	mov	rax,3
+	mov	r10,1
+	cmp	rdx,4
+	cmovae	rax,r10
+	test	r8,r8
+	cmovns	rax,r10
+
+	and	rax,rdx
+	jz	NEAR $L$blocks_vpmadd52_4x
+
+	sub	rdx,rax
+	mov	r10d,7
+	mov	r11d,1
+	kmovw	k7,r10d
+	lea	r10,[$L$2_44_inp_permd]
+	kmovw	k1,r11d
+
+	vmovq	xmm21,rcx
+	vmovdqa64	ymm19,YMMWORD[r10]
+	vmovdqa64	ymm20,YMMWORD[32+r10]
+	vpermq	ymm21,ymm21,0xcf
+	vmovdqa64	ymm22,YMMWORD[64+r10]
+
+	vmovdqu64	ymm16{k7}{z},[rdi]
+	vmovdqu64	ymm3{k7}{z},[40+rdi]
+	vmovdqu64	ymm4{k7}{z},[32+rdi]
+	vmovdqu64	ymm5{k7}{z},[24+rdi]
+
+	vmovdqa64	ymm23,YMMWORD[96+r10]
+	vmovdqa64	ymm24,YMMWORD[128+r10]
+
+	jmp	NEAR $L$oop_vpmadd52
+
+ALIGN	32
+$L$oop_vpmadd52:
+	vmovdqu32	xmm18,XMMWORD[rsi]
+	lea	rsi,[16+rsi]
+
+	vpermd	ymm18,ymm19,ymm18
+	vpsrlvq	ymm18,ymm18,ymm20
+	vpandq	ymm18,ymm18,ymm22
+	vporq	ymm18,ymm18,ymm21
+
+	vpaddq	ymm16,ymm16,ymm18
+
+	vpermq	ymm0{k7}{z},ymm16,0
+	vpermq	ymm1{k7}{z},ymm16,85
+	vpermq	ymm2{k7}{z},ymm16,170
+
+	vpxord	ymm16,ymm16,ymm16
+	vpxord	ymm17,ymm17,ymm17
+
+	vpmadd52luq	ymm16,ymm0,ymm3
+	vpmadd52huq	ymm17,ymm0,ymm3
+
+	vpmadd52luq	ymm16,ymm1,ymm4
+	vpmadd52huq	ymm17,ymm1,ymm4
+
+	vpmadd52luq	ymm16,ymm2,ymm5
+	vpmadd52huq	ymm17,ymm2,ymm5
+
+	vpsrlvq	ymm18,ymm16,ymm23
+	vpsllvq	ymm17,ymm17,ymm24
+	vpandq	ymm16,ymm16,ymm22
+
+	vpaddq	ymm17,ymm17,ymm18
+
+	vpermq	ymm17,ymm17,147
+
+	vpaddq	ymm16,ymm16,ymm17
+
+	vpsrlvq	ymm18,ymm16,ymm23
+	vpandq	ymm16,ymm16,ymm22
+
+	vpermq	ymm18,ymm18,147
+
+	vpaddq	ymm16,ymm16,ymm18
+
+	vpermq	ymm18{k1}{z},ymm16,147
+
+	vpaddq	ymm16,ymm16,ymm18
+	vpsllq	ymm18,ymm18,2
+
+	vpaddq	ymm16,ymm16,ymm18
+
+	dec	rax
+	jnz	NEAR $L$oop_vpmadd52
+
+	vmovdqu64	YMMWORD[rdi]{k7},ymm16
+
+	test	rdx,rdx
+	jnz	NEAR $L$blocks_vpmadd52_4x
+
+$L$no_data_vpmadd52:
+	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
+	mov	rsi,QWORD[16+rsp]
+	DB	0F3h,0C3h		;repret
+$L$SEH_end_poly1305_blocks_vpmadd52:
+
+ALIGN	32
+poly1305_blocks_vpmadd52_4x:
+	mov	QWORD[8+rsp],rdi	;WIN64 prologue
+	mov	QWORD[16+rsp],rsi
+	mov	rax,rsp
+$L$SEH_begin_poly1305_blocks_vpmadd52_4x:
+	mov	rdi,rcx
+	mov	rsi,rdx
+	mov	rdx,r8
+	mov	rcx,r9
+
+
+	shr	rdx,4
+	jz	NEAR $L$no_data_vpmadd52_4x
+
+	shl	rcx,40
+	mov	r8,QWORD[64+rdi]
+
+$L$blocks_vpmadd52_4x:
+	vpbroadcastq	ymm31,rcx
+
+	vmovdqa64	ymm28,YMMWORD[$L$x_mask44]
+	mov	eax,5
+	vmovdqa64	ymm29,YMMWORD[$L$x_mask42]
+	kmovw	k1,eax
+
+	test	r8,r8
+	js	NEAR $L$init_vpmadd52
+
+	vmovq	xmm0,QWORD[rdi]
+	vmovq	xmm1,QWORD[8+rdi]
+	vmovq	xmm2,QWORD[16+rdi]
+
+	test	rdx,3
+	jnz	NEAR $L$blocks_vpmadd52_2x_do
+
+$L$blocks_vpmadd52_4x_do:
+	vpbroadcastq	ymm3,QWORD[64+rdi]
+	vpbroadcastq	ymm4,QWORD[96+rdi]
+	vpbroadcastq	ymm5,QWORD[128+rdi]
+	vpbroadcastq	ymm16,QWORD[160+rdi]
+
+$L$blocks_vpmadd52_4x_key_loaded:
+	vpsllq	ymm17,ymm5,2
+	vpaddq	ymm17,ymm17,ymm5
+	vpsllq	ymm17,ymm17,2
+
+	test	rdx,7
+	jz	NEAR $L$blocks_vpmadd52_8x
+
+	vmovdqu64	ymm26,YMMWORD[rsi]
+	vmovdqu64	ymm27,YMMWORD[32+rsi]
+	lea	rsi,[64+rsi]
+
+	vpunpcklqdq	ymm25,ymm26,ymm27
+	vpunpckhqdq	ymm27,ymm26,ymm27
+
+
+
+	vpsrlq	ymm26,ymm27,24
+	vporq	ymm26,ymm26,ymm31
+	vpaddq	ymm2,ymm2,ymm26
+	vpandq	ymm24,ymm25,ymm28
+	vpsrlq	ymm25,ymm25,44
+	vpsllq	ymm27,ymm27,20
+	vporq	ymm25,ymm25,ymm27
+	vpandq	ymm25,ymm25,ymm28
+
+	sub	rdx,4
+	jz	NEAR $L$tail_vpmadd52_4x
+	jmp	NEAR $L$oop_vpmadd52_4x
+	ud2
+
+ALIGN	32
+$L$init_vpmadd52:
+	vmovq	xmm16,QWORD[24+rdi]
+	vmovq	xmm2,QWORD[56+rdi]
+	vmovq	xmm17,QWORD[32+rdi]
+	vmovq	xmm3,QWORD[40+rdi]
+	vmovq	xmm4,QWORD[48+rdi]
+
+	vmovdqa	ymm0,ymm3
+	vmovdqa	ymm1,ymm4
+	vmovdqa	ymm5,ymm2
+
+	mov	eax,2
+
+$L$mul_init_vpmadd52:
+	vpxorq	ymm18,ymm18,ymm18
+	vpmadd52luq	ymm18,ymm16,ymm2
+	vpxorq	ymm19,ymm19,ymm19
+	vpmadd52huq	ymm19,ymm16,ymm2
+	vpxorq	ymm20,ymm20,ymm20
+	vpmadd52luq	ymm20,ymm17,ymm2
+	vpxorq	ymm21,ymm21,ymm21
+	vpmadd52huq	ymm21,ymm17,ymm2
+	vpxorq	ymm22,ymm22,ymm22
+	vpmadd52luq	ymm22,ymm3,ymm2
+	vpxorq	ymm23,ymm23,ymm23
+	vpmadd52huq	ymm23,ymm3,ymm2
+
+	vpmadd52luq	ymm18,ymm3,ymm0
+	vpmadd52huq	ymm19,ymm3,ymm0
+	vpmadd52luq	ymm20,ymm4,ymm0
+	vpmadd52huq	ymm21,ymm4,ymm0
+	vpmadd52luq	ymm22,ymm5,ymm0
+	vpmadd52huq	ymm23,ymm5,ymm0
+
+	vpmadd52luq	ymm18,ymm17,ymm1
+	vpmadd52huq	ymm19,ymm17,ymm1
+	vpmadd52luq	ymm20,ymm3,ymm1
+	vpmadd52huq	ymm21,ymm3,ymm1
+	vpmadd52luq	ymm22,ymm4,ymm1
+	vpmadd52huq	ymm23,ymm4,ymm1
+
+
+
+	vpsrlq	ymm30,ymm18,44
+	vpsllq	ymm19,ymm19,8
+	vpandq	ymm0,ymm18,ymm28
+	vpaddq	ymm19,ymm19,ymm30
+
+	vpaddq	ymm20,ymm20,ymm19
+
+	vpsrlq	ymm30,ymm20,44
+	vpsllq	ymm21,ymm21,8
+	vpandq	ymm1,ymm20,ymm28
+	vpaddq	ymm21,ymm21,ymm30
+
+	vpaddq	ymm22,ymm22,ymm21
+
+	vpsrlq	ymm30,ymm22,42
+	vpsllq	ymm23,ymm23,10
+	vpandq	ymm2,ymm22,ymm29
+	vpaddq	ymm23,ymm23,ymm30
+
+	vpaddq	ymm0,ymm0,ymm23
+	vpsllq	ymm23,ymm23,2
+
+	vpaddq	ymm0,ymm0,ymm23
+
+	vpsrlq	ymm30,ymm0,44
+	vpandq	ymm0,ymm0,ymm28
+
+	vpaddq	ymm1,ymm1,ymm30
+
+	dec	eax
+	jz	NEAR $L$done_init_vpmadd52
+
+	vpunpcklqdq	ymm4,ymm1,ymm4
+	vpbroadcastq	xmm1,xmm1
+	vpunpcklqdq	ymm5,ymm2,ymm5
+	vpbroadcastq	xmm2,xmm2
+	vpunpcklqdq	ymm3,ymm0,ymm3
+	vpbroadcastq	xmm0,xmm0
+
+	vpsllq	ymm16,ymm4,2
+	vpsllq	ymm17,ymm5,2
+	vpaddq	ymm16,ymm16,ymm4
+	vpaddq	ymm17,ymm17,ymm5
+	vpsllq	ymm16,ymm16,2
+	vpsllq	ymm17,ymm17,2
+
+	jmp	NEAR $L$mul_init_vpmadd52
+	ud2
+
+ALIGN	32
+$L$done_init_vpmadd52:
+	vinserti128	ymm4,ymm1,xmm4,1
+	vinserti128	ymm5,ymm2,xmm5,1
+	vinserti128	ymm3,ymm0,xmm3,1
+
+	vpermq	ymm4,ymm4,216
+	vpermq	ymm5,ymm5,216
+	vpermq	ymm3,ymm3,216
+
+	vpsllq	ymm16,ymm4,2
+	vpaddq	ymm16,ymm16,ymm4
+	vpsllq	ymm16,ymm16,2
+
+	vmovq	xmm0,QWORD[rdi]
+	vmovq	xmm1,QWORD[8+rdi]
+	vmovq	xmm2,QWORD[16+rdi]
+
+	test	rdx,3
+	jnz	NEAR $L$done_init_vpmadd52_2x
+
+	vmovdqu64	YMMWORD[64+rdi],ymm3
+	vpbroadcastq	ymm3,xmm3
+	vmovdqu64	YMMWORD[96+rdi],ymm4
+	vpbroadcastq	ymm4,xmm4
+	vmovdqu64	YMMWORD[128+rdi],ymm5
+	vpbroadcastq	ymm5,xmm5
+	vmovdqu64	YMMWORD[160+rdi],ymm16
+	vpbroadcastq	ymm16,xmm16
+
+	jmp	NEAR $L$blocks_vpmadd52_4x_key_loaded
+	ud2
+
+ALIGN	32
+$L$done_init_vpmadd52_2x:
+	vmovdqu64	YMMWORD[64+rdi],ymm3
+	vpsrldq	ymm3,ymm3,8
+	vmovdqu64	YMMWORD[96+rdi],ymm4
+	vpsrldq	ymm4,ymm4,8
+	vmovdqu64	YMMWORD[128+rdi],ymm5
+	vpsrldq	ymm5,ymm5,8
+	vmovdqu64	YMMWORD[160+rdi],ymm16
+	vpsrldq	ymm16,ymm16,8
+	jmp	NEAR $L$blocks_vpmadd52_2x_key_loaded
+	ud2
+
+ALIGN	32
+$L$blocks_vpmadd52_2x_do:
+	vmovdqu64	ymm5{k1}{z},[((128+8))+rdi]
+	vmovdqu64	ymm16{k1}{z},[((160+8))+rdi]
+	vmovdqu64	ymm3{k1}{z},[((64+8))+rdi]
+	vmovdqu64	ymm4{k1}{z},[((96+8))+rdi]
+
+$L$blocks_vpmadd52_2x_key_loaded:
+	vmovdqu64	ymm26,YMMWORD[rsi]
+	vpxorq	ymm27,ymm27,ymm27
+	lea	rsi,[32+rsi]
+
+	vpunpcklqdq	ymm25,ymm26,ymm27
+	vpunpckhqdq	ymm27,ymm26,ymm27
+
+
+
+	vpsrlq	ymm26,ymm27,24
+	vporq	ymm26,ymm26,ymm31
+	vpaddq	ymm2,ymm2,ymm26
+	vpandq	ymm24,ymm25,ymm28
+	vpsrlq	ymm25,ymm25,44
+	vpsllq	ymm27,ymm27,20
+	vporq	ymm25,ymm25,ymm27
+	vpandq	ymm25,ymm25,ymm28
+
+	jmp	NEAR $L$tail_vpmadd52_2x
+	ud2
+
+ALIGN	32
+$L$oop_vpmadd52_4x:
+
+	vpaddq	ymm0,ymm0,ymm24
+	vpaddq	ymm1,ymm1,ymm25
+
+	vpxorq	ymm18,ymm18,ymm18
+	vpmadd52luq	ymm18,ymm16,ymm2
+	vpxorq	ymm19,ymm19,ymm19
+	vpmadd52huq	ymm19,ymm16,ymm2
+	vpxorq	ymm20,ymm20,ymm20
+	vpmadd52luq	ymm20,ymm17,ymm2
+	vpxorq	ymm21,ymm21,ymm21
+	vpmadd52huq	ymm21,ymm17,ymm2
+	vpxorq	ymm22,ymm22,ymm22
+	vpmadd52luq	ymm22,ymm3,ymm2
+	vpxorq	ymm23,ymm23,ymm23
+	vpmadd52huq	ymm23,ymm3,ymm2
+
+	vmovdqu64	ymm26,YMMWORD[rsi]
+	vmovdqu64	ymm27,YMMWORD[32+rsi]
+	lea	rsi,[64+rsi]
+	vpmadd52luq	ymm18,ymm3,ymm0
+	vpmadd52huq	ymm19,ymm3,ymm0
+	vpmadd52luq	ymm20,ymm4,ymm0
+	vpmadd52huq	ymm21,ymm4,ymm0
+	vpmadd52luq	ymm22,ymm5,ymm0
+	vpmadd52huq	ymm23,ymm5,ymm0
+
+	vpunpcklqdq	ymm25,ymm26,ymm27
+	vpunpckhqdq	ymm27,ymm26,ymm27
+	vpmadd52luq	ymm18,ymm17,ymm1
+	vpmadd52huq	ymm19,ymm17,ymm1
+	vpmadd52luq	ymm20,ymm3,ymm1
+	vpmadd52huq	ymm21,ymm3,ymm1
+	vpmadd52luq	ymm22,ymm4,ymm1
+	vpmadd52huq	ymm23,ymm4,ymm1
+
+
+
+	vpsrlq	ymm30,ymm18,44
+	vpsllq	ymm19,ymm19,8
+	vpandq	ymm0,ymm18,ymm28
+	vpaddq	ymm19,ymm19,ymm30
+
+	vpsrlq	ymm26,ymm27,24
+	vporq	ymm26,ymm26,ymm31
+	vpaddq	ymm20,ymm20,ymm19
+
+	vpsrlq	ymm30,ymm20,44
+	vpsllq	ymm21,ymm21,8
+	vpandq	ymm1,ymm20,ymm28
+	vpaddq	ymm21,ymm21,ymm30
+
+	vpandq	ymm24,ymm25,ymm28
+	vpsrlq	ymm25,ymm25,44
+	vpsllq	ymm27,ymm27,20
+	vpaddq	ymm22,ymm22,ymm21
+
+	vpsrlq	ymm30,ymm22,42
+	vpsllq	ymm23,ymm23,10
+	vpandq	ymm2,ymm22,ymm29
+	vpaddq	ymm23,ymm23,ymm30
+
+	vpaddq	ymm2,ymm2,ymm26
+	vpaddq	ymm0,ymm0,ymm23
+	vpsllq	ymm23,ymm23,2
+
+	vpaddq	ymm0,ymm0,ymm23
+	vporq	ymm25,ymm25,ymm27
+	vpandq	ymm25,ymm25,ymm28
+
+	vpsrlq	ymm30,ymm0,44
+	vpandq	ymm0,ymm0,ymm28
+
+	vpaddq	ymm1,ymm1,ymm30
+
+	sub	rdx,4
+	jnz	NEAR $L$oop_vpmadd52_4x
+
+$L$tail_vpmadd52_4x:
+	vmovdqu64	ymm5,YMMWORD[128+rdi]
+	vmovdqu64	ymm16,YMMWORD[160+rdi]
+	vmovdqu64	ymm3,YMMWORD[64+rdi]
+	vmovdqu64	ymm4,YMMWORD[96+rdi]
+
+$L$tail_vpmadd52_2x:
+	vpsllq	ymm17,ymm5,2
+	vpaddq	ymm17,ymm17,ymm5
+	vpsllq	ymm17,ymm17,2
+
+
+	vpaddq	ymm0,ymm0,ymm24
+	vpaddq	ymm1,ymm1,ymm25
+
+	vpxorq	ymm18,ymm18,ymm18
+	vpmadd52luq	ymm18,ymm16,ymm2
+	vpxorq	ymm19,ymm19,ymm19
+	vpmadd52huq	ymm19,ymm16,ymm2
+	vpxorq	ymm20,ymm20,ymm20
+	vpmadd52luq	ymm20,ymm17,ymm2
+	vpxorq	ymm21,ymm21,ymm21
+	vpmadd52huq	ymm21,ymm17,ymm2
+	vpxorq	ymm22,ymm22,ymm22
+	vpmadd52luq	ymm22,ymm3,ymm2
+	vpxorq	ymm23,ymm23,ymm23
+	vpmadd52huq	ymm23,ymm3,ymm2
+
+	vpmadd52luq	ymm18,ymm3,ymm0
+	vpmadd52huq	ymm19,ymm3,ymm0
+	vpmadd52luq	ymm20,ymm4,ymm0
+	vpmadd52huq	ymm21,ymm4,ymm0
+	vpmadd52luq	ymm22,ymm5,ymm0
+	vpmadd52huq	ymm23,ymm5,ymm0
+
+	vpmadd52luq	ymm18,ymm17,ymm1
+	vpmadd52huq	ymm19,ymm17,ymm1
+	vpmadd52luq	ymm20,ymm3,ymm1
+	vpmadd52huq	ymm21,ymm3,ymm1
+	vpmadd52luq	ymm22,ymm4,ymm1
+	vpmadd52huq	ymm23,ymm4,ymm1
+
+
+
+
+	mov	eax,1
+	kmovw	k1,eax
+	vpsrldq	ymm24,ymm18,8
+	vpsrldq	ymm0,ymm19,8
+	vpsrldq	ymm25,ymm20,8
+	vpsrldq	ymm1,ymm21,8
+	vpaddq	ymm18,ymm18,ymm24
+	vpaddq	ymm19,ymm19,ymm0
+	vpsrldq	ymm26,ymm22,8
+	vpsrldq	ymm2,ymm23,8
+	vpaddq	ymm20,ymm20,ymm25
+	vpaddq	ymm21,ymm21,ymm1
+	vpermq	ymm24,ymm18,0x2
+	vpermq	ymm0,ymm19,0x2
+	vpaddq	ymm22,ymm22,ymm26
+	vpaddq	ymm23,ymm23,ymm2
+
+	vpermq	ymm25,ymm20,0x2
+	vpermq	ymm1,ymm21,0x2
+	vpaddq	ymm18{k1}{z},ymm18,ymm24
+	vpaddq	ymm19{k1}{z},ymm19,ymm0
+	vpermq	ymm26,ymm22,0x2
+	vpermq	ymm2,ymm23,0x2
+	vpaddq	ymm20{k1}{z},ymm20,ymm25
+	vpaddq	ymm21{k1}{z},ymm21,ymm1
+	vpaddq	ymm22{k1}{z},ymm22,ymm26
+	vpaddq	ymm23{k1}{z},ymm23,ymm2
+
+
+
+	vpsrlq	ymm30,ymm18,44
+	vpsllq	ymm19,ymm19,8
+	vpandq	ymm0,ymm18,ymm28
+	vpaddq	ymm19,ymm19,ymm30
+
+	vpaddq	ymm20,ymm20,ymm19
+
+	vpsrlq	ymm30,ymm20,44
+	vpsllq	ymm21,ymm21,8
+	vpandq	ymm1,ymm20,ymm28
+	vpaddq	ymm21,ymm21,ymm30
+
+	vpaddq	ymm22,ymm22,ymm21
+
+	vpsrlq	ymm30,ymm22,42
+	vpsllq	ymm23,ymm23,10
+	vpandq	ymm2,ymm22,ymm29
+	vpaddq	ymm23,ymm23,ymm30
+
+	vpaddq	ymm0,ymm0,ymm23
+	vpsllq	ymm23,ymm23,2
+
+	vpaddq	ymm0,ymm0,ymm23
+
+	vpsrlq	ymm30,ymm0,44
+	vpandq	ymm0,ymm0,ymm28
+
+	vpaddq	ymm1,ymm1,ymm30
+
+
+	sub	rdx,2
+	ja	NEAR $L$blocks_vpmadd52_4x_do
+
+	vmovq	QWORD[rdi],xmm0
+	vmovq	QWORD[8+rdi],xmm1
+	vmovq	QWORD[16+rdi],xmm2
+	vzeroall
+
+$L$no_data_vpmadd52_4x:
+	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
+	mov	rsi,QWORD[16+rsp]
+	DB	0F3h,0C3h		;repret
+$L$SEH_end_poly1305_blocks_vpmadd52_4x:
+
+ALIGN	32
+poly1305_blocks_vpmadd52_8x:
+	mov	QWORD[8+rsp],rdi	;WIN64 prologue
+	mov	QWORD[16+rsp],rsi
+	mov	rax,rsp
+$L$SEH_begin_poly1305_blocks_vpmadd52_8x:
+	mov	rdi,rcx
+	mov	rsi,rdx
+	mov	rdx,r8
+	mov	rcx,r9
+
+
+	shr	rdx,4
+	jz	NEAR $L$no_data_vpmadd52_8x
+
+	shl	rcx,40
+	mov	r8,QWORD[64+rdi]
+
+	vmovdqa64	ymm28,YMMWORD[$L$x_mask44]
+	vmovdqa64	ymm29,YMMWORD[$L$x_mask42]
+
+	test	r8,r8
+	js	NEAR $L$init_vpmadd52
+
+	vmovq	xmm0,QWORD[rdi]
+	vmovq	xmm1,QWORD[8+rdi]
+	vmovq	xmm2,QWORD[16+rdi]
+
+$L$blocks_vpmadd52_8x:
+
+
+
+	vmovdqu64	ymm5,YMMWORD[128+rdi]
+	vmovdqu64	ymm16,YMMWORD[160+rdi]
+	vmovdqu64	ymm3,YMMWORD[64+rdi]
+	vmovdqu64	ymm4,YMMWORD[96+rdi]
+
+	vpsllq	ymm17,ymm5,2
+	vpaddq	ymm17,ymm17,ymm5
+	vpsllq	ymm17,ymm17,2
+
+	vpbroadcastq	ymm8,xmm5
+	vpbroadcastq	ymm6,xmm3
+	vpbroadcastq	ymm7,xmm4
+
+	vpxorq	ymm18,ymm18,ymm18
+	vpmadd52luq	ymm18,ymm16,ymm8
+	vpxorq	ymm19,ymm19,ymm19
+	vpmadd52huq	ymm19,ymm16,ymm8
+	vpxorq	ymm20,ymm20,ymm20
+	vpmadd52luq	ymm20,ymm17,ymm8
+	vpxorq	ymm21,ymm21,ymm21
+	vpmadd52huq	ymm21,ymm17,ymm8
+	vpxorq	ymm22,ymm22,ymm22
+	vpmadd52luq	ymm22,ymm3,ymm8
+	vpxorq	ymm23,ymm23,ymm23
+	vpmadd52huq	ymm23,ymm3,ymm8
+
+	vpmadd52luq	ymm18,ymm3,ymm6
+	vpmadd52huq	ymm19,ymm3,ymm6
+	vpmadd52luq	ymm20,ymm4,ymm6
+	vpmadd52huq	ymm21,ymm4,ymm6
+	vpmadd52luq	ymm22,ymm5,ymm6
+	vpmadd52huq	ymm23,ymm5,ymm6
+
+	vpmadd52luq	ymm18,ymm17,ymm7
+	vpmadd52huq	ymm19,ymm17,ymm7
+	vpmadd52luq	ymm20,ymm3,ymm7
+	vpmadd52huq	ymm21,ymm3,ymm7
+	vpmadd52luq	ymm22,ymm4,ymm7
+	vpmadd52huq	ymm23,ymm4,ymm7
+
+
+
+	vpsrlq	ymm30,ymm18,44
+	vpsllq	ymm19,ymm19,8
+	vpandq	ymm6,ymm18,ymm28
+	vpaddq	ymm19,ymm19,ymm30
+
+	vpaddq	ymm20,ymm20,ymm19
+
+	vpsrlq	ymm30,ymm20,44
+	vpsllq	ymm21,ymm21,8
+	vpandq	ymm7,ymm20,ymm28
+	vpaddq	ymm21,ymm21,ymm30
+
+	vpaddq	ymm22,ymm22,ymm21
+
+	vpsrlq	ymm30,ymm22,42
+	vpsllq	ymm23,ymm23,10
+	vpandq	ymm8,ymm22,ymm29
+	vpaddq	ymm23,ymm23,ymm30
+
+	vpaddq	ymm6,ymm6,ymm23
+	vpsllq	ymm23,ymm23,2
+
+	vpaddq	ymm6,ymm6,ymm23
+
+	vpsrlq	ymm30,ymm6,44
+	vpandq	ymm6,ymm6,ymm28
+
+	vpaddq	ymm7,ymm7,ymm30
+
+
+
+
+
+	vpunpcklqdq	ymm26,ymm8,ymm5
+	vpunpckhqdq	ymm5,ymm8,ymm5
+	vpunpcklqdq	ymm24,ymm6,ymm3
+	vpunpckhqdq	ymm3,ymm6,ymm3
+	vpunpcklqdq	ymm25,ymm7,ymm4
+	vpunpckhqdq	ymm4,ymm7,ymm4
+	vshufi64x2	zmm8,zmm26,zmm5,0x44
+	vshufi64x2	zmm6,zmm24,zmm3,0x44
+	vshufi64x2	zmm7,zmm25,zmm4,0x44
+
+	vmovdqu64	zmm26,ZMMWORD[rsi]
+	vmovdqu64	zmm27,ZMMWORD[64+rsi]
+	lea	rsi,[128+rsi]
+
+	vpsllq	zmm10,zmm8,2
+	vpsllq	zmm9,zmm7,2
+	vpaddq	zmm10,zmm10,zmm8
+	vpaddq	zmm9,zmm9,zmm7
+	vpsllq	zmm10,zmm10,2
+	vpsllq	zmm9,zmm9,2
+
+	vpbroadcastq	zmm31,rcx
+	vpbroadcastq	zmm28,xmm28
+	vpbroadcastq	zmm29,xmm29
+
+	vpbroadcastq	zmm16,xmm9
+	vpbroadcastq	zmm17,xmm10
+	vpbroadcastq	zmm3,xmm6
+	vpbroadcastq	zmm4,xmm7
+	vpbroadcastq	zmm5,xmm8
+
+	vpunpcklqdq	zmm25,zmm26,zmm27
+	vpunpckhqdq	zmm27,zmm26,zmm27
+
+
+
+	vpsrlq	zmm26,zmm27,24
+	vporq	zmm26,zmm26,zmm31
+	vpaddq	zmm2,zmm2,zmm26
+	vpandq	zmm24,zmm25,zmm28
+	vpsrlq	zmm25,zmm25,44
+	vpsllq	zmm27,zmm27,20
+	vporq	zmm25,zmm25,zmm27
+	vpandq	zmm25,zmm25,zmm28
+
+	sub	rdx,8
+	jz	NEAR $L$tail_vpmadd52_8x
+	jmp	NEAR $L$oop_vpmadd52_8x
+
+ALIGN	32
+$L$oop_vpmadd52_8x:
+
+	vpaddq	zmm0,zmm0,zmm24
+	vpaddq	zmm1,zmm1,zmm25
+
+	vpxorq	zmm18,zmm18,zmm18
+	vpmadd52luq	zmm18,zmm16,zmm2
+	vpxorq	zmm19,zmm19,zmm19
+	vpmadd52huq	zmm19,zmm16,zmm2
+	vpxorq	zmm20,zmm20,zmm20
+	vpmadd52luq	zmm20,zmm17,zmm2
+	vpxorq	zmm21,zmm21,zmm21
+	vpmadd52huq	zmm21,zmm17,zmm2
+	vpxorq	zmm22,zmm22,zmm22
+	vpmadd52luq	zmm22,zmm3,zmm2
+	vpxorq	zmm23,zmm23,zmm23
+	vpmadd52huq	zmm23,zmm3,zmm2
+
+	vmovdqu64	zmm26,ZMMWORD[rsi]
+	vmovdqu64	zmm27,ZMMWORD[64+rsi]
+	lea	rsi,[128+rsi]
+	vpmadd52luq	zmm18,zmm3,zmm0
+	vpmadd52huq	zmm19,zmm3,zmm0
+	vpmadd52luq	zmm20,zmm4,zmm0
+	vpmadd52huq	zmm21,zmm4,zmm0
+	vpmadd52luq	zmm22,zmm5,zmm0
+	vpmadd52huq	zmm23,zmm5,zmm0
+
+	vpunpcklqdq	zmm25,zmm26,zmm27
+	vpunpckhqdq	zmm27,zmm26,zmm27
+	vpmadd52luq	zmm18,zmm17,zmm1
+	vpmadd52huq	zmm19,zmm17,zmm1
+	vpmadd52luq	zmm20,zmm3,zmm1
+	vpmadd52huq	zmm21,zmm3,zmm1
+	vpmadd52luq	zmm22,zmm4,zmm1
+	vpmadd52huq	zmm23,zmm4,zmm1
+
+
+
+	vpsrlq	zmm30,zmm18,44
+	vpsllq	zmm19,zmm19,8
+	vpandq	zmm0,zmm18,zmm28
+	vpaddq	zmm19,zmm19,zmm30
+
+	vpsrlq	zmm26,zmm27,24
+	vporq	zmm26,zmm26,zmm31
+	vpaddq	zmm20,zmm20,zmm19
+
+	vpsrlq	zmm30,zmm20,44
+	vpsllq	zmm21,zmm21,8
+	vpandq	zmm1,zmm20,zmm28
+	vpaddq	zmm21,zmm21,zmm30
+
+	vpandq	zmm24,zmm25,zmm28
+	vpsrlq	zmm25,zmm25,44
+	vpsllq	zmm27,zmm27,20
+	vpaddq	zmm22,zmm22,zmm21
+
+	vpsrlq	zmm30,zmm22,42
+	vpsllq	zmm23,zmm23,10
+	vpandq	zmm2,zmm22,zmm29
+	vpaddq	zmm23,zmm23,zmm30
+
+	vpaddq	zmm2,zmm2,zmm26
+	vpaddq	zmm0,zmm0,zmm23
+	vpsllq	zmm23,zmm23,2
+
+	vpaddq	zmm0,zmm0,zmm23
+	vporq	zmm25,zmm25,zmm27
+	vpandq	zmm25,zmm25,zmm28
+
+	vpsrlq	zmm30,zmm0,44
+	vpandq	zmm0,zmm0,zmm28
+
+	vpaddq	zmm1,zmm1,zmm30
+
+	sub	rdx,8
+	jnz	NEAR $L$oop_vpmadd52_8x
+
+$L$tail_vpmadd52_8x:
+
+	vpaddq	zmm0,zmm0,zmm24
+	vpaddq	zmm1,zmm1,zmm25
+
+	vpxorq	zmm18,zmm18,zmm18
+	vpmadd52luq	zmm18,zmm9,zmm2
+	vpxorq	zmm19,zmm19,zmm19
+	vpmadd52huq	zmm19,zmm9,zmm2
+	vpxorq	zmm20,zmm20,zmm20
+	vpmadd52luq	zmm20,zmm10,zmm2
+	vpxorq	zmm21,zmm21,zmm21
+	vpmadd52huq	zmm21,zmm10,zmm2
+	vpxorq	zmm22,zmm22,zmm22
+	vpmadd52luq	zmm22,zmm6,zmm2
+	vpxorq	zmm23,zmm23,zmm23
+	vpmadd52huq	zmm23,zmm6,zmm2
+
+	vpmadd52luq	zmm18,zmm6,zmm0
+	vpmadd52huq	zmm19,zmm6,zmm0
+	vpmadd52luq	zmm20,zmm7,zmm0
+	vpmadd52huq	zmm21,zmm7,zmm0
+	vpmadd52luq	zmm22,zmm8,zmm0
+	vpmadd52huq	zmm23,zmm8,zmm0
+
+	vpmadd52luq	zmm18,zmm10,zmm1
+	vpmadd52huq	zmm19,zmm10,zmm1
+	vpmadd52luq	zmm20,zmm6,zmm1
+	vpmadd52huq	zmm21,zmm6,zmm1
+	vpmadd52luq	zmm22,zmm7,zmm1
+	vpmadd52huq	zmm23,zmm7,zmm1
+
+
+
+
+	mov	eax,1
+	kmovw	k1,eax
+	vpsrldq	zmm24,zmm18,8
+	vpsrldq	zmm0,zmm19,8
+	vpsrldq	zmm25,zmm20,8
+	vpsrldq	zmm1,zmm21,8
+	vpaddq	zmm18,zmm18,zmm24
+	vpaddq	zmm19,zmm19,zmm0
+	vpsrldq	zmm26,zmm22,8
+	vpsrldq	zmm2,zmm23,8
+	vpaddq	zmm20,zmm20,zmm25
+	vpaddq	zmm21,zmm21,zmm1
+	vpermq	zmm24,zmm18,0x2
+	vpermq	zmm0,zmm19,0x2
+	vpaddq	zmm22,zmm22,zmm26
+	vpaddq	zmm23,zmm23,zmm2
+
+	vpermq	zmm25,zmm20,0x2
+	vpermq	zmm1,zmm21,0x2
+	vpaddq	zmm18,zmm18,zmm24
+	vpaddq	zmm19,zmm19,zmm0
+	vpermq	zmm26,zmm22,0x2
+	vpermq	zmm2,zmm23,0x2
+	vpaddq	zmm20,zmm20,zmm25
+	vpaddq	zmm21,zmm21,zmm1
+	vextracti64x4	ymm24,zmm18,1
+	vextracti64x4	ymm0,zmm19,1
+	vpaddq	zmm22,zmm22,zmm26
+	vpaddq	zmm23,zmm23,zmm2
+
+	vextracti64x4	ymm25,zmm20,1
+	vextracti64x4	ymm1,zmm21,1
+	vextracti64x4	ymm26,zmm22,1
+	vextracti64x4	ymm2,zmm23,1
+	vpaddq	ymm18{k1}{z},ymm18,ymm24
+	vpaddq	ymm19{k1}{z},ymm19,ymm0
+	vpaddq	ymm20{k1}{z},ymm20,ymm25
+	vpaddq	ymm21{k1}{z},ymm21,ymm1
+	vpaddq	ymm22{k1}{z},ymm22,ymm26
+	vpaddq	ymm23{k1}{z},ymm23,ymm2
+
+
+
+	vpsrlq	ymm30,ymm18,44
+	vpsllq	ymm19,ymm19,8
+	vpandq	ymm0,ymm18,ymm28
+	vpaddq	ymm19,ymm19,ymm30
+
+	vpaddq	ymm20,ymm20,ymm19
+
+	vpsrlq	ymm30,ymm20,44
+	vpsllq	ymm21,ymm21,8
+	vpandq	ymm1,ymm20,ymm28
+	vpaddq	ymm21,ymm21,ymm30
+
+	vpaddq	ymm22,ymm22,ymm21
+
+	vpsrlq	ymm30,ymm22,42
+	vpsllq	ymm23,ymm23,10
+	vpandq	ymm2,ymm22,ymm29
+	vpaddq	ymm23,ymm23,ymm30
+
+	vpaddq	ymm0,ymm0,ymm23
+	vpsllq	ymm23,ymm23,2
+
+	vpaddq	ymm0,ymm0,ymm23
+
+	vpsrlq	ymm30,ymm0,44
+	vpandq	ymm0,ymm0,ymm28
+
+	vpaddq	ymm1,ymm1,ymm30
+
+
+
+	vmovq	QWORD[rdi],xmm0
+	vmovq	QWORD[8+rdi],xmm1
+	vmovq	QWORD[16+rdi],xmm2
+	vzeroall
+
+$L$no_data_vpmadd52_8x:
+	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
+	mov	rsi,QWORD[16+rsp]
+	DB	0F3h,0C3h		;repret
+$L$SEH_end_poly1305_blocks_vpmadd52_8x:
+
+ALIGN	32
+poly1305_emit_base2_44:
+	mov	QWORD[8+rsp],rdi	;WIN64 prologue
+	mov	QWORD[16+rsp],rsi
+	mov	rax,rsp
+$L$SEH_begin_poly1305_emit_base2_44:
+	mov	rdi,rcx
+	mov	rsi,rdx
+	mov	rdx,r8
+
+
+	mov	r8,QWORD[rdi]
+	mov	r9,QWORD[8+rdi]
+	mov	r10,QWORD[16+rdi]
+
+	mov	rax,r9
+	shr	r9,20
+	shl	rax,44
+	mov	rcx,r10
+	shr	r10,40
+	shl	rcx,24
+
+	add	r8,rax
+	adc	r9,rcx
+	adc	r10,0
+
+	mov	rax,r8
+	add	r8,5
+	mov	rcx,r9
+	adc	r9,0
+	adc	r10,0
+	shr	r10,2
+	cmovnz	rax,r8
+	cmovnz	rcx,r9
+
+	add	rax,QWORD[rdx]
+	adc	rcx,QWORD[8+rdx]
+	mov	QWORD[rsi],rax
+	mov	QWORD[8+rsi],rcx
+
+	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
+	mov	rsi,QWORD[16+rsp]
+	DB	0F3h,0C3h		;repret
+$L$SEH_end_poly1305_emit_base2_44:
 ALIGN	64
 $L$const:
 $L$mask24:
@@ -2216,6 +3812,9 @@ ALIGN	4
 	DD	$L$even_avx2 wrt ..imagebase
 	DD	$L$SEH_end_poly1305_blocks_avx2 wrt ..imagebase
 	DD	$L$SEH_info_poly1305_blocks_avx2_3 wrt ..imagebase
+	DD	$L$SEH_begin_poly1305_blocks_avx512 wrt ..imagebase
+	DD	$L$SEH_end_poly1305_blocks_avx512 wrt ..imagebase
+	DD	$L$SEH_info_poly1305_blocks_avx512 wrt ..imagebase
 section	.xdata rdata align=8
 ALIGN	8
 $L$SEH_info_poly1305_init:
@@ -2265,3 +3864,7 @@ $L$SEH_info_poly1305_blocks_avx2_3:
 DB	9,0,0,0
 	DD	avx_handler wrt ..imagebase
 	DD	$L$do_avx2_body wrt ..imagebase,$L$do_avx2_epilogue wrt ..imagebase
+$L$SEH_info_poly1305_blocks_avx512:
+DB	9,0,0,0
+	DD	avx_handler wrt ..imagebase
+	DD	$L$do_avx512_body wrt ..imagebase,$L$do_avx512_epilogue wrt ..imagebase

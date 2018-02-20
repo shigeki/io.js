@@ -70,6 +70,9 @@
     ],
   },
   'defines': ['<@(openssl_defines_linux-armv4)'],
+  'include_dirs': [
+    './include',
+  ],
   'cflags' : ['<@(openssl_cflags_linux-armv4)'],
   'libraries': ['<@(openssl_ex_libs_linux-armv4)'],
   'sources': ['<@(openssl_cli_srcs_linux-armv4)'],

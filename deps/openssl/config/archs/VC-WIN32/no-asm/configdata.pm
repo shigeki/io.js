@@ -11,6 +11,7 @@ our @ISA = qw(Exporter);
 our @EXPORT = qw(%config %target %disabled %withargs %unified_info @disablables);
 
 our %config = (
+  afalgeng => "",
   ar => "lib",
   arflags => [ "/nologo" ],
   as => "nasm",
@@ -47,13 +48,13 @@ our %config = (
   mtflags => [ "-nologo" ],
   openssl_algorithm_defines => [ "OPENSSL_NO_COMP", "OPENSSL_NO_MD2", "OPENSSL_NO_RC5" ],
   openssl_api_defines => [  ],
-  openssl_other_defines => [ "OPENSSL_RAND_SEED_OS", "OPENSSL_NO_AFALGENG", "OPENSSL_NO_ASAN", "OPENSSL_NO_ASM", "OPENSSL_NO_CRYPTO_MDEBUG", "OPENSSL_NO_CRYPTO_MDEBUG_BACKTRACE", "OPENSSL_NO_DEVCRYPTOENG", "OPENSSL_NO_EC_NISTP_64_GCC_128", "OPENSSL_NO_EGD", "OPENSSL_NO_EXTERNAL_TESTS", "OPENSSL_NO_FUZZ_AFL", "OPENSSL_NO_FUZZ_LIBFUZZER", "OPENSSL_NO_HEARTBEATS", "OPENSSL_NO_MSAN", "OPENSSL_NO_SCTP", "OPENSSL_NO_SSL_TRACE", "OPENSSL_NO_SSL3", "OPENSSL_NO_SSL3_METHOD", "OPENSSL_NO_TLS13DOWNGRADE", "OPENSSL_NO_UBSAN", "OPENSSL_NO_UNIT_TEST", "OPENSSL_NO_WEAK_SSL_CIPHERS", "OPENSSL_NO_AFALGENG" ],
+  openssl_other_defines => [ "OPENSSL_RAND_SEED_OS", "OPENSSL_NO_ASAN", "OPENSSL_NO_ASM", "OPENSSL_NO_CRYPTO_MDEBUG", "OPENSSL_NO_CRYPTO_MDEBUG_BACKTRACE", "OPENSSL_NO_DEVCRYPTOENG", "OPENSSL_NO_EC_NISTP_64_GCC_128", "OPENSSL_NO_EGD", "OPENSSL_NO_EXTERNAL_TESTS", "OPENSSL_NO_FUZZ_AFL", "OPENSSL_NO_FUZZ_LIBFUZZER", "OPENSSL_NO_HEARTBEATS", "OPENSSL_NO_MSAN", "OPENSSL_NO_SCTP", "OPENSSL_NO_SSL_TRACE", "OPENSSL_NO_SSL3", "OPENSSL_NO_SSL3_METHOD", "OPENSSL_NO_TLS13DOWNGRADE", "OPENSSL_NO_UBSAN", "OPENSSL_NO_UNIT_TEST", "OPENSSL_NO_WEAK_SSL_CIPHERS", "OPENSSL_NO_AFALGENG" ],
   openssl_sys_defines => [ "OPENSSL_SYS_WIN32" ],
   openssl_thread_defines => [ "OPENSSL_THREADS" ],
   openssldir => "",
-  options => " no-afalgeng no-asan no-asm no-comp no-crypto-mdebug no-crypto-mdebug-backtrace no-devcryptoeng no-dynamic-engine no-ec_nistp_64_gcc_128 no-egd no-external-tests no-fuzz-afl no-fuzz-libfuzzer no-heartbeats no-md2 no-msan no-rc5 no-sctp no-shared no-ssl-trace no-ssl3 no-ssl3-method no-tls13downgrade no-ubsan no-unit-test no-weak-ssl-ciphers no-zlib no-zlib-dynamic",
+  options => " no-asan no-asm no-comp no-crypto-mdebug no-crypto-mdebug-backtrace no-devcryptoeng no-dynamic-engine no-ec_nistp_64_gcc_128 no-egd no-external-tests no-fuzz-afl no-fuzz-libfuzzer no-heartbeats no-md2 no-msan no-rc5 no-sctp no-shared no-ssl-trace no-ssl3 no-ssl3-method no-tls13downgrade no-ubsan no-unit-test no-weak-ssl-ciphers no-zlib no-zlib-dynamic",
   perl => "/usr/bin/perl",
-  perlargv => [ "no-shared", "no-comp", "no-ssl3", "no-afalgeng", "no-asm", "VC-WIN32" ],
+  perlargv => [ "no-shared", "no-comp", "no-ssl3", "no-asm", "VC-WIN32" ],
   perlenv => {
       "AR" => undef,
       "ARFLAGS" => undef,
@@ -168,7 +169,7 @@ our %target = (
   perlasm_scheme => "win32n",
   poly1305_asm_src => "",
   poly1305_obj => "",
-  ranlib => "CODE(0x1f94f98)",
+  ranlib => "CODE(0xaef148)",
   rc => "rc",
   rc4_asm_src => "rc4_enc.c rc4_skey.c",
   rc4_obj => "rc4_enc.o rc4_skey.o",
@@ -307,7 +308,7 @@ our @disablables = (
 );
 
 our %disabled = (
-  "afalgeng" => "option",
+  "afalgeng" => "not-linux",
   "asan" => "default",
   "asm" => "option",
   "comp" => "option",
@@ -14822,9 +14823,6 @@ my %makevars = (
     RM                  => 'rm',
 );
 my %disabled_info = (
-    'afalgeng' => {
-        macro => 'OPENSSL_NO_AFALGENG',
-    },
     'asan' => {
         macro => 'OPENSSL_NO_ASAN',
     },

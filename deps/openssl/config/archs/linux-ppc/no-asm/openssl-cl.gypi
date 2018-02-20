@@ -70,6 +70,9 @@
     ],
   },
   'defines': ['<@(openssl_defines_linux-ppc)'],
+  'include_dirs': [
+    './include',
+  ],
   'cflags' : ['<@(openssl_cflags_linux-ppc)'],
   'libraries': ['<@(openssl_ex_libs_linux-ppc)'],
   'sources': ['<@(openssl_cli_srcs_linux-ppc)'],
