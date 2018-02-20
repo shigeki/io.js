@@ -5,6 +5,7 @@
     'openssl/crypto/',
     'openssl/crypto/include/',
     'openssl/crypto/modes/',
+    'config/',
   ],
   # build options specific to OS
   'conditions': [

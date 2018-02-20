@@ -25,16 +25,18 @@ if ($nasm_version < $nasm_version_min) {
 }
 
 my $src_dir = "../openssl";
-my $base_dir = "../config/archs/$arch/$asm";
+my $arch_dir = "../config/archs/$arch";
+my $base_dir = "$arch_dir/$asm";
 
 my $is_win = ($arch =~/^VC-WIN/);
 # VC-WIN32 and VC-WIN64A generate makefile but it can be available
 # with only nmake. Use pre-created Makefile_VC_WIN32
 # Makefile_VC-WIN64A instead.
 my $makefile = $is_win ? "../config/Makefile_$arch": "Makefile";
-
 # Generate arch dependent header files with Makefile
-my $cmd1 = "cd ../openssl; make -f $makefile build_generated crypto/buildinf.h;";
+my $buildinf = "crypto/buildinf.h";
+my $progs = "apps/progs.h";
+my $cmd1 = "cd ../openssl; make -f $makefile build_generated $buildinf $progs;";
 system($cmd1) == 0 or die "Error in system($cmd1)";
 
 # Copy and move all arch dependent header files into config/archs
@@ -54,10 +56,17 @@ move("$src_dir/crypto/include/internal/bn_conf.h",
      "$base_dir/crypto/include/internal/") or die "Move failed: $!";
 move("$src_dir/crypto/include/internal/dso_conf.h",
      "$base_dir/crypto/include/internal/") or die "Move failed: $!";
-copy("$src_dir/crypto/buildinf.h",
+copy("$src_dir/$buildinf",
      "$base_dir/crypto/") or die "Copy failed: $!";
+copy("$src_dir/$progs",
+     "$base_dir/") or die "Copy failed: $!";
 
 # read openssl source lists from configdata.pm
+my @libapps_srcs = ();
+foreach my $obj (@{$unified_info{sources}->{'apps/libapps.a'}}) {
+    push(@libapps_srcs, ${$unified_info{sources}->{$obj}}[0]);
+}
+
 my @libssl_srcs = ();
 foreach my $obj (@{$unified_info{sources}->{libssl}}) {
   push(@libssl_srcs, ${$unified_info{sources}->{$obj}}[0]);
@@ -182,6 +191,10 @@ foreach my $src (@apps_openssl_srcs) {
   print CLGYPI "      'openssl/$src',\n";
 }
 
+foreach my $src (@libapps_srcs) {
+  print CLGYPI "      'openssl/$src',\n";
+}
+        
 print CLGYPI << "CLGYPI3";
     ],
   },

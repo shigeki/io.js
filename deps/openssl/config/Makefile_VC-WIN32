@@ -1326,6 +1326,8 @@ engines/e_padlock-x86.asm: engines/asm/e_padlock-x86.pl
 	$(PERL) engines/asm/e_padlock-x86.pl $(PERLASM_SCHEME) $(CFLAGS) $(LIB_CFLAGS) $(PROCESSOR) $@
 engines/e_padlock.obj: engines/e_padlock.c
 	$(CC)  /I . /I crypto/include /I include $(CFLAGS) $(LIB_CFLAGS) -c $(COUTFLAG)$@ engines/e_padlock.c
+apps/progs.h:
+	"$(PERL)" "apps/progs.pl" "$(APPS_OPENSSL)" > $@
 
 distclean:
 	$(RM) $(GENERATED)

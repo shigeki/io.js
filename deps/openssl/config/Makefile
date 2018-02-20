@@ -14,7 +14,10 @@ CONFIGURE = ./Configure
 # no-comp, no-ssl3: default openssl config options
 # no-shared: openssl-cli needs static link
 # no-afalgeng: old Linux kernel(e.g. Ubuntu 12) does not suport it
-COPTS = no-shared no-comp no-ssl3 no-afalgeng
+COPTS = no-shared no-comp no-ssl3
+
+# disable platform check in Configure
+NO_WARN_ENV = CONFIGURE_CHECKER_WARN=1
 
 GITIGNORE = $(OPSSL_SRC)/.gitignore
 GENERATE = ./generate.pl
@@ -37,10 +40,10 @@ $(ARCHS):
 # Remove openssl .gitignore to follow nodejs .gitignore
 	if [ -e $(GITIGNORE) ]; then rm $(GITIGNORE); fi
 # Confgure asm and generate asm sources
-	cd $(OPSSL_SRC); $(PERL) $(CONFIGURE) $(COPTS) $@;
+	cd $(OPSSL_SRC); $(NO_WARN_ENV) $(PERL) $(CONFIGURE) $(COPTS) $@;
 	$(PERL) -w -I$(OPSSL_SRC) $(GENERATE) asm $@
 # Confgure no-asm and generate no-asm sources
-	cd $(OPSSL_SRC); $(PERL) $(CONFIGURE) $(COPTS) no-asm $@;
+	cd $(OPSSL_SRC); $(NO_WARN_ENV) $(PERL) $(CONFIGURE) $(COPTS) no-asm $@;
 	$(PERL) -w -I$(OPSSL_SRC) $(GENERATE) no-asm $@
 
 # Replace and copy arch dependent headers
