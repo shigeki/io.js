@@ -59,7 +59,7 @@ move("$src_dir/crypto/include/internal/dso_conf.h",
 copy("$src_dir/$buildinf",
      "$base_dir/crypto/") or die "Copy failed: $!";
 move("$src_dir/$progs",
-     "$base_dir/") or die "Copy failed: $!";
+     "$base_dir/include") or die "Copy failed: $!";
 
 # read openssl source lists from configdata.pm
 my @libapps_srcs = ();
@@ -199,6 +199,9 @@ print CLGYPI << "CLGYPI3";
     ],
   },
   'defines': ['<@(openssl_defines_$arch)'],
+  'include_dirs': [
+    './include',
+  ],
 CLGYPI3
 
 if (!$is_win) {
