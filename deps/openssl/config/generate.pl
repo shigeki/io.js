@@ -58,7 +58,7 @@ move("$src_dir/crypto/include/internal/dso_conf.h",
      "$base_dir/crypto/include/internal/") or die "Move failed: $!";
 copy("$src_dir/$buildinf",
      "$base_dir/crypto/") or die "Copy failed: $!";
-copy("$src_dir/$progs",
+move("$src_dir/$progs",
      "$base_dir/") or die "Copy failed: $!";
 
 # read openssl source lists from configdata.pm
