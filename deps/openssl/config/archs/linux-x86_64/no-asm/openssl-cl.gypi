@@ -70,6 +70,9 @@
     ],
   },
   'defines': ['<@(openssl_defines_linux-x86_64)'],
+  'include_dirs': [
+    './include',
+  ],
   'cflags' : ['<@(openssl_cflags_linux-x86_64)'],
   'libraries': ['<@(openssl_ex_libs_linux-x86_64)'],
   'sources': ['<@(openssl_cli_srcs_linux-x86_64)'],

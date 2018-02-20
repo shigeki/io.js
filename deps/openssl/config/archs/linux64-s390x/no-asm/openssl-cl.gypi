@@ -70,6 +70,9 @@
     ],
   },
   'defines': ['<@(openssl_defines_linux64-s390x)'],
+  'include_dirs': [
+    './include',
+  ],
   'cflags' : ['<@(openssl_cflags_linux64-s390x)'],
   'libraries': ['<@(openssl_ex_libs_linux64-s390x)'],
   'sources': ['<@(openssl_cli_srcs_linux64-s390x)'],

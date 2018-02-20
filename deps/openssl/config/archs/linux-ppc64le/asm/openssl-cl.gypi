@@ -79,6 +79,9 @@
     ],
   },
   'defines': ['<@(openssl_defines_linux-ppc64le)'],
+  'include_dirs': [
+    './include',
+  ],
   'cflags' : ['<@(openssl_cflags_linux-ppc64le)'],
   'libraries': ['<@(openssl_ex_libs_linux-ppc64le)'],
   'sources': ['<@(openssl_cli_srcs_linux-ppc64le)'],

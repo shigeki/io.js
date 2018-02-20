@@ -70,6 +70,9 @@
     ],
   },
   'defines': ['<@(openssl_defines_aix-gcc)'],
+  'include_dirs': [
+    './include',
+  ],
   'cflags' : ['<@(openssl_cflags_aix-gcc)'],
   'libraries': ['<@(openssl_ex_libs_aix-gcc)'],
   'sources': ['<@(openssl_cli_srcs_aix-gcc)'],

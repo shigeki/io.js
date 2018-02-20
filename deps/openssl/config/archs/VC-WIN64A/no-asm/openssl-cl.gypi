@@ -77,5 +77,8 @@
     ],
   },
   'defines': ['<@(openssl_defines_VC-WIN64A)'],
+  'include_dirs': [
+    './include',
+  ],
   'sources': ['<@(openssl_cli_srcs_VC-WIN64A)'],
 }
