@@ -33,8 +33,10 @@ const server = tls.createServer({
   cert: fixtures.readKey('agent1-cert.pem')
 }, function(c) {
   // Send close-notify without shutting down TCP socket
-  if (c._handle.shutdownSSL() !== 1)
-    c._handle.shutdownSSL();
+  setImmediate(() => {
+    if (c._handle.shutdownSSL() !== 1)
+      c._handle.shutdownSSL();
+  });
 }).listen(0, common.mustCall(function() {
   const c = tls.connect(this.address().port, {
     rejectUnauthorized: false
