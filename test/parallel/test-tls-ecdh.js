@@ -49,7 +49,7 @@ const server = tls.createServer(options, common.mustCall(function(conn) {
 
 server.listen(0, '127.0.0.1', common.mustCall(function() {
   const cmd = `"${common.opensslCli}" s_client -cipher ${
-    options.ciphers} -connect 127.0.0.1:${this.address().port}`;
+    options.ciphers} -connect 127.0.0.1:${this.address().port} -tls1_2`;
 
   exec(cmd, common.mustCall(function(err, stdout, stderr) {
     assert.ifError(err);

@@ -37,7 +37,8 @@ let gotReply = false;
 server.listen(0, function() {
   const args = ['s_client',
                 '-cipher', `${options.ciphers}`,
-                '-connect', `127.0.0.1:${this.address().port}`];
+                '-connect', `127.0.0.1:${this.address().port}`,
+                '-tls1_2'];
 
   const client = spawn(common.opensslCli, args);
 

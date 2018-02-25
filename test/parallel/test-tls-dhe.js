@@ -70,7 +70,7 @@ function test(keylen, expectedCipher, cb) {
 
   server.listen(0, '127.0.0.1', function() {
     const args = ['s_client', '-connect', `127.0.0.1:${this.address().port}`,
-                  '-cipher', ciphers];
+                  '-cipher', ciphers, '-tls1_2'];
 
     const client = spawn(common.opensslCli, args);
     let out = '';
