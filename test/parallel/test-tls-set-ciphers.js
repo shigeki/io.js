@@ -54,10 +54,6 @@ server.listen(0, '127.0.0.1', function() {
   let cmd = `"${common.opensslCli}" s_client -cipher ${
     options.ciphers} -connect 127.0.0.1:${this.address().port}`;
 
-  // for the performance and stability issue in s_client on Windows
-  if (common.isWindows)
-    cmd += ' -no_rand_screen';
-
   exec(cmd, function(err, stdout, stderr) {
     assert.ifError(err);
     response = stdout;
