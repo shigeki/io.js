@@ -1073,6 +1073,15 @@ def configure_openssl(o):
     except OSError:
       pass
 
+  openssl111_asm_supported = \
+    ('gas_version' in o['variables'] and o['variables']['gas_version'] >= '2.26') or \
+    ('llvm_version' in o['variables'] and o['variables']['llvm_version'] >= '3.6') or \
+    ('nasm_version' in o['variables'] and o['variables']['nasm_version'] >= '2.11.8')
+
+  if not openssl111_asm_supported:
+    warn('Assember version is too old for openssl-1.1.1. openssl_no_asm is added.')
+    o['variables']['openssl_no_asm'] = 1
+
   if options.without_ssl:
     def without_ssl_error(option):
       print('Error: --without-ssl is incompatible with %s' % option)
