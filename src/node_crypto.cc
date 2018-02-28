@@ -632,8 +632,11 @@ void SecureContext::Init(const FunctionCallbackInfo<Value>& args) {
   SSL_CTX_set_options(sc->ctx_, SSL_OP_NO_SSLv2);
   SSL_CTX_set_options(sc->ctx_, SSL_OP_NO_SSLv3);
 
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
   // TLS 1.3 is disabled by default
   SSL_CTX_set_max_proto_version(sc->ctx_, TLS1_2_VERSION);
+#endif
+
   // SSL session cache configuration
   SSL_CTX_set_session_cache_mode(sc->ctx_,
                                  SSL_SESS_CACHE_SERVER |
