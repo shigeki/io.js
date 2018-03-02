@@ -5,6 +5,7 @@ GENERATED_MANDATORY=crypto/include/internal/bn_conf.h crypto/include/internal/ds
 GENERATED=test/buildtest_ec.c crypto/aes/aes-586.asm crypto/modes/ghash-x86.asm test/buildtest_ssl.c test/buildtest_dtls1.c test/buildtest_srp.c test/buildtest_obj_mac.c crypto/whrlpool/wp-mmx.asm test/buildtest_opensslconf.c test/buildtest_pkcs7.c test/buildtest_stack.c test/buildtest_x509_vfy.c test/buildtest_lhash.c test/buildtest_conf_api.c test/buildtest_blowfish.c test/buildtest_safestack.c test/buildtest_evp.c test/buildtest_asn1.c crypto/bn/bn-586.asm crypto/x86cpuid.asm test/buildtest_pem.c test/buildtest_ts.c test/buildtest_pkcs12.c crypto/des/crypt586.asm test/buildtest_cmac.c crypto/sha/sha512-586.asm test/buildtest_ct.c crypto/bn/x86-gf2m.asm test/buildtest_sha.c test/buildtest_ossl_typ.c crypto/ec/ecp_nistz256-x86.asm test/buildtest_rc2.c test/buildtest_x509v3.c test/buildtest_symhacks.c test/buildtest_asn1t.c test/buildtest_opensslv.c test/buildtest_camellia.c test/buildtest_modes.c test/buildtest_async.c crypto/sha/sha256-586.asm crypto/ripemd/rmd-586.asm test/buildtest_ui.c test/buildtest_comp.c crypto/rc4/rc4-586.asm test/buildtest_dh.c test/buildtest_ecdh.c test/buildtest_cast.c test/buildtest_ebcdic.c crypto/aes/vpaes-x86.asm crypto/chacha/chacha-x86.asm test/buildtest_rsa.c test/buildtest_ssl2.c test/buildtest_ripemd.c test/buildtest_dsa.c test/buildtest_hmac.c test/buildtest_conf.c test/buildtest_e_os2.c crypto/aes/aesni-x86.asm test/buildtest_pem2.c engines/e_padlock-x86.asm test/buildtest_x509.c crypto/bn/co-586.asm crypto/poly1305/poly1305-x86.asm test/buildtest_rand.c test/buildtest_seed.c test/buildtest_buffer.c test/buildtest_kdf.c test/buildtest_bio.c test/buildtest_objects.c test/buildtest_crypto.c crypto/md5/md5-586.asm test/buildtest_engine.c test/buildtest_tls1.c test/buildtest_aes.c test/buildtest_mdc2.c test/buildtest_ocsp.c crypto/camellia/cmll-x86.asm test/buildtest_whrlpool.c crypto/bf/bf-586.asm test/buildtest_md5.c crypto/des/des-586.asm crypto/bn/x86-mont.asm test/buildtest_err.c test/buildtest_bn.c test/buildtest_srtp.c test/buildtest_idea.c test/buildtest_des.c test/buildtest_txt_db.c test/buildtest_cms.c test/buildtest_md4.c crypto/sha/sha1-586.asm test/buildtest_ecdsa.c test/buildtest_rc4.c crypto/include/internal/bn_conf.h include/openssl/opensslconf.h crypto/buildinf.h crypto/include/internal/dso_conf.h
 
 PERLASM_SCHEME= win32n
+APPS_OPENSSL=apps/openssl
 
 # OPENSSL_IA32_SSE2 flag is needed for checking the sse2 feature on ia32
 # see https://github.com/openssl/openssl/blob/master/crypto/sha/asm/sha256-586.pl#L82
@@ -1326,7 +1327,7 @@ engines/e_padlock-x86.asm: engines/asm/e_padlock-x86.pl
 	$(PERL) engines/asm/e_padlock-x86.pl $(PERLASM_SCHEME) $(CFLAGS) $(LIB_CFLAGS) $(PROCESSOR) $@
 engines/e_padlock.obj: engines/e_padlock.c
 	$(CC)  /I . /I crypto/include /I include $(CFLAGS) $(LIB_CFLAGS) -c $(COUTFLAG)$@ engines/e_padlock.c
-apps/progs.h:
+apps/progs.h: apps/progs.pl configdata.pm
 	"$(PERL)" "apps/progs.pl" "$(APPS_OPENSSL)" > $@
 
 distclean:
