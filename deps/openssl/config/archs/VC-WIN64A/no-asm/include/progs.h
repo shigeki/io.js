@@ -24,10 +24,190 @@ typedef struct function_st {
 
 DEFINE_LHASH_OF(FUNCTION);
 
+extern int asn1parse_main(int argc, char *argv[]);
+extern int ca_main(int argc, char *argv[]);
+extern int ciphers_main(int argc, char *argv[]);
+extern int cms_main(int argc, char *argv[]);
+extern int crl_main(int argc, char *argv[]);
+extern int crl2pkcs7_main(int argc, char *argv[]);
+extern int dgst_main(int argc, char *argv[]);
+extern int dhparam_main(int argc, char *argv[]);
+extern int dsa_main(int argc, char *argv[]);
+extern int dsaparam_main(int argc, char *argv[]);
+extern int ec_main(int argc, char *argv[]);
+extern int ecparam_main(int argc, char *argv[]);
+extern int enc_main(int argc, char *argv[]);
+extern int engine_main(int argc, char *argv[]);
+extern int errstr_main(int argc, char *argv[]);
+extern int gendsa_main(int argc, char *argv[]);
+extern int genpkey_main(int argc, char *argv[]);
+extern int genrsa_main(int argc, char *argv[]);
+extern int help_main(int argc, char *argv[]);
+extern int list_main(int argc, char *argv[]);
+extern int nseq_main(int argc, char *argv[]);
+extern int ocsp_main(int argc, char *argv[]);
+extern int passwd_main(int argc, char *argv[]);
+extern int pkcs12_main(int argc, char *argv[]);
+extern int pkcs7_main(int argc, char *argv[]);
+extern int pkcs8_main(int argc, char *argv[]);
+extern int pkey_main(int argc, char *argv[]);
+extern int pkeyparam_main(int argc, char *argv[]);
+extern int pkeyutl_main(int argc, char *argv[]);
+extern int prime_main(int argc, char *argv[]);
+extern int rand_main(int argc, char *argv[]);
+extern int rehash_main(int argc, char *argv[]);
+extern int req_main(int argc, char *argv[]);
+extern int rsa_main(int argc, char *argv[]);
+extern int rsautl_main(int argc, char *argv[]);
+extern int s_client_main(int argc, char *argv[]);
+extern int s_server_main(int argc, char *argv[]);
+extern int s_time_main(int argc, char *argv[]);
+extern int sess_id_main(int argc, char *argv[]);
+extern int smime_main(int argc, char *argv[]);
+extern int speed_main(int argc, char *argv[]);
+extern int spkac_main(int argc, char *argv[]);
+extern int srp_main(int argc, char *argv[]);
+extern int storeutl_main(int argc, char *argv[]);
+extern int ts_main(int argc, char *argv[]);
+extern int verify_main(int argc, char *argv[]);
+extern int version_main(int argc, char *argv[]);
+extern int x509_main(int argc, char *argv[]);
 
+extern const OPTIONS asn1parse_options[];
+extern const OPTIONS ca_options[];
+extern const OPTIONS ciphers_options[];
+extern const OPTIONS cms_options[];
+extern const OPTIONS crl_options[];
+extern const OPTIONS crl2pkcs7_options[];
+extern const OPTIONS dgst_options[];
+extern const OPTIONS dhparam_options[];
+extern const OPTIONS dsa_options[];
+extern const OPTIONS dsaparam_options[];
+extern const OPTIONS ec_options[];
+extern const OPTIONS ecparam_options[];
+extern const OPTIONS enc_options[];
+extern const OPTIONS engine_options[];
+extern const OPTIONS errstr_options[];
+extern const OPTIONS gendsa_options[];
+extern const OPTIONS genpkey_options[];
+extern const OPTIONS genrsa_options[];
+extern const OPTIONS help_options[];
+extern const OPTIONS list_options[];
+extern const OPTIONS nseq_options[];
+extern const OPTIONS ocsp_options[];
+extern const OPTIONS passwd_options[];
+extern const OPTIONS pkcs12_options[];
+extern const OPTIONS pkcs7_options[];
+extern const OPTIONS pkcs8_options[];
+extern const OPTIONS pkey_options[];
+extern const OPTIONS pkeyparam_options[];
+extern const OPTIONS pkeyutl_options[];
+extern const OPTIONS prime_options[];
+extern const OPTIONS rand_options[];
+extern const OPTIONS rehash_options[];
+extern const OPTIONS req_options[];
+extern const OPTIONS rsa_options[];
+extern const OPTIONS rsautl_options[];
+extern const OPTIONS s_client_options[];
+extern const OPTIONS s_server_options[];
+extern const OPTIONS s_time_options[];
+extern const OPTIONS sess_id_options[];
+extern const OPTIONS smime_options[];
+extern const OPTIONS speed_options[];
+extern const OPTIONS spkac_options[];
+extern const OPTIONS srp_options[];
+extern const OPTIONS storeutl_options[];
+extern const OPTIONS ts_options[];
+extern const OPTIONS verify_options[];
+extern const OPTIONS version_options[];
+extern const OPTIONS x509_options[];
 
 #ifdef INCLUDE_FUNCTION_TABLE
 static FUNCTION functions[] = {
+    {FT_general, "asn1parse", asn1parse_main, asn1parse_options},
+    {FT_general, "ca", ca_main, ca_options},
+#ifndef OPENSSL_NO_SOCK
+    {FT_general, "ciphers", ciphers_main, ciphers_options},
+#endif
+#ifndef OPENSSL_NO_CMS
+    {FT_general, "cms", cms_main, cms_options},
+#endif
+    {FT_general, "crl", crl_main, crl_options},
+    {FT_general, "crl2pkcs7", crl2pkcs7_main, crl2pkcs7_options},
+    {FT_general, "dgst", dgst_main, dgst_options},
+#ifndef OPENSSL_NO_DH
+    {FT_general, "dhparam", dhparam_main, dhparam_options},
+#endif
+#ifndef OPENSSL_NO_DSA
+    {FT_general, "dsa", dsa_main, dsa_options},
+#endif
+#ifndef OPENSSL_NO_DSA
+    {FT_general, "dsaparam", dsaparam_main, dsaparam_options},
+#endif
+#ifndef OPENSSL_NO_EC
+    {FT_general, "ec", ec_main, ec_options},
+#endif
+#ifndef OPENSSL_NO_EC
+    {FT_general, "ecparam", ecparam_main, ecparam_options},
+#endif
+    {FT_general, "enc", enc_main, enc_options},
+#ifndef OPENSSL_NO_ENGINE
+    {FT_general, "engine", engine_main, engine_options},
+#endif
+    {FT_general, "errstr", errstr_main, errstr_options},
+#ifndef OPENSSL_NO_DSA
+    {FT_general, "gendsa", gendsa_main, gendsa_options},
+#endif
+    {FT_general, "genpkey", genpkey_main, genpkey_options},
+#ifndef OPENSSL_NO_RSA
+    {FT_general, "genrsa", genrsa_main, genrsa_options},
+#endif
+    {FT_general, "help", help_main, help_options},
+    {FT_general, "list", list_main, list_options},
+    {FT_general, "nseq", nseq_main, nseq_options},
+#ifndef OPENSSL_NO_OCSP
+    {FT_general, "ocsp", ocsp_main, ocsp_options},
+#endif
+    {FT_general, "passwd", passwd_main, passwd_options},
+#ifndef OPENSSL_NO_DES
+    {FT_general, "pkcs12", pkcs12_main, pkcs12_options},
+#endif
+    {FT_general, "pkcs7", pkcs7_main, pkcs7_options},
+    {FT_general, "pkcs8", pkcs8_main, pkcs8_options},
+    {FT_general, "pkey", pkey_main, pkey_options},
+    {FT_general, "pkeyparam", pkeyparam_main, pkeyparam_options},
+    {FT_general, "pkeyutl", pkeyutl_main, pkeyutl_options},
+    {FT_general, "prime", prime_main, prime_options},
+    {FT_general, "rand", rand_main, rand_options},
+    {FT_general, "rehash", rehash_main, rehash_options},
+    {FT_general, "req", req_main, req_options},
+    {FT_general, "rsa", rsa_main, rsa_options},
+#ifndef OPENSSL_NO_RSA
+    {FT_general, "rsautl", rsautl_main, rsautl_options},
+#endif
+#ifndef OPENSSL_NO_SOCK
+    {FT_general, "s_client", s_client_main, s_client_options},
+#endif
+#ifndef OPENSSL_NO_SOCK
+    {FT_general, "s_server", s_server_main, s_server_options},
+#endif
+#ifndef OPENSSL_NO_SOCK
+    {FT_general, "s_time", s_time_main, s_time_options},
+#endif
+    {FT_general, "sess_id", sess_id_main, sess_id_options},
+    {FT_general, "smime", smime_main, smime_options},
+    {FT_general, "speed", speed_main, speed_options},
+    {FT_general, "spkac", spkac_main, spkac_options},
+#ifndef OPENSSL_NO_SRP
+    {FT_general, "srp", srp_main, srp_options},
+#endif
+    {FT_general, "storeutl", storeutl_main, storeutl_options},
+#ifndef OPENSSL_NO_TS
+    {FT_general, "ts", ts_main, ts_options},
+#endif
+    {FT_general, "verify", verify_main, verify_options},
+    {FT_general, "version", version_main, version_options},
+    {FT_general, "x509", x509_main, x509_options},
 #ifndef OPENSSL_NO_MD2
     {FT_md, "md2", dgst_main},
 #endif
