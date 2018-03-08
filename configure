@@ -645,11 +645,10 @@ def get_nasm_version(asm):
                             stdin=subprocess.PIPE, stderr=subprocess.PIPE,
                             stdout=subprocess.PIPE)
   except OSError:
-    print('''Node.js configure error: No acceptable ASM compiler found!
-            Please make sure you have installed nasm from http://www.nasm.us
-            or add an option of openssl_no_asm.
-        ''')
-    sys.exit()
+    warn('''No acceptable ASM compiler found!
+         Please make sure you have installed nasm from http://www.nasm.us
+         and refer BUILDING.md.''')
+    return 0
 
   match = re.match(r"NASM version ([2-9]\.[0-9][0-9]+)",
                    proc.communicate()[0])
@@ -1085,7 +1084,8 @@ def configure_openssl(o):
   ('nasm_version' in variables and variables['nasm_version'] >= '2.10')
 
   if not openssl110_asm_supported and variables['openssl_no_asm'] == 0:
-    warn('asm compiler is old. openssl_no_asm is added.')
+    warn('''openssl_no_asm is enabled due to missed or old assembler.
+            Please refer BUILDING.md''')
     variables['openssl_no_asm'] = 1
 
   if options.openssl_fips:
