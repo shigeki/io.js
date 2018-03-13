@@ -12,7 +12,7 @@
       '-Wall -O3 -pthread -DL_ENDIAN -fomit-frame-pointer',
     ],
     'openssl_ex_libs_linux-elf': [
-      '-ldl',
+      '-ldl -pthread',
     ],
     'openssl_cli_srcs_linux-elf': [
       'openssl/apps/app_rand.c',

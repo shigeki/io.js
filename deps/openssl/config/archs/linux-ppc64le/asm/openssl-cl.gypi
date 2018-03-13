@@ -19,7 +19,7 @@
       '-Wall -O3 -pthread -m64 -DL_ENDIAN',
     ],
     'openssl_ex_libs_linux-ppc64le': [
-      '-ldl',
+      '-ldl -pthread',
     ],
     'openssl_cli_srcs_linux-ppc64le': [
       'openssl/apps/app_rand.c',

@@ -12,7 +12,7 @@
       '-Wall -O3 -pthread -m64 -DB_ENDIAN',
     ],
     'openssl_ex_libs_linux-ppc64': [
-      '-ldl',
+      '-ldl -pthread',
     ],
     'openssl_cli_srcs_linux-ppc64': [
       'openssl/apps/app_rand.c',

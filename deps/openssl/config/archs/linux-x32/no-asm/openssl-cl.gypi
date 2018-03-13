@@ -12,7 +12,7 @@
       '-Wall -O3 -pthread -mx32 -DL_ENDIAN',
     ],
     'openssl_ex_libs_linux-x32': [
-      '-ldl',
+      '-ldl -pthread',
     ],
     'openssl_cli_srcs_linux-x32': [
       'openssl/apps/app_rand.c',

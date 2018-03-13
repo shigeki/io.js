@@ -655,7 +655,7 @@
       '-DB_ENDIAN -O -pthread',
     ],
     'openssl_ex_libs_aix-gcc': [
-      '',
+      '-pthread',
     ],
   },
   'include_dirs': [

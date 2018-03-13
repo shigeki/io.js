@@ -12,7 +12,7 @@
       '-Wall -O3 -pthread',
     ],
     'openssl_ex_libs_linux-ppc': [
-      '-ldl',
+      '-ldl -pthread',
     ],
     'openssl_cli_srcs_linux-ppc': [
       'openssl/apps/app_rand.c',

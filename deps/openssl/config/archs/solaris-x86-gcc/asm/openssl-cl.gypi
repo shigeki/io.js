@@ -29,7 +29,7 @@
       '-Wall -DL_ENDIAN -DOPENSSL_NO_INLINE_ASM -O3 -fomit-frame-pointer -pthread -DFILIO_H',
     ],
     'openssl_ex_libs_solaris-x86-gcc': [
-      '-lsocket -lnsl -ldl',
+      '-lsocket -lnsl -ldl -pthread',
     ],
     'openssl_cli_srcs_solaris-x86-gcc': [
       'openssl/apps/app_rand.c',

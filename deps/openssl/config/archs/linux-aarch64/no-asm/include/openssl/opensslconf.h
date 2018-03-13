@@ -85,9 +85,6 @@ extern "C" {
 #ifndef OPENSSL_NO_WEAK_SSL_CIPHERS
 # define OPENSSL_NO_WEAK_SSL_CIPHERS
 #endif
-#ifndef OPENSSL_NO_AFALGENG
-# define OPENSSL_NO_AFALGENG
-#endif
 
 
 /*

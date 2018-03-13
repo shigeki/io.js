@@ -12,7 +12,7 @@
       '-DB_ENDIAN -O -pthread',
     ],
     'openssl_ex_libs_aix-gcc': [
-      '',
+      '-pthread',
     ],
     'openssl_cli_srcs_aix-gcc': [
       'openssl/apps/app_rand.c',

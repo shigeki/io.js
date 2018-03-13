@@ -638,6 +638,8 @@
       'openssl/crypto/x509v3/v3_tlsf.c',
       'openssl/crypto/x509v3/v3_utl.c',
       'openssl/crypto/x509v3/v3err.c',
+      'openssl/engines/afalg/e_afalg.c',
+      'openssl/engines/afalg/e_afalg_err.c',
       'openssl/engines/e_capi.c',
       'openssl/engines/e_padlock.c',
     ],
@@ -655,7 +657,7 @@
       '-Wall -O3 -pthread -m64 -DB_ENDIAN',
     ],
     'openssl_ex_libs_linux-ppc64': [
-      '-ldl',
+      '-ldl -pthread',
     ],
   },
   'include_dirs': [

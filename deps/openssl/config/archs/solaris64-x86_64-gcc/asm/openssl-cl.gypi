@@ -28,7 +28,7 @@
       '-m64 -Wall -DL_ENDIAN -O3 -pthread -DFILIO_H',
     ],
     'openssl_ex_libs_solaris64-x86_64-gcc': [
-      '-lsocket -lnsl -ldl',
+      '-lsocket -lnsl -ldl -pthread',
     ],
     'openssl_cli_srcs_solaris64-x86_64-gcc': [
       'openssl/apps/app_rand.c',

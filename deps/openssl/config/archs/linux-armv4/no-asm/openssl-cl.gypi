@@ -12,7 +12,7 @@
       '-Wall -O3 -pthread',
     ],
     'openssl_ex_libs_linux-armv4': [
-      '-ldl',
+      '-ldl -pthread',
     ],
     'openssl_cli_srcs_linux-armv4': [
       'openssl/apps/app_rand.c',
