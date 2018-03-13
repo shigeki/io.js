@@ -11,7 +11,7 @@
 
 struct bio_method_st {
     int type;
-    const char *name;
+    char *name;
     int (*bwrite) (BIO *, const char *, int);
     int (*bread) (BIO *, char *, int);
     int (*bputs) (BIO *, const char *);
@@ -19,7 +19,7 @@ struct bio_method_st {
     long (*ctrl) (BIO *, int, long, void *);
     int (*create) (BIO *);
     int (*destroy) (BIO *);
-    long (*callback_ctrl) (BIO *, int, bio_info_cb *);
+    long (*callback_ctrl) (BIO *, int, BIO_info_cb *);
 };
 
 void bio_free_ex_data(BIO *bio);

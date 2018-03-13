@@ -658,6 +658,7 @@ uint32_t X509_get_extension_flags(X509 *x);
 uint32_t X509_get_key_usage(X509 *x);
 uint32_t X509_get_extended_key_usage(X509 *x);
 const ASN1_OCTET_STRING *X509_get0_subject_key_id(X509 *x);
+const ASN1_OCTET_STRING *X509_get0_authority_key_id(X509 *x);
 
 int X509_PURPOSE_get_count(void);
 X509_PURPOSE *X509_PURPOSE_get0(int idx);
@@ -876,6 +877,7 @@ int ERR_load_X509V3_strings(void);
 # define X509V3_F_ADDR_VALIDATE_PATH_INTERNAL             166
 # define X509V3_F_ASIDENTIFIERCHOICE_CANONIZE             161
 # define X509V3_F_ASIDENTIFIERCHOICE_IS_CANONICAL         162
+# define X509V3_F_BIGNUM_TO_STRING                        167
 # define X509V3_F_COPY_EMAIL                              122
 # define X509V3_F_COPY_ISSUER                             123
 # define X509V3_F_DO_DIRNAME                              144

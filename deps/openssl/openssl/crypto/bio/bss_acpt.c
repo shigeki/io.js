@@ -57,11 +57,11 @@ static const BIO_METHOD methods_acceptp = {
     acpt_write,
     acpt_read,
     acpt_puts,
-    NULL,                       /* connect_gets, */
+    NULL,                       /* connect_gets,         */
     acpt_ctrl,
     acpt_new,
     acpt_free,
-    NULL,
+    NULL,                       /* connect_callback_ctrl */
 };
 
 const BIO_METHOD *BIO_s_accept(void)
@@ -270,6 +270,11 @@ static int acpt_state(BIO *b, BIO_ACCEPT *c)
             }
             BIO_clear_retry_flags(b);
             b->retry_reason = 0;
+
+            OPENSSL_free(c->cache_peer_name);
+            c->cache_peer_name = NULL;
+            OPENSSL_free(c->cache_peer_serv);
+            c->cache_peer_serv = NULL;
 
             s = BIO_accept_ex(c->accept_sock, &c->cache_peer_addr,
                               c->accepted_mode);

@@ -1853,7 +1853,7 @@ int s_server_main(int argc, char *argv[])
     SSL_CTX_set_verify(ctx, s_server_verify, verify_callback);
     if (!SSL_CTX_set_session_id_context(ctx,
                                         (void *)&s_server_session_id_context,
-                                        sizeof s_server_session_id_context)) {
+                                        sizeof(s_server_session_id_context))) {
         BIO_printf(bio_err, "error setting session id context\n");
         ERR_print_errors(bio_err);
         goto end;
@@ -1867,7 +1867,7 @@ int s_server_main(int argc, char *argv[])
         SSL_CTX_set_verify(ctx2, s_server_verify, verify_callback);
         if (!SSL_CTX_set_session_id_context(ctx2,
                     (void *)&s_server_session_id_context,
-                    sizeof s_server_session_id_context)) {
+                    sizeof(s_server_session_id_context))) {
             BIO_printf(bio_err, "error setting session id context\n");
             ERR_print_errors(bio_err);
             goto end;
@@ -2535,15 +2535,15 @@ static int init_ssl_connection(SSL *con)
     if (peer != NULL) {
         BIO_printf(bio_s_out, "Client certificate\n");
         PEM_write_bio_X509(bio_s_out, peer);
-        X509_NAME_oneline(X509_get_subject_name(peer), buf, sizeof buf);
+        X509_NAME_oneline(X509_get_subject_name(peer), buf, sizeof(buf));
         BIO_printf(bio_s_out, "subject=%s\n", buf);
-        X509_NAME_oneline(X509_get_issuer_name(peer), buf, sizeof buf);
+        X509_NAME_oneline(X509_get_issuer_name(peer), buf, sizeof(buf));
         BIO_printf(bio_s_out, "issuer=%s\n", buf);
         X509_free(peer);
         peer = NULL;
     }
 
-    if (SSL_get_shared_ciphers(con, buf, sizeof buf) != NULL)
+    if (SSL_get_shared_ciphers(con, buf, sizeof(buf)) != NULL)
         BIO_printf(bio_s_out, "Shared ciphers:%s\n", buf);
     str = SSL_CIPHER_get_name(SSL_get_current_cipher(con));
     ssl_print_sigalgs(bio_s_out, con);
@@ -2575,6 +2575,9 @@ static int init_ssl_connection(SSL *con)
         BIO_printf(bio_s_out, "Reused session-id\n");
     BIO_printf(bio_s_out, "Secure Renegotiation IS%s supported\n",
                SSL_get_secure_renegotiation_support(con) ? "" : " NOT");
+    if ((SSL_get_options(con) & SSL_OP_NO_RENEGOTIATION))
+        BIO_printf(bio_s_out, "Renegotiation is DISABLED\n");
+
     if (keymatexportlabel != NULL) {
         BIO_printf(bio_s_out, "Keying material exporter:\n");
         BIO_printf(bio_s_out, "    Label: '%s'\n", keymatexportlabel);
