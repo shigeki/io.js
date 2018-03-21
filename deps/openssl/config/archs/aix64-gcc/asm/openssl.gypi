@@ -699,6 +699,18 @@
     ],
     'openssl_defines_aix64-gcc': [
       'NDEBUG',
+      'DSO_DLFCN',
+      'HAVE_DLFCN_H',
+      'OPENSSL_PIC',
+      'OPENSSL_CPUID_OBJ',
+      'OPENSSL_BN_ASM_MONT',
+      'SHA1_ASM',
+      'SHA256_ASM',
+      'SHA512_ASM',
+      'AES_ASM',
+      'VPAES_ASM',
+      'ECP_NISTZ256_ASM',
+      'POLY1305_ASM',
     ],
     'openssl_cflags_aix64-gcc': [
       '-maix64 -pthread',

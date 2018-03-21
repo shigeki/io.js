@@ -684,6 +684,9 @@
     ],
     'openssl_defines_linux-x32': [
       'NDEBUG',
+      'DSO_DLFCN',
+      'HAVE_DLFCN_H',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_linux-x32': [
       '-pthread -mx32',

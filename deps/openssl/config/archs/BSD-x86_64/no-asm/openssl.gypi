@@ -684,6 +684,9 @@
     ],
     'openssl_defines_BSD-x86_64': [
       'NDEBUG',
+      'DSO_DLFCN',
+      'HAVE_DLFCN_H',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_BSD-x86_64': [
       '-pthread',

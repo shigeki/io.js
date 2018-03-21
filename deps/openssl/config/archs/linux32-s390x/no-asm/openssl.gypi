@@ -683,6 +683,9 @@
     ],
     'openssl_defines_linux32-s390x': [
       'NDEBUG',
+      'DSO_DLFCN',
+      'HAVE_DLFCN_H',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_linux32-s390x': [
       '-pthread -m31 -Wa,-mzarch',

@@ -684,6 +684,9 @@
     ],
     'openssl_defines_solaris-x86-gcc': [
       'NDEBUG',
+      'DSO_DLFCN',
+      'HAVE_DLFCN_H',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_solaris-x86-gcc': [
       '-pthread',
