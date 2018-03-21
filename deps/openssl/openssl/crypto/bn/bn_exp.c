@@ -1,116 +1,14 @@
-/* crypto/bn/bn_exp.c */
-/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
- * All rights reserved.
+/*
+ * Copyright 1995-2018 The OpenSSL Project Authors. All Rights Reserved.
  *
- * This package is an SSL implementation written
- * by Eric Young (eay@cryptsoft.com).
- * The implementation was written so as to conform with Netscapes SSL.
- *
- * This library is free for commercial and non-commercial use as long as
- * the following conditions are aheared to.  The following conditions
- * apply to all code found in this distribution, be it the RC4, RSA,
- * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
- * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- *
- * Copyright remains Eric Young's, and as such any Copyright notices in
- * the code are not to be removed.
- * If this package is used in a product, Eric Young should be given attribution
- * as the author of the parts of the library used.
- * This can be in the form of a textual message at program startup or
- * in documentation (online or textual) provided with the package.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *    "This product includes cryptographic software written by
- *     Eric Young (eay@cryptsoft.com)"
- *    The word 'cryptographic' can be left out if the rouines from the library
- *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from
- *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- *
- * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * The licence and distribution terms for any publically available version or
- * derivative of this code cannot be changed.  i.e. this code cannot simply be
- * copied and put under another distribution licence
- * [including the GNU Public Licence.]
- */
-/* ====================================================================
- * Copyright (c) 1998-2005 The OpenSSL Project.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
- *
- * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
- *    endorse or promote products derived from this software without
- *    prior written permission. For written permission, please contact
- *    openssl-core@openssl.org.
- *
- * 5. Products derived from this software may not be called "OpenSSL"
- *    nor may "OpenSSL" appear in their names without prior written
- *    permission of the OpenSSL Project.
- *
- * 6. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *    "This product includes software developed by the OpenSSL Project
- *    for use in the OpenSSL Toolkit (http://www.openssl.org/)"
- *
- * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
- *
- * This product includes cryptographic software written by Eric Young
- * (eay@cryptsoft.com).  This product includes software written by Tim
- * Hudson (tjh@cryptsoft.com).
- *
+ * Licensed under the OpenSSL license (the "License").  You may not use
+ * this file except in compliance with the License.  You can obtain a copy
+ * in the file LICENSE in the source distribution or at
+ * https://www.openssl.org/source/license.html
  */
 
-#include "cryptlib.h"
-#include "constant_time_locl.h"
+#include "internal/cryptlib.h"
+#include "internal/constant_time_locl.h"
 #include "bn_lcl.h"
 
 #include <stdlib.h>
@@ -153,10 +51,7 @@ int BN_exp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx)
     }
 
     BN_CTX_start(ctx);
-    if ((r == a) || (r == p))
-        rr = BN_CTX_get(ctx);
-    else
-        rr = r;
+    rr = ((r == a) || (r == p)) ? BN_CTX_get(ctx) : r;
     v = BN_CTX_get(ctx);
     if (rr == NULL || v == NULL)
         goto err;
@@ -188,7 +83,7 @@ int BN_exp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx)
  err:
     BN_CTX_end(ctx);
     bn_check_top(r);
-    return (ret);
+    return ret;
 }
 
 int BN_mod_exp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, const BIGNUM *m,
@@ -201,7 +96,7 @@ int BN_mod_exp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, const BIGNUM *m,
     bn_check_top(m);
 
     /*-
-     * For even modulus  m = 2^k*m_odd,  it might make sense to compute
+     * For even modulus  m = 2^k*m_odd, it might make sense to compute
      * a^p mod m_odd  and  a^p mod 2^k  separately (with Montgomery
      * exponentiation for the odd part), using appropriate exponent
      * reductions, and combine the results using the CRT.
@@ -236,13 +131,6 @@ int BN_mod_exp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, const BIGNUM *m,
 #define RECP_MUL_MOD
 
 #ifdef MONT_MUL_MOD
-    /*
-     * I have finally been able to take out this pre-condition of the top bit
-     * being set.  It was caused by an error in BN_div with negatives.  There
-     * was also another problem when for a^b%m a >= m.  eay 07-May-97
-     */
-    /* if ((m->d[m->top-1]&BN_TBIT) && BN_is_odd(m)) */
-
     if (BN_is_odd(m)) {
 # ifdef MONT_EXP_WORD
         if (a->top == 1 && !a->neg
@@ -267,7 +155,7 @@ int BN_mod_exp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, const BIGNUM *m,
 #endif
 
     bn_check_top(r);
-    return (ret);
+    return ret;
 }
 
 int BN_mod_exp_recp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p,
@@ -303,7 +191,7 @@ int BN_mod_exp_recp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p,
     BN_CTX_start(ctx);
     aa = BN_CTX_get(ctx);
     val[0] = BN_CTX_get(ctx);
-    if (!aa || !val[0])
+    if (val[0] == NULL)
         goto err;
 
     BN_RECP_CTX_init(&recp);
@@ -402,7 +290,7 @@ int BN_mod_exp_recp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p,
     BN_CTX_end(ctx);
     BN_RECP_CTX_free(&recp);
     bn_check_top(r);
-    return (ret);
+    return ret;
 }
 
 int BN_mod_exp_mont(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
@@ -428,7 +316,7 @@ int BN_mod_exp_mont(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
 
     if (!BN_is_odd(m)) {
         BNerr(BN_F_BN_MOD_EXP_MONT, BN_R_CALLED_WITH_EVEN_MODULUS);
-        return (0);
+        return 0;
     }
     bits = BN_num_bits(p);
     if (bits == 0) {
@@ -446,7 +334,7 @@ int BN_mod_exp_mont(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
     d = BN_CTX_get(ctx);
     r = BN_CTX_get(ctx);
     val[0] = BN_CTX_get(ctx);
-    if (!d || !r || !val[0])
+    if (val[0] == NULL)
         goto err;
 
     /*
@@ -578,11 +466,11 @@ int BN_mod_exp_mont(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
         goto err;
     ret = 1;
  err:
-    if ((in_mont == NULL) && (mont != NULL))
+    if (in_mont == NULL)
         BN_MONT_CTX_free(mont);
     BN_CTX_end(ctx);
     bn_check_top(rr);
-    return (ret);
+    return ret;
 }
 
 #if defined(SPARC_T4_MONT)
@@ -637,6 +525,14 @@ static int MOD_EXP_CTIME_COPY_FROM_PREBUF(BIGNUM *b, int top,
 {
     int i, j;
     int width = 1 << window;
+    /*
+     * We declare table 'volatile' in order to discourage compiler
+     * from reordering loads from the table. Concern is that if
+     * reordered in specific manner loads might give away the
+     * information we are trying to conceal. Some would argue that
+     * compiler can reorder them anyway, but it can as well be
+     * argued that doing so would be violation of standard...
+     */
     volatile BN_ULONG *table = (volatile BN_ULONG *)buf;
 
     if (bn_wexpand(b, top) == NULL)
@@ -722,12 +618,16 @@ int BN_mod_exp_mont_consttime(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
 
     if (!BN_is_odd(m)) {
         BNerr(BN_F_BN_MOD_EXP_MONT_CONSTTIME, BN_R_CALLED_WITH_EVEN_MODULUS);
-        return (0);
+        return 0;
     }
 
     top = m->top;
 
-    bits = BN_num_bits(p);
+    /*
+     * Use all bits stored in |p|, rather than |BN_num_bits|, so we do not leak
+     * whether the top bits are zero.
+     */
+    bits = p->top * BN_BITS2;
     if (bits == 0) {
         /* x**0 mod 1 is still zero. */
         if (BN_is_one(m)) {
@@ -755,31 +655,33 @@ int BN_mod_exp_mont_consttime(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
     }
 
 #ifdef RSAZ_ENABLED
-    /*
-     * If the size of the operands allow it, perform the optimized
-     * RSAZ exponentiation. For further information see
-     * crypto/bn/rsaz_exp.c and accompanying assembly modules.
-     */
-    if ((16 == a->top) && (16 == p->top) && (BN_num_bits(m) == 1024)
-        && rsaz_avx2_eligible()) {
-        if (NULL == bn_wexpand(rr, 16))
+    if (!a->neg) {
+        /*
+         * If the size of the operands allow it, perform the optimized
+         * RSAZ exponentiation. For further information see
+         * crypto/bn/rsaz_exp.c and accompanying assembly modules.
+         */
+        if ((16 == a->top) && (16 == p->top) && (BN_num_bits(m) == 1024)
+            && rsaz_avx2_eligible()) {
+            if (NULL == bn_wexpand(rr, 16))
+                goto err;
+            RSAZ_1024_mod_exp_avx2(rr->d, a->d, p->d, m->d, mont->RR.d,
+                                   mont->n0[0]);
+            rr->top = 16;
+            rr->neg = 0;
+            bn_correct_top(rr);
+            ret = 1;
             goto err;
-        RSAZ_1024_mod_exp_avx2(rr->d, a->d, p->d, m->d, mont->RR.d,
-                               mont->n0[0]);
-        rr->top = 16;
-        rr->neg = 0;
-        bn_correct_top(rr);
-        ret = 1;
-        goto err;
-    } else if ((8 == a->top) && (8 == p->top) && (BN_num_bits(m) == 512)) {
-        if (NULL == bn_wexpand(rr, 8))
+        } else if ((8 == a->top) && (8 == p->top) && (BN_num_bits(m) == 512)) {
+            if (NULL == bn_wexpand(rr, 8))
+                goto err;
+            RSAZ_512_mod_exp(rr->d, a->d, p->d, m->d, mont->n0[0], mont->RR.d);
+            rr->top = 8;
+            rr->neg = 0;
+            bn_correct_top(rr);
+            ret = 1;
             goto err;
-        RSAZ_512_mod_exp(rr->d, a->d, p->d, m->d, mont->n0[0], mont->RR.d);
-        rr->top = 8;
-        rr->neg = 0;
-        bn_correct_top(rr);
-        ret = 1;
-        goto err;
+        }
     }
 #endif
 
@@ -817,8 +719,7 @@ int BN_mod_exp_mont_consttime(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
     else
 #endif
         if ((powerbufFree =
-             (unsigned char *)OPENSSL_malloc(powerbufLen +
-                                             MOD_EXP_CTIME_MIN_CACHE_LINE_WIDTH))
+             OPENSSL_malloc(powerbufLen + MOD_EXP_CTIME_MIN_CACHE_LINE_WIDTH))
             == NULL)
         goto err;
 
@@ -853,7 +754,7 @@ int BN_mod_exp_mont_consttime(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
 
     /* prepare a^1 in Montgomery domain */
     if (a->neg || BN_ucmp(a, m) >= 0) {
-        if (!BN_mod(&am, a, m, ctx))
+        if (!BN_nnmod(&am, a, m, ctx))
             goto err;
         if (!BN_to_montgomery(&am, &am, mont, ctx))
             goto err;
@@ -1187,15 +1088,14 @@ int BN_mod_exp_mont_consttime(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
         goto err;
     ret = 1;
  err:
-    if ((in_mont == NULL) && (mont != NULL))
+    if (in_mont == NULL)
         BN_MONT_CTX_free(mont);
     if (powerbuf != NULL) {
         OPENSSL_cleanse(powerbuf, powerbufLen);
-        if (powerbufFree)
-            OPENSSL_free(powerbufFree);
+        OPENSSL_free(powerbufFree);
     }
     BN_CTX_end(ctx);
-    return (ret);
+    return ret;
 }
 
 int BN_mod_exp_mont_word(BIGNUM *rr, BN_ULONG a, const BIGNUM *p,
@@ -1205,7 +1105,7 @@ int BN_mod_exp_mont_word(BIGNUM *rr, BN_ULONG a, const BIGNUM *p,
     int b, bits, ret = 0;
     int r_is_one;
     BN_ULONG w, next_w;
-    BIGNUM *d, *r, *t;
+    BIGNUM *r, *t;
     BIGNUM *swap_tmp;
 #define BN_MOD_MUL_WORD(r, w, m) \
                 (BN_mul_word(r, (w)) && \
@@ -1236,7 +1136,7 @@ int BN_mod_exp_mont_word(BIGNUM *rr, BN_ULONG a, const BIGNUM *p,
 
     if (!BN_is_odd(m)) {
         BNerr(BN_F_BN_MOD_EXP_MONT_WORD, BN_R_CALLED_WITH_EVEN_MODULUS);
-        return (0);
+        return 0;
     }
     if (m->top == 1)
         a %= m->d[0];           /* make sure that 'a' is reduced */
@@ -1259,10 +1159,9 @@ int BN_mod_exp_mont_word(BIGNUM *rr, BN_ULONG a, const BIGNUM *p,
     }
 
     BN_CTX_start(ctx);
-    d = BN_CTX_get(ctx);
     r = BN_CTX_get(ctx);
     t = BN_CTX_get(ctx);
-    if (d == NULL || r == NULL || t == NULL)
+    if (t == NULL)
         goto err;
 
     if (in_mont != NULL)
@@ -1339,11 +1238,11 @@ int BN_mod_exp_mont_word(BIGNUM *rr, BN_ULONG a, const BIGNUM *p,
     }
     ret = 1;
  err:
-    if ((in_mont == NULL) && (mont != NULL))
+    if (in_mont == NULL)
         BN_MONT_CTX_free(mont);
     BN_CTX_end(ctx);
     bn_check_top(rr);
-    return (ret);
+    return ret;
 }
 
 /* The old fallback, simple version :-) */
@@ -1365,7 +1264,7 @@ int BN_mod_exp_simple(BIGNUM *r, const BIGNUM *a, const BIGNUM *p,
     }
 
     bits = BN_num_bits(p);
-   if (bits == 0) {
+    if (bits == 0) {
         /* x**0 mod 1 is still zero. */
         if (BN_is_one(m)) {
             ret = 1;
@@ -1379,7 +1278,7 @@ int BN_mod_exp_simple(BIGNUM *r, const BIGNUM *a, const BIGNUM *p,
     BN_CTX_start(ctx);
     d = BN_CTX_get(ctx);
     val[0] = BN_CTX_get(ctx);
-    if (!d || !val[0])
+    if (val[0] == NULL)
         goto err;
 
     if (!BN_nnmod(val[0], a, m, ctx))
@@ -1464,5 +1363,5 @@ int BN_mod_exp_simple(BIGNUM *r, const BIGNUM *a, const BIGNUM *p,
  err:
     BN_CTX_end(ctx);
     bn_check_top(r);
-    return (ret);
+    return ret;
 }
