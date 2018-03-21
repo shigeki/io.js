@@ -142,6 +142,10 @@ foreach my $define (@{$config{defines}}) {
   print GYPI "      '$define',\n";
 }
 
+foreach my $define (@{$config{lib_defines}}) {
+  print GYPI "      '$define',\n";
+}
+
 print GYPI << "GYP4";
     ],
     'openssl_cflags_$arch': [
