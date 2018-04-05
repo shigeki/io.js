@@ -51,10 +51,7 @@ int BN_exp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx)
     }
 
     BN_CTX_start(ctx);
-    if ((r == a) || (r == p))
-        rr = BN_CTX_get(ctx);
-    else
-        rr = r;
+    rr = ((r == a) || (r == p)) ? BN_CTX_get(ctx) : r;
     v = BN_CTX_get(ctx);
     if (rr == NULL || v == NULL)
         goto err;
@@ -86,7 +83,7 @@ int BN_exp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, BN_CTX *ctx)
  err:
     BN_CTX_end(ctx);
     bn_check_top(r);
-    return (ret);
+    return ret;
 }
 
 int BN_mod_exp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, const BIGNUM *m,
@@ -134,13 +131,6 @@ int BN_mod_exp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, const BIGNUM *m,
 #define RECP_MUL_MOD
 
 #ifdef MONT_MUL_MOD
-    /*
-     * I have finally been able to take out this pre-condition of the top bit
-     * being set.  It was caused by an error in BN_div with negatives.  There
-     * was also another problem when for a^b%m a >= m.  eay 07-May-97
-     */
-    /* if ((m->d[m->top-1]&BN_TBIT) && BN_is_odd(m)) */
-
     if (BN_is_odd(m)) {
 # ifdef MONT_EXP_WORD
         if (a->top == 1 && !a->neg
@@ -165,7 +155,7 @@ int BN_mod_exp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p, const BIGNUM *m,
 #endif
 
     bn_check_top(r);
-    return (ret);
+    return ret;
 }
 
 int BN_mod_exp_recp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p,
@@ -201,7 +191,7 @@ int BN_mod_exp_recp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p,
     BN_CTX_start(ctx);
     aa = BN_CTX_get(ctx);
     val[0] = BN_CTX_get(ctx);
-    if (!aa || !val[0])
+    if (val[0] == NULL)
         goto err;
 
     BN_RECP_CTX_init(&recp);
@@ -300,7 +290,7 @@ int BN_mod_exp_recp(BIGNUM *r, const BIGNUM *a, const BIGNUM *p,
     BN_CTX_end(ctx);
     BN_RECP_CTX_free(&recp);
     bn_check_top(r);
-    return (ret);
+    return ret;
 }
 
 int BN_mod_exp_mont(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
@@ -326,7 +316,7 @@ int BN_mod_exp_mont(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
 
     if (!BN_is_odd(m)) {
         BNerr(BN_F_BN_MOD_EXP_MONT, BN_R_CALLED_WITH_EVEN_MODULUS);
-        return (0);
+        return 0;
     }
     bits = BN_num_bits(p);
     if (bits == 0) {
@@ -344,7 +334,7 @@ int BN_mod_exp_mont(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
     d = BN_CTX_get(ctx);
     r = BN_CTX_get(ctx);
     val[0] = BN_CTX_get(ctx);
-    if (!d || !r || !val[0])
+    if (val[0] == NULL)
         goto err;
 
     /*
@@ -480,7 +470,7 @@ int BN_mod_exp_mont(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
         BN_MONT_CTX_free(mont);
     BN_CTX_end(ctx);
     bn_check_top(rr);
-    return (ret);
+    return ret;
 }
 
 #if defined(SPARC_T4_MONT)
@@ -628,7 +618,7 @@ int BN_mod_exp_mont_consttime(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
 
     if (!BN_is_odd(m)) {
         BNerr(BN_F_BN_MOD_EXP_MONT_CONSTTIME, BN_R_CALLED_WITH_EVEN_MODULUS);
-        return (0);
+        return 0;
     }
 
     top = m->top;
@@ -665,31 +655,33 @@ int BN_mod_exp_mont_consttime(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
     }
 
 #ifdef RSAZ_ENABLED
-    /*
-     * If the size of the operands allow it, perform the optimized
-     * RSAZ exponentiation. For further information see
-     * crypto/bn/rsaz_exp.c and accompanying assembly modules.
-     */
-    if ((16 == a->top) && (16 == p->top) && (BN_num_bits(m) == 1024)
-        && rsaz_avx2_eligible()) {
-        if (NULL == bn_wexpand(rr, 16))
+    if (!a->neg) {
+        /*
+         * If the size of the operands allow it, perform the optimized
+         * RSAZ exponentiation. For further information see
+         * crypto/bn/rsaz_exp.c and accompanying assembly modules.
+         */
+        if ((16 == a->top) && (16 == p->top) && (BN_num_bits(m) == 1024)
+            && rsaz_avx2_eligible()) {
+            if (NULL == bn_wexpand(rr, 16))
+                goto err;
+            RSAZ_1024_mod_exp_avx2(rr->d, a->d, p->d, m->d, mont->RR.d,
+                                   mont->n0[0]);
+            rr->top = 16;
+            rr->neg = 0;
+            bn_correct_top(rr);
+            ret = 1;
             goto err;
-        RSAZ_1024_mod_exp_avx2(rr->d, a->d, p->d, m->d, mont->RR.d,
-                               mont->n0[0]);
-        rr->top = 16;
-        rr->neg = 0;
-        bn_correct_top(rr);
-        ret = 1;
-        goto err;
-    } else if ((8 == a->top) && (8 == p->top) && (BN_num_bits(m) == 512)) {
-        if (NULL == bn_wexpand(rr, 8))
+        } else if ((8 == a->top) && (8 == p->top) && (BN_num_bits(m) == 512)) {
+            if (NULL == bn_wexpand(rr, 8))
+                goto err;
+            RSAZ_512_mod_exp(rr->d, a->d, p->d, m->d, mont->n0[0], mont->RR.d);
+            rr->top = 8;
+            rr->neg = 0;
+            bn_correct_top(rr);
+            ret = 1;
             goto err;
-        RSAZ_512_mod_exp(rr->d, a->d, p->d, m->d, mont->n0[0], mont->RR.d);
-        rr->top = 8;
-        rr->neg = 0;
-        bn_correct_top(rr);
-        ret = 1;
-        goto err;
+        }
     }
 #endif
 
@@ -762,7 +754,7 @@ int BN_mod_exp_mont_consttime(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
 
     /* prepare a^1 in Montgomery domain */
     if (a->neg || BN_ucmp(a, m) >= 0) {
-        if (!BN_mod(&am, a, m, ctx))
+        if (!BN_nnmod(&am, a, m, ctx))
             goto err;
         if (!BN_to_montgomery(&am, &am, mont, ctx))
             goto err;
@@ -1103,7 +1095,7 @@ int BN_mod_exp_mont_consttime(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
         OPENSSL_free(powerbufFree);
     }
     BN_CTX_end(ctx);
-    return (ret);
+    return ret;
 }
 
 int BN_mod_exp_mont_word(BIGNUM *rr, BN_ULONG a, const BIGNUM *p,
@@ -1113,7 +1105,7 @@ int BN_mod_exp_mont_word(BIGNUM *rr, BN_ULONG a, const BIGNUM *p,
     int b, bits, ret = 0;
     int r_is_one;
     BN_ULONG w, next_w;
-    BIGNUM *d, *r, *t;
+    BIGNUM *r, *t;
     BIGNUM *swap_tmp;
 #define BN_MOD_MUL_WORD(r, w, m) \
                 (BN_mul_word(r, (w)) && \
@@ -1144,7 +1136,7 @@ int BN_mod_exp_mont_word(BIGNUM *rr, BN_ULONG a, const BIGNUM *p,
 
     if (!BN_is_odd(m)) {
         BNerr(BN_F_BN_MOD_EXP_MONT_WORD, BN_R_CALLED_WITH_EVEN_MODULUS);
-        return (0);
+        return 0;
     }
     if (m->top == 1)
         a %= m->d[0];           /* make sure that 'a' is reduced */
@@ -1167,10 +1159,9 @@ int BN_mod_exp_mont_word(BIGNUM *rr, BN_ULONG a, const BIGNUM *p,
     }
 
     BN_CTX_start(ctx);
-    d = BN_CTX_get(ctx);
     r = BN_CTX_get(ctx);
     t = BN_CTX_get(ctx);
-    if (d == NULL || r == NULL || t == NULL)
+    if (t == NULL)
         goto err;
 
     if (in_mont != NULL)
@@ -1251,7 +1242,7 @@ int BN_mod_exp_mont_word(BIGNUM *rr, BN_ULONG a, const BIGNUM *p,
         BN_MONT_CTX_free(mont);
     BN_CTX_end(ctx);
     bn_check_top(rr);
-    return (ret);
+    return ret;
 }
 
 /* The old fallback, simple version :-) */
@@ -1273,7 +1264,7 @@ int BN_mod_exp_simple(BIGNUM *r, const BIGNUM *a, const BIGNUM *p,
     }
 
     bits = BN_num_bits(p);
-   if (bits == 0) {
+    if (bits == 0) {
         /* x**0 mod 1 is still zero. */
         if (BN_is_one(m)) {
             ret = 1;
@@ -1287,7 +1278,7 @@ int BN_mod_exp_simple(BIGNUM *r, const BIGNUM *a, const BIGNUM *p,
     BN_CTX_start(ctx);
     d = BN_CTX_get(ctx);
     val[0] = BN_CTX_get(ctx);
-    if (!d || !val[0])
+    if (val[0] == NULL)
         goto err;
 
     if (!BN_nnmod(val[0], a, m, ctx))
@@ -1372,5 +1363,5 @@ int BN_mod_exp_simple(BIGNUM *r, const BIGNUM *a, const BIGNUM *p,
  err:
     BN_CTX_end(ctx);
     bn_check_top(r);
-    return (ret);
+    return ret;
 }

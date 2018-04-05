@@ -1,5 +1,5 @@
 /*
- * Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the OpenSSL license (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -16,7 +16,7 @@
 
 /*
  * A hashing implementation that appears to be based on the linear hashing
- * algorithm:
+ * alogrithm:
  * https://en.wikipedia.org/wiki/Linear_hashing
  *
  * Litwin, Witold (1980), "Linear hashing: A new tool for file and table
@@ -49,8 +49,6 @@ OPENSSL_LHASH *OPENSSL_LH_new(OPENSSL_LH_HASHFUNC h, OPENSSL_LH_COMPFUNC c)
         return NULL;
     if ((ret->b = OPENSSL_zalloc(sizeof(*ret->b) * MIN_NODES)) == NULL)
         goto err;
-    if ((ret->retrieve_stats_lock = CRYPTO_THREAD_lock_new()) == NULL) 
-        goto err;
     ret->comp = ((c == NULL) ? (OPENSSL_LH_COMPFUNC)strcmp : c);
     ret->hash = ((h == NULL) ? (OPENSSL_LH_HASHFUNC)OPENSSL_LH_strhash : h);
     ret->num_nodes = MIN_NODES / 2;
@@ -58,7 +56,7 @@ OPENSSL_LHASH *OPENSSL_LH_new(OPENSSL_LH_HASHFUNC h, OPENSSL_LH_COMPFUNC c)
     ret->pmax = MIN_NODES / 2;
     ret->up_load = UP_LOAD;
     ret->down_load = DOWN_LOAD;
-    return (ret);
+    return ret;
 
 err:
     OPENSSL_free(ret->b);
@@ -82,7 +80,6 @@ void OPENSSL_LH_free(OPENSSL_LHASH *lh)
             n = nn;
         }
     }
-    CRYPTO_THREAD_lock_free(lh->retrieve_stats_lock);
     OPENSSL_free(lh->b);
     OPENSSL_free(lh);
 }
@@ -102,7 +99,7 @@ void *OPENSSL_LH_insert(OPENSSL_LHASH *lh, void *data)
     if (*rn == NULL) {
         if ((nn = OPENSSL_malloc(sizeof(*nn))) == NULL) {
             lh->error++;
-            return (NULL);
+            return NULL;
         }
         nn->data = data;
         nn->next = NULL;
@@ -112,12 +109,11 @@ void *OPENSSL_LH_insert(OPENSSL_LHASH *lh, void *data)
         lh->num_insert++;
         lh->num_items++;
     } else {                    /* replace same key */
-
         ret = (*rn)->data;
         (*rn)->data = data;
         lh->num_replace++;
     }
-    return (ret);
+    return ret;
 }
 
 void *OPENSSL_LH_delete(OPENSSL_LHASH *lh, const void *data)
@@ -131,7 +127,7 @@ void *OPENSSL_LH_delete(OPENSSL_LHASH *lh, const void *data)
 
     if (*rn == NULL) {
         lh->num_no_delete++;
-        return (NULL);
+        return NULL;
     } else {
         nn = *rn;
         *rn = nn->next;
@@ -145,7 +141,7 @@ void *OPENSSL_LH_delete(OPENSSL_LHASH *lh, const void *data)
         (lh->down_load >= (lh->num_items * LH_LOAD_MULT / lh->num_nodes)))
         contract(lh);
 
-    return (ret);
+    return ret;
 }
 
 void *OPENSSL_LH_retrieve(OPENSSL_LHASH *lh, const void *data)
@@ -153,17 +149,16 @@ void *OPENSSL_LH_retrieve(OPENSSL_LHASH *lh, const void *data)
     unsigned long hash;
     OPENSSL_LH_NODE **rn;
     void *ret;
-    int scratch;
 
     lh->error = 0;
     rn = getrn(lh, data, &hash);
 
     if (*rn == NULL) {
-        CRYPTO_atomic_add(&lh->num_retrieve_miss, 1, &scratch, lh->retrieve_stats_lock);
+        lh->num_retrieve_miss++;
         return NULL;
     } else {
         ret = (*rn)->data;
-        CRYPTO_atomic_add(&lh->num_retrieve, 1, &scratch, lh->retrieve_stats_lock);
+        lh->num_retrieve++;
     }
     return ret;
 }
@@ -292,10 +287,9 @@ static OPENSSL_LH_NODE **getrn(OPENSSL_LHASH *lh,
     OPENSSL_LH_NODE **ret, *n1;
     unsigned long hash, nn;
     OPENSSL_LH_COMPFUNC cf;
-    int scratch;
 
     hash = (*(lh->hash)) (data);
-    CRYPTO_atomic_add(&lh->num_hash_calls, 1, &scratch, lh->retrieve_stats_lock);
+    lh->num_hash_calls++;
     *rhash = hash;
 
     nn = hash % lh->pmax;
@@ -305,17 +299,17 @@ static OPENSSL_LH_NODE **getrn(OPENSSL_LHASH *lh,
     cf = lh->comp;
     ret = &(lh->b[(int)nn]);
     for (n1 = *ret; n1 != NULL; n1 = n1->next) {
-        CRYPTO_atomic_add(&lh->num_hash_comps, 1, &scratch, lh->retrieve_stats_lock);
+        lh->num_hash_comps++;
         if (n1->hash != hash) {
             ret = &(n1->next);
             continue;
         }
-        CRYPTO_atomic_add(&lh->num_comp_calls, 1, &scratch, lh->retrieve_stats_lock);
+        lh->num_comp_calls++;
         if (cf(n1->data, data) == 0)
             break;
         ret = &(n1->next);
     }
-    return (ret);
+    return ret;
 }
 
 /*
@@ -331,12 +325,7 @@ unsigned long OPENSSL_LH_strhash(const char *c)
     int r;
 
     if ((c == NULL) || (*c == '\0'))
-        return (ret);
-/*-
-    unsigned char b[16];
-    MD5(c,strlen(c),b);
-    return(b[0]|(b[1]<<8)|(b[2]<<16)|(b[3]<<24));
-*/
+        return ret;
 
     n = 0x100;
     while (*c) {
@@ -348,7 +337,7 @@ unsigned long OPENSSL_LH_strhash(const char *c)
         ret ^= v * v;
         c++;
     }
-    return ((ret >> 16) ^ ret);
+    return (ret >> 16) ^ ret;
 }
 
 unsigned long OPENSSL_LH_num_items(const OPENSSL_LHASH *lh)

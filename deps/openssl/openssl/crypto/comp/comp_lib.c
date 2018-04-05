@@ -1,5 +1,5 @@
 /*
- * Copyright 1998-2016 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 1998-2018 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the OpenSSL license (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -19,13 +19,13 @@ COMP_CTX *COMP_CTX_new(COMP_METHOD *meth)
     COMP_CTX *ret;
 
     if ((ret = OPENSSL_zalloc(sizeof(*ret))) == NULL)
-        return (NULL);
+        return NULL;
     ret->meth = meth;
     if ((ret->meth->init != NULL) && !ret->meth->init(ret)) {
         OPENSSL_free(ret);
         ret = NULL;
     }
-    return (ret);
+    return ret;
 }
 
 const COMP_METHOD *COMP_CTX_get_method(const COMP_CTX *ctx)
@@ -47,7 +47,6 @@ void COMP_CTX_free(COMP_CTX *ctx)
 {
     if (ctx == NULL)
         return;
-
     if (ctx->meth->finish != NULL)
         ctx->meth->finish(ctx);
 
@@ -59,14 +58,14 @@ int COMP_compress_block(COMP_CTX *ctx, unsigned char *out, int olen,
 {
     int ret;
     if (ctx->meth->compress == NULL) {
-        return (-1);
+        return -1;
     }
     ret = ctx->meth->compress(ctx, out, olen, in, ilen);
     if (ret > 0) {
         ctx->compress_in += ilen;
         ctx->compress_out += ret;
     }
-    return (ret);
+    return ret;
 }
 
 int COMP_expand_block(COMP_CTX *ctx, unsigned char *out, int olen,
@@ -75,14 +74,14 @@ int COMP_expand_block(COMP_CTX *ctx, unsigned char *out, int olen,
     int ret;
 
     if (ctx->meth->expand == NULL) {
-        return (-1);
+        return -1;
     }
     ret = ctx->meth->expand(ctx, out, olen, in, ilen);
     if (ret > 0) {
         ctx->expand_in += ilen;
         ctx->expand_out += ret;
     }
-    return (ret);
+    return ret;
 }
 
 int COMP_CTX_get_type(const COMP_CTX* comp)

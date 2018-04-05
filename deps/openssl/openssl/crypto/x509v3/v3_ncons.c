@@ -1,5 +1,5 @@
 /*
- * Copyright 2003-2016 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 2003-2017 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the OpenSSL license (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -7,9 +7,9 @@
  * https://www.openssl.org/source/license.html
  */
 
-#include <stdio.h>
 #include "internal/cryptlib.h"
 #include "internal/numbers.h"
+#include <stdio.h>
 #include "internal/asn1_int.h"
 #include <openssl/asn1t.h>
 #include <openssl/conf.h>
@@ -316,6 +316,7 @@ int NAME_CONSTRAINTS_check_CN(X509 *x, NAME_CONSTRAINTS *nc)
     for (i = -1;;) {
         X509_NAME_ENTRY *ne;
         ASN1_STRING *hn;
+
         i = X509_NAME_get_index_by_NID(nm, NID_commonName, i);
         if (i == -1)
             break;

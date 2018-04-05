@@ -17,12 +17,17 @@ use TLSProxy::Record;
 use TLSProxy::Message;
 use TLSProxy::ClientHello;
 use TLSProxy::ServerHello;
+use TLSProxy::EncryptedExtensions;
+use TLSProxy::Certificate;
+use TLSProxy::CertificateVerify;
 use TLSProxy::ServerKeyExchange;
 use TLSProxy::NewSessionTicket;
-use Time::HiRes qw/usleep/;
 
 my $have_IPv6 = 0;
 my $IP_factory;
+
+my $is_tls13 = 0;
+my $ciphersuite = undef;
 
 sub new
 {
@@ -35,23 +40,26 @@ sub new
     my $self = {
         #Public read/write
         proxy_addr => "localhost",
-        proxy_port => 4453,
         server_addr => "localhost",
-        server_port => 4443,
         filter => $filter,
         serverflags => "",
         clientflags => "",
         serverconnects => 1,
-        serverpid => 0,
-        clientpid => 0,
         reneg => 0,
+        sessionfile => undef,
 
         #Public read
+        proxy_port => 0,
+        server_port => 0,
+        serverpid => 0,
+        clientpid => 0,
         execute => $execute,
         cert => $cert,
         debug => $debug,
         cipherc => "",
+        ciphersuitesc => "",
         ciphers => "AES128-SHA",
+        ciphersuitess => "TLS_AES_128_GCM_SHA256",
         flight => -1,
         direction => -1,
         partial => ["", ""],
@@ -101,18 +109,17 @@ sub new
     $proxaddr =~ s/[\[\]]//g; # Remove [ and ]
     my @proxyargs = (
         LocalHost   => $proxaddr,
-        LocalPort   => $self->{proxy_port},
+        LocalPort   => 0,
         Proto       => "tcp",
         Listen      => SOMAXCONN,
        );
-    push @proxyargs, ReuseAddr => 1
-        unless $^O eq "MSWin32";
     $self->{proxy_sock} = $IP_factory->(@proxyargs);
 
     if ($self->{proxy_sock}) {
+        $self->{proxy_port} = $self->{proxy_sock}->sockport();
         print "Proxy started on port ".$self->{proxy_port}."\n";
     } else {
-        warn "Failed creating proxy socket (".$proxaddr.",".$self->{proxy_port}."): $!\n";
+        warn "Failed creating proxy socket (".$proxaddr.",0): $!\n";
     }
 
     return bless $self, $class;
@@ -130,13 +137,17 @@ sub clearClient
     my $self = shift;
 
     $self->{cipherc} = "";
+    $self->{ciphersuitec} = "";
     $self->{flight} = -1;
     $self->{direction} = -1;
     $self->{partial} = ["", ""];
     $self->{record_list} = [];
     $self->{message_list} = [];
     $self->{clientflags} = "";
+    $self->{sessionfile} = undef;
     $self->{clientpid} = 0;
+    $is_tls13 = 0;
+    $ciphersuite = undef;
 
     TLSProxy::Message->clear();
     TLSProxy::Record->clear();
@@ -148,6 +159,7 @@ sub clear
 
     $self->clearClient;
     $self->{ciphers} = "AES128-SHA";
+    $self->{ciphersuitess} = "TLS_AES_128_GCM_SHA256";
     $self->{serverflags} = "";
     $self->{serverconnects} = 1;
     $self->{serverpid} = 0;
@@ -170,6 +182,19 @@ sub clientrestart
     $self->clientstart;
 }
 
+sub connect_to_server
+{
+    my $self = shift;
+    my $servaddr = $self->{server_addr};
+
+    $servaddr =~ s/[\[\]]//g; # Remove [ and ]
+
+    $self->{server_sock} = $IP_factory->(PeerAddr => $servaddr,
+                                         PeerPort => $self->{server_port},
+                                         Proto => 'tcp')
+                           or die "unable to connect: $!\n";
+}
+
 sub start
 {
     my ($self) = shift;
@@ -179,27 +204,84 @@ sub start
         return 0;
     }
 
-    $pid = fork();
-    if ($pid == 0) {
-        my $execcmd = $self->execute
-            ." s_server -max_protocol TLSv1.2 -no_comp -rev -engine ossltest -accept "
-            .($self->server_port)
-            ." -cert ".$self->cert." -naccept ".$self->serverconnects;
-        unless ($self->supports_IPv6) {
-            $execcmd .= " -4";
-        }
-        if ($self->ciphers ne "") {
-            $execcmd .= " -cipher ".$self->ciphers;
-        }
-        if ($self->serverflags ne "") {
-            $execcmd .= " ".$self->serverflags;
-        }
-        if ($self->debug) {
-            print STDERR "Server command: $execcmd\n";
-        }
-        exec($execcmd);
+    my $execcmd = $self->execute
+        ." s_server -max_protocol TLSv1.3 -no_comp -rev -engine ossltest"
+        ." -accept 0 -cert ".$self->cert." -cert2 ".$self->cert
+        ." -naccept ".$self->serverconnects;
+    unless ($self->supports_IPv6) {
+        $execcmd .= " -4";
     }
-    $self->serverpid($pid);
+    if ($self->ciphers ne "") {
+        $execcmd .= " -cipher ".$self->ciphers;
+    }
+    if ($self->ciphersuitess ne "") {
+        $execcmd .= " -ciphersuites ".$self->ciphersuitess;
+    }
+    if ($self->serverflags ne "") {
+        $execcmd .= " ".$self->serverflags;
+    }
+    if ($self->debug) {
+        print STDERR "Server command: $execcmd\n";
+    }
+
+    open(my $savedin, "<&STDIN");
+
+    # Temporarily replace STDIN so that sink process can inherit it...
+    $pid = open(STDIN, "$execcmd |") or die "Failed to $execcmd: $!\n";
+    $self->{real_serverpid} = $pid;
+
+    # Process the output from s_server until we find the ACCEPT line, which
+    # tells us what the accepting address and port are.
+    while (<>) {
+        print;
+        s/\R$//;                # Better chomp
+        next unless (/^ACCEPT\s.*:(\d+)$/);
+        $self->{server_port} = $1;
+        last;
+    }
+
+    if ($self->{server_port} == 0) {
+        # This actually means that s_server exited, because otherwise
+        # we would still searching for ACCEPT...
+        die "no ACCEPT detected in '$execcmd' output\n";
+    }
+
+    # Just make sure everything else is simply printed [as separate lines].
+    # The sub process simply inherits our STD* and will keep consuming
+    # server's output and printing it as long as there is anything there,
+    # out of our way.
+    my $error;
+    $pid = undef;
+    if (eval { require Win32::Process; 1; }) {
+        if (Win32::Process::Create(my $h, $^X, "perl -ne print", 0, 0, ".")) {
+            $pid = $h->GetProcessID();
+        } else {
+            $error = Win32::FormatMessage(Win32::GetLastError());
+        }
+    } else {
+        if (defined($pid = fork)) {
+            $pid or exec("$^X -ne print") or exit($!);
+        } else {
+            $error = $!;
+        }
+    }
+
+    # Change back to original stdin
+    open(STDIN, "<&", $savedin);
+    close($savedin);
+
+    if (!defined($pid)) {
+        kill(3, $self->{real_serverpid});
+        die "Failed to capture s_server's output: $error\n";
+    }
+
+    $self->{serverpid} = $pid;
+
+    print STDERR "Server responds on ",
+        $self->{server_addr}, ":", $self->{server_port}, "\n";
+
+    # Connect right away...
+    $self->connect_to_server();
 
     return $self->clientstart;
 }
@@ -207,38 +289,57 @@ sub start
 sub clientstart
 {
     my ($self) = shift;
-    my $oldstdout;
 
     if ($self->execute) {
-        my $pid = fork();
-        if ($pid == 0) {
-            my $echostr;
-            if ($self->reneg()) {
-                $echostr = "R";
-            } else {
-                $echostr = "test";
-            }
-            my $execcmd = "echo ".$echostr." | ".$self->execute
-                 ." s_client -max_protocol TLSv1.2 -engine ossltest -connect "
-                 .($self->proxy_addr).":".($self->proxy_port);
-            unless ($self->supports_IPv6) {
-                $execcmd .= " -4";
-            }
-            if ($self->cipherc ne "") {
-                $execcmd .= " -cipher ".$self->cipherc;
-            }
-            if ($self->clientflags ne "") {
-                $execcmd .= " ".$self->clientflags;
-            }
-            if ($self->debug) {
-                print STDERR "Client command: $execcmd\n";
-            }
-            exec($execcmd);
+        my $pid;
+        my $execcmd = $self->execute
+             ." s_client -max_protocol TLSv1.3 -engine ossltest -connect "
+             .($self->proxy_addr).":".($self->proxy_port);
+        unless ($self->supports_IPv6) {
+            $execcmd .= " -4";
         }
-        $self->clientpid($pid);
+        if ($self->cipherc ne "") {
+            $execcmd .= " -cipher ".$self->cipherc;
+        }
+        if ($self->ciphersuitesc ne "") {
+            $execcmd .= " -ciphersuites ".$self->ciphersuitesc;
+        }
+        if ($self->clientflags ne "") {
+            $execcmd .= " ".$self->clientflags;
+        }
+        if (defined $self->sessionfile) {
+            $execcmd .= " -ign_eof";
+        }
+        if ($self->debug) {
+            print STDERR "Client command: $execcmd\n";
+        }
+
+        open(my $savedout, ">&STDOUT");
+        # If we open pipe with new descriptor, attempt to close it,
+        # explicitly or implicitly, would incur waitpid and effectively
+        # dead-lock...
+        if (!($pid = open(STDOUT, "| $execcmd"))) {
+            my $err = $!;
+            kill(3, $self->{real_serverpid});
+            die "Failed to $execcmd: $err\n";
+        }
+        $self->{clientpid} = $pid;
+
+        # queue [magic] input
+        print $self->reneg ? "R" : "test";
+
+        # this closes client's stdin without waiting for its pid
+        open(STDOUT, ">&", $savedout);
+        close($savedout);
     }
 
     # Wait for incoming connection from client
+    my $fdset = IO::Select->new($self->{proxy_sock});
+    if (!$fdset->can_read(1)) {
+        kill(3, $self->{real_serverpid});
+        die "s_client didn't try to connect\n";
+    }
+
     my $client_sock;
     if(!($client_sock = $self->{proxy_sock}->accept())) {
         warn "Failed accepting incoming connection: $!\n";
@@ -247,89 +348,75 @@ sub clientstart
 
     print "Connection opened\n";
 
-    # Now connect to the server
-    my $retry = 50;
-    my $server_sock;
-    #We loop over this a few times because sometimes s_server can take a while
-    #to start up
-    do {
-        my $servaddr = $self->server_addr;
-        $servaddr =~ s/[\[\]]//g; # Remove [ and ]
-        eval {
-            $server_sock = $IP_factory->(
-                PeerAddr => $servaddr,
-                PeerPort => $self->server_port,
-                MultiHomed => 1,
-                Proto => 'tcp'
-            );
-        };
-
-        $retry--;
-        #Some buggy IP factories can return a defined server_sock that hasn't
-        #actually connected, so we check peerport too
-        if ($@ || !defined($server_sock) || !defined($server_sock->peerport)) {
-            $server_sock->close() if defined($server_sock);
-            undef $server_sock;
-            if ($retry) {
-                #Sleep for a short while
-                select(undef, undef, undef, 0.1);
-            } else {
-                warn "Failed to start up server (".$servaddr.",".$self->server_port."): $!\n";
-                return 0;
-            }
-        }
-    } while (!$server_sock);
-
-    my $sel = IO::Select->new($server_sock, $client_sock);
+    my $server_sock = $self->{server_sock};
     my $indata;
-    my @handles = ($server_sock, $client_sock);
 
     #Wait for either the server socket or the client socket to become readable
+    $fdset = IO::Select->new($server_sock, $client_sock);
     my @ready;
+    my $ctr = 0;
     local $SIG{PIPE} = "IGNORE";
-    while(!(TLSProxy::Message->end) && (@ready = $sel->can_read)) {
+    while(     (!(TLSProxy::Message->end)
+                || (defined $self->sessionfile()
+                    && (-s $self->sessionfile()) == 0))
+            && $ctr < 10) {
+        if (!(@ready = $fdset->can_read(1))) {
+            $ctr++;
+            next;
+        }
         foreach my $hand (@ready) {
             if ($hand == $server_sock) {
                 $server_sock->sysread($indata, 16384) or goto END;
                 $indata = $self->process_packet(1, $indata);
                 $client_sock->syswrite($indata);
+                $ctr = 0;
             } elsif ($hand == $client_sock) {
                 $client_sock->sysread($indata, 16384) or goto END;
                 $indata = $self->process_packet(0, $indata);
                 $server_sock->syswrite($indata);
+                $ctr = 0;
             } else {
-                print "Err\n";
-                goto END;
+                kill(3, $self->{real_serverpid});
+                die "Unexpected handle";
             }
         }
+    }
+
+    if ($ctr >= 10) {
+        kill(3, $self->{real_serverpid});
+        die "No progress made";
     }
 
     END:
     print "Connection closed\n";
     if($server_sock) {
         $server_sock->close();
+        $self->{server_sock} = undef;
     }
     if($client_sock) {
         #Closing this also kills the child process
         $client_sock->close();
     }
-    if(!$self->debug) {
-        select($oldstdout);
-    }
-    $self->serverconnects($self->serverconnects - 1);
-    if ($self->serverconnects == 0) {
-        die "serverpid is zero\n" if $self->serverpid == 0;
-        print "Waiting for server process to close: "
-              .$self->serverpid."\n";
-        waitpid( $self->serverpid, 0);
+
+    my $pid;
+    if (--$self->{serverconnects} == 0) {
+        $pid = $self->{serverpid};
+        die "serverpid is zero\n" if $pid == 0;
+        print "Waiting for server process to close: $pid...\n";
+        # recall that we wait on process that buffers server's output
+        waitpid($pid, 0);
         die "exit code $? from server process\n" if $? != 0;
     } else {
-        # Give s_server sufficient time to finish what it was doing
-        usleep(250000);
+        # It's a bit counter-intuitive spot to make next connection to
+        # the s_server. Rationale is that established connection works
+        # as syncronization point, in sense that this way we know that
+        # s_server is actually done with current session...
+        $self->connect_to_server();
     }
-    die "clientpid is zero\n" if $self->clientpid == 0;
-    print "Waiting for client process to close: ".$self->clientpid."\n";
-    waitpid($self->clientpid, 0);
+    $pid = $self->{clientpid};
+    die "clientpid is zero\n" if $pid == 0;
+    print "Waiting for client process to close: $pid...\n";
+    waitpid($pid, 0);
 
     return 1;
 }
@@ -360,7 +447,7 @@ sub process_packet
     #list of messages in those records and any partial message
     my @ret = TLSProxy::Record->get_records($server, $self->flight, $self->{partial}[$server].$packet);
     $self->{partial}[$server] = $ret[2];
-    push @{$self->record_list}, @{$ret[0]};
+    push @{$self->{record_list}}, @{$ret[0]};
     push @{$self->{message_list}}, @{$ret[1]};
 
     print "\n";
@@ -377,7 +464,7 @@ sub process_packet
     #Reconstruct the packet
     $packet = "";
     foreach my $record (@{$self->record_list}) {
-        $packet .= $record->reconstruct_record();
+        $packet .= $record->reconstruct_record($server);
     }
 
     print "Forwarded packet length = ".length($packet)."\n\n";
@@ -436,29 +523,33 @@ sub proxy_port
     my $self = shift;
     return $self->{proxy_port};
 }
-
-#Read/write accessors
 sub server_addr
 {
     my $self = shift;
-    if (@_) {
-      $self->{server_addr} = shift;
-    }
     return $self->{server_addr};
 }
 sub server_port
 {
     my $self = shift;
-    if (@_) {
-      $self->{server_port} = shift;
-    }
     return $self->{server_port};
 }
+sub serverpid
+{
+    my $self = shift;
+    return $self->{serverpid};
+}
+sub clientpid
+{
+    my $self = shift;
+    return $self->{clientpid};
+}
+
+#Read/write accessors
 sub filter
 {
     my $self = shift;
     if (@_) {
-      $self->{filter} = shift;
+        $self->{filter} = shift;
     }
     return $self->{filter};
 }
@@ -466,23 +557,39 @@ sub cipherc
 {
     my $self = shift;
     if (@_) {
-      $self->{cipherc} = shift;
+        $self->{cipherc} = shift;
     }
     return $self->{cipherc};
+}
+sub ciphersuitesc
+{
+    my $self = shift;
+    if (@_) {
+        $self->{ciphersuitesc} = shift;
+    }
+    return $self->{ciphersuitesc};
 }
 sub ciphers
 {
     my $self = shift;
     if (@_) {
-      $self->{ciphers} = shift;
+        $self->{ciphers} = shift;
     }
     return $self->{ciphers};
+}
+sub ciphersuitess
+{
+    my $self = shift;
+    if (@_) {
+        $self->{ciphersuitess} = shift;
+    }
+    return $self->{ciphersuitess};
 }
 sub serverflags
 {
     my $self = shift;
     if (@_) {
-      $self->{serverflags} = shift;
+        $self->{serverflags} = shift;
     }
     return $self->{serverflags};
 }
@@ -490,7 +597,7 @@ sub clientflags
 {
     my $self = shift;
     if (@_) {
-      $self->{clientflags} = shift;
+        $self->{clientflags} = shift;
     }
     return $self->{clientflags};
 }
@@ -498,7 +605,7 @@ sub serverconnects
 {
     my $self = shift;
     if (@_) {
-      $self->{serverconnects} = shift;
+        $self->{serverconnects} = shift;
     }
     return $self->{serverconnects};
 }
@@ -514,22 +621,6 @@ sub message_list
     }
     return $self->{message_list};
 }
-sub serverpid
-{
-    my $self = shift;
-    if (@_) {
-      $self->{serverpid} = shift;
-    }
-    return $self->{serverpid};
-}
-sub clientpid
-{
-    my $self = shift;
-    if (@_) {
-        $self->{clientpid} = shift;
-    }
-    return $self->{clientpid};
-}
 
 sub fill_known_data
 {
@@ -541,13 +632,47 @@ sub fill_known_data
     return $ret;
 }
 
+sub is_tls13
+{
+    my $class = shift;
+    if (@_) {
+        $is_tls13 = shift;
+    }
+    return $is_tls13;
+}
+
 sub reneg
 {
     my $self = shift;
     if (@_) {
-      $self->{reneg} = shift;
+        $self->{reneg} = shift;
     }
     return $self->{reneg};
+}
+
+#Setting a sessionfile means that the client will not close until the given
+#file exists. This is useful in TLSv1.3 where otherwise s_client will close
+#immediately at the end of the handshake, but before the session has been
+#received from the server. A side effect of this is that s_client never sends
+#a close_notify, so instead we consider success to be when it sends application
+#data over the connection.
+sub sessionfile
+{
+    my $self = shift;
+    if (@_) {
+        $self->{sessionfile} = shift;
+        TLSProxy::Message->successondata(1);
+    }
+    return $self->{sessionfile};
+}
+
+sub ciphersuite
+{
+    my $class = shift;
+    if (@_) {
+        $ciphersuite = shift;
+    }
+    return $ciphersuite;
 }
 
 1;
