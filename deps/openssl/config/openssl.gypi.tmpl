@@ -14,6 +14,9 @@ foreach $src (@libcrypto_srcs) {
     'openssl_defines_%%-$arch-%%': [
 %%- foreach $define (@{$config{defines}}) {
   $OUT .= "      '$define',\n";
+}
+foreach $define (@{$config{lib_defines}}) {
+  $OUT .= "      '$define',\n";
 } -%%    ],
     'openssl_cflags_%%-$arch-%%': [
       '%%-$target{cflags}-%%',
