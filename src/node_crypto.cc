@@ -380,7 +380,7 @@ void SecureContext::Init(const FunctionCallbackInfo<Value>& args) {
   Environment* env = sc->env();
 
   int min_version = 0;
-  int max_version = 0;
+  int max_version = TLS1_2_VERSION;;
   const SSL_METHOD* method = TLS_method();
 
   if (args.Length() == 1 && args[0]->IsString()) {
