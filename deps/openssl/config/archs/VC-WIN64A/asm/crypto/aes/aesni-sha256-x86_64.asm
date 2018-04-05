@@ -98,15 +98,23 @@ $L$SEH_begin_aesni_cbc_sha256_enc_xop:
 	mov	r9,QWORD[48+rsp]
 
 
+
 $L$xop_shortcut:
 	mov	r10,QWORD[56+rsp]
+	mov	rax,rsp
+
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
-	mov	r11,rsp
+
 	sub	rsp,288
 	and	rsp,-64
 
@@ -122,7 +130,8 @@ $L$xop_shortcut:
 	mov	QWORD[((64+32))+rsp],r8
 	mov	QWORD[((64+40))+rsp],r9
 	mov	QWORD[((64+48))+rsp],r10
-	mov	QWORD[((64+56))+rsp],r11
+	mov	QWORD[120+rsp],rax
+
 	movaps	XMMWORD[128+rsp],xmm6
 	movaps	XMMWORD[144+rsp],xmm7
 	movaps	XMMWORD[160+rsp],xmm8
@@ -1238,7 +1247,8 @@ DB	143,232,120,194,239,2
 	jb	NEAR $L$loop_xop
 
 	mov	r8,QWORD[((64+32))+rsp]
-	mov	rsi,QWORD[((64+56))+rsp]
+	mov	rsi,QWORD[120+rsp]
+
 	vmovdqu	XMMWORD[r8],xmm8
 	vzeroall
 	movaps	xmm6,XMMWORD[128+rsp]
@@ -1251,17 +1261,25 @@ DB	143,232,120,194,239,2
 	movaps	xmm13,XMMWORD[240+rsp]
 	movaps	xmm14,XMMWORD[256+rsp]
 	movaps	xmm15,XMMWORD[272+rsp]
-	mov	r15,QWORD[rsi]
-	mov	r14,QWORD[8+rsi]
-	mov	r13,QWORD[16+rsi]
-	mov	r12,QWORD[24+rsi]
-	mov	rbp,QWORD[32+rsi]
-	mov	rbx,QWORD[40+rsi]
-	lea	rsp,[48+rsi]
+	mov	r15,QWORD[((-48))+rsi]
+
+	mov	r14,QWORD[((-40))+rsi]
+
+	mov	r13,QWORD[((-32))+rsi]
+
+	mov	r12,QWORD[((-24))+rsi]
+
+	mov	rbp,QWORD[((-16))+rsi]
+
+	mov	rbx,QWORD[((-8))+rsi]
+
+	lea	rsp,[rsi]
+
 $L$epilogue_xop:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_aesni_cbc_sha256_enc_xop:
 
 ALIGN	64
@@ -1278,15 +1296,23 @@ $L$SEH_begin_aesni_cbc_sha256_enc_avx:
 	mov	r9,QWORD[48+rsp]
 
 
+
 $L$avx_shortcut:
 	mov	r10,QWORD[56+rsp]
+	mov	rax,rsp
+
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
-	mov	r11,rsp
+
 	sub	rsp,288
 	and	rsp,-64
 
@@ -1302,7 +1328,8 @@ $L$avx_shortcut:
 	mov	QWORD[((64+32))+rsp],r8
 	mov	QWORD[((64+40))+rsp],r9
 	mov	QWORD[((64+48))+rsp],r10
-	mov	QWORD[((64+56))+rsp],r11
+	mov	QWORD[120+rsp],rax
+
 	movaps	XMMWORD[128+rsp],xmm6
 	movaps	XMMWORD[144+rsp],xmm7
 	movaps	XMMWORD[160+rsp],xmm8
@@ -2449,7 +2476,8 @@ $L$avx_00_47:
 	jb	NEAR $L$loop_avx
 
 	mov	r8,QWORD[((64+32))+rsp]
-	mov	rsi,QWORD[((64+56))+rsp]
+	mov	rsi,QWORD[120+rsp]
+
 	vmovdqu	XMMWORD[r8],xmm8
 	vzeroall
 	movaps	xmm6,XMMWORD[128+rsp]
@@ -2462,17 +2490,25 @@ $L$avx_00_47:
 	movaps	xmm13,XMMWORD[240+rsp]
 	movaps	xmm14,XMMWORD[256+rsp]
 	movaps	xmm15,XMMWORD[272+rsp]
-	mov	r15,QWORD[rsi]
-	mov	r14,QWORD[8+rsi]
-	mov	r13,QWORD[16+rsi]
-	mov	r12,QWORD[24+rsi]
-	mov	rbp,QWORD[32+rsi]
-	mov	rbx,QWORD[40+rsi]
-	lea	rsp,[48+rsi]
+	mov	r15,QWORD[((-48))+rsi]
+
+	mov	r14,QWORD[((-40))+rsi]
+
+	mov	r13,QWORD[((-32))+rsi]
+
+	mov	r12,QWORD[((-24))+rsi]
+
+	mov	rbp,QWORD[((-16))+rsi]
+
+	mov	rbx,QWORD[((-8))+rsi]
+
+	lea	rsp,[rsi]
+
 $L$epilogue_avx:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_aesni_cbc_sha256_enc_avx:
 
 ALIGN	64
@@ -2489,15 +2525,23 @@ $L$SEH_begin_aesni_cbc_sha256_enc_avx2:
 	mov	r9,QWORD[48+rsp]
 
 
+
 $L$avx2_shortcut:
 	mov	r10,QWORD[56+rsp]
+	mov	rax,rsp
+
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
-	mov	r11,rsp
+
 	sub	rsp,736
 	and	rsp,-256*4
 	add	rsp,448
@@ -2514,7 +2558,8 @@ $L$avx2_shortcut:
 	mov	QWORD[((64+32))+rsp],r8
 	mov	QWORD[((64+40))+rsp],r9
 	mov	QWORD[((64+48))+rsp],r10
-	mov	QWORD[((64+56))+rsp],r11
+	mov	QWORD[120+rsp],rax
+
 	movaps	XMMWORD[128+rsp],xmm6
 	movaps	XMMWORD[144+rsp],xmm7
 	movaps	XMMWORD[160+rsp],xmm8
@@ -4086,7 +4131,8 @@ $L$ower_avx2:
 $L$done_avx2:
 	lea	rsp,[rbp]
 	mov	r8,QWORD[((64+32))+rsp]
-	mov	rsi,QWORD[((64+56))+rsp]
+	mov	rsi,QWORD[120+rsp]
+
 	vmovdqu	XMMWORD[r8],xmm8
 	vzeroall
 	movaps	xmm6,XMMWORD[128+rsp]
@@ -4099,17 +4145,25 @@ $L$done_avx2:
 	movaps	xmm13,XMMWORD[240+rsp]
 	movaps	xmm14,XMMWORD[256+rsp]
 	movaps	xmm15,XMMWORD[272+rsp]
-	mov	r15,QWORD[rsi]
-	mov	r14,QWORD[8+rsi]
-	mov	r13,QWORD[16+rsi]
-	mov	r12,QWORD[24+rsi]
-	mov	rbp,QWORD[32+rsi]
-	mov	rbx,QWORD[40+rsi]
-	lea	rsp,[48+rsi]
+	mov	r15,QWORD[((-48))+rsi]
+
+	mov	r14,QWORD[((-40))+rsi]
+
+	mov	r13,QWORD[((-32))+rsi]
+
+	mov	r12,QWORD[((-24))+rsi]
+
+	mov	rbp,QWORD[((-16))+rsi]
+
+	mov	rbx,QWORD[((-8))+rsi]
+
+	lea	rsp,[rsi]
+
 $L$epilogue_avx2:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_aesni_cbc_sha256_enc_avx2:
 
 ALIGN	32
@@ -4554,7 +4608,6 @@ $L$not_in_shaext:
 $L$not_in_avx2:
 	mov	rsi,rax
 	mov	rax,QWORD[((64+56))+rax]
-	lea	rax,[48+rax]
 
 	mov	rbx,QWORD[((-8))+rax]
 	mov	rbp,QWORD[((-16))+rax]

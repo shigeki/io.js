@@ -1,3 +1,5 @@
+#include "s390x_arch.h"
+
 .text
 .align	64
 .type	Ktable,@object
@@ -8,7 +10,7 @@ Ktable: .long	0x5a827999,0x6ed9eba1,0x8f1bbcdc,0xca62c1d6
 .type	sha1_block_data_order,@function
 sha1_block_data_order:
 	larl	%r1,OPENSSL_s390xcap_P
-	lg	%r0,16(%r1)	# check kimd capabilities
+	lg	%r0,S390X_KIMD(%r1)	# check kimd capabilities
 	tmhh	%r0,16384
 	jz	.Lsoftware
 	lghi	%r0,1

@@ -8,7 +8,9 @@ section	.text code align=64
 
 ALIGN	16
 _mul_1x1:
+
 	sub	rsp,128+8
+
 	mov	r9,-1
 	lea	rsi,[rax*1+rax]
 	shr	r9,3
@@ -198,16 +200,20 @@ DB	102,72,15,126,199
 	xor	rdx,rdi
 
 	add	rsp,128+8
+
 	DB	0F3h,0C3h		;repret
 $L$end_mul_1x1:
+
 
 EXTERN	OPENSSL_ia32cap_P
 global	bn_GF2m_mul_2x2
 
 ALIGN	16
 bn_GF2m_mul_2x2:
-	mov	rax,QWORD[OPENSSL_ia32cap_P]
-	bt	rax,33
+
+	mov	rax,rsp
+	mov	r10,QWORD[OPENSSL_ia32cap_P]
+	bt	r10,33
 	jnc	NEAR $L$vanilla_mul_2x2
 
 DB	102,72,15,110,194
@@ -235,14 +241,20 @@ DB	102,15,58,68,229,0
 ALIGN	16
 $L$vanilla_mul_2x2:
 	lea	rsp,[((-136))+rsp]
+
 	mov	r10,QWORD[176+rsp]
 	mov	QWORD[120+rsp],rdi
 	mov	QWORD[128+rsp],rsi
 	mov	QWORD[80+rsp],r14
+
 	mov	QWORD[88+rsp],r13
+
 	mov	QWORD[96+rsp],r12
+
 	mov	QWORD[104+rsp],rbp
+
 	mov	QWORD[112+rsp],rbx
+
 $L$body_mul_2x2:
 	mov	QWORD[32+rsp],rcx
 	mov	QWORD[40+rsp],rdx
@@ -287,15 +299,23 @@ $L$body_mul_2x2:
 	mov	QWORD[8+rbp],rax
 
 	mov	r14,QWORD[80+rsp]
+
 	mov	r13,QWORD[88+rsp]
+
 	mov	r12,QWORD[96+rsp]
+
 	mov	rbp,QWORD[104+rsp]
+
 	mov	rbx,QWORD[112+rsp]
+
 	mov	rdi,QWORD[120+rsp]
 	mov	rsi,QWORD[128+rsp]
 	lea	rsp,[136+rsp]
+
+$L$epilogue_mul_2x2:
 	DB	0F3h,0C3h		;repret
 $L$end_mul_2x2:
+
 
 DB	71,70,40,50,94,109,41,32,77,117,108,116,105,112,108,105
 DB	99,97,116,105,111,110,32,102,111,114,32,120,56,54,95,54
@@ -319,12 +339,18 @@ se_handler:
 	pushfq
 	sub	rsp,64
 
-	mov	rax,QWORD[152+r8]
+	mov	rax,QWORD[120+r8]
 	mov	rbx,QWORD[248+r8]
 
 	lea	r10,[$L$body_mul_2x2]
 	cmp	rbx,r10
 	jb	NEAR $L$in_prologue
+
+	mov	rax,QWORD[152+r8]
+
+	lea	r10,[$L$epilogue_mul_2x2]
+	cmp	rbx,r10
+	jae	NEAR $L$in_prologue
 
 	mov	r14,QWORD[80+rax]
 	mov	r13,QWORD[88+rax]
@@ -342,8 +368,9 @@ se_handler:
 	mov	QWORD[224+r8],r13
 	mov	QWORD[232+r8],r14
 
-$L$in_prologue:
 	lea	rax,[136+rax]
+
+$L$in_prologue:
 	mov	QWORD[152+r8],rax
 
 	mov	rdi,QWORD[40+r9]

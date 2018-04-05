@@ -34,6 +34,9 @@ extern "C" {
 #ifndef OPENSSL_THREADS
 # define OPENSSL_THREADS
 #endif
+#ifndef OPENSSL_RAND_SEED_OS
+# define OPENSSL_RAND_SEED_OS
+#endif
 #ifndef OPENSSL_NO_AFALGENG
 # define OPENSSL_NO_AFALGENG
 #endif
@@ -49,11 +52,17 @@ extern "C" {
 #ifndef OPENSSL_NO_CRYPTO_MDEBUG_BACKTRACE
 # define OPENSSL_NO_CRYPTO_MDEBUG_BACKTRACE
 #endif
+#ifndef OPENSSL_NO_DEVCRYPTOENG
+# define OPENSSL_NO_DEVCRYPTOENG
+#endif
 #ifndef OPENSSL_NO_EC_NISTP_64_GCC_128
 # define OPENSSL_NO_EC_NISTP_64_GCC_128
 #endif
 #ifndef OPENSSL_NO_EGD
 # define OPENSSL_NO_EGD
+#endif
+#ifndef OPENSSL_NO_EXTERNAL_TESTS
+# define OPENSSL_NO_EXTERNAL_TESTS
 #endif
 #ifndef OPENSSL_NO_FUZZ_AFL
 # define OPENSSL_NO_FUZZ_AFL
@@ -79,6 +88,9 @@ extern "C" {
 #ifndef OPENSSL_NO_SSL3_METHOD
 # define OPENSSL_NO_SSL3_METHOD
 #endif
+#ifndef OPENSSL_NO_TLS13DOWNGRADE
+# define OPENSSL_NO_TLS13DOWNGRADE
+#endif
 #ifndef OPENSSL_NO_UBSAN
 # define OPENSSL_NO_UBSAN
 #endif
@@ -87,6 +99,9 @@ extern "C" {
 #endif
 #ifndef OPENSSL_NO_WEAK_SSL_CIPHERS
 # define OPENSSL_NO_WEAK_SSL_CIPHERS
+#endif
+#ifndef OPENSSL_NO_DYNAMIC_ENGINE
+# define OPENSSL_NO_DYNAMIC_ENGINE
 #endif
 #ifndef OPENSSL_NO_AFALGENG
 # define OPENSSL_NO_AFALGENG
@@ -132,6 +147,12 @@ extern "C" {
 # define OPENSSL_API_COMPAT OPENSSL_MIN_API
 #endif
 
+#if OPENSSL_API_COMPAT < 0x10200000L
+# define DEPRECATEDIN_1_2_0(f)   DECLARE_DEPRECATED(f)
+#else
+# define DEPRECATEDIN_1_2_0(f)
+#endif
+
 #if OPENSSL_API_COMPAT < 0x10100000L
 # define DEPRECATEDIN_1_1_0(f)   DECLARE_DEPRECATED(f)
 #else
@@ -149,8 +170,6 @@ extern "C" {
 #else
 # define DEPRECATEDIN_0_9_8(f)
 #endif
-
-
 
 /* Generate 80386 code? */
 #undef I386_ONLY

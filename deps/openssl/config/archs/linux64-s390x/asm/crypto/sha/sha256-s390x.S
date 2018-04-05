@@ -1,3 +1,5 @@
+#include "s390x_arch.h"
+
 .text
 .align	64
 .type	K256,@object
@@ -24,7 +26,7 @@ K256:
 sha256_block_data_order:
 	sllg	%r4,%r4,6
 	larl	%r1,OPENSSL_s390xcap_P
-	lg	%r0,16(%r1)	# check kimd capabilities
+	lg	%r0,S390X_KIMD(%r1)	# check kimd capabilities
 	tmhh	%r0,8192
 	jz	.Lsoftware
 	lghi	%r0,2
@@ -1234,7 +1236,7 @@ sha256_block_data_order:
 	clg	%r3,256(%r15)
 	jne	.Lloop
 
-	lmg	%r6,%r15,272(%r15)	
+	lmg	%r6,%r15,272(%r15)
 	br	%r14
 .size	sha256_block_data_order,.-sha256_block_data_order
 .string	"SHA256 block transform for s390x, CRYPTOGAMS by <appro@openssl.org>"

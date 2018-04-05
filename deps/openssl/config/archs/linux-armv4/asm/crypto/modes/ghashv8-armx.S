@@ -50,8 +50,7 @@ gcm_init_v8:
 	vext.8	q9,q14,q14,#8		@ Karatsuba pre-processing
 	veor	q9,q9,q14
 	vext.8	q13,q8,q9,#8		@ pack Karatsuba pre-processed
-	vst1.64	{q13,q14},[r0]		@ store Htable[1..2]
-
+	vst1.64	{q13,q14},[r0]!	@ store Htable[1..2]
 	bx	lr
 .size	gcm_init_v8,.-gcm_init_v8
 .globl	gcm_gmult_v8
@@ -105,13 +104,13 @@ gcm_ghash_v8:
 						@ loaded value would have
 						@ to be rotated in order to
 						@ make it appear as in
-						@ alorithm specification
+						@ algorithm specification
 	subs	r3,r3,#32		@ see if r3 is 32 or larger
 	mov	r12,#16		@ r12 is used as post-
 						@ increment for input pointer;
 						@ as loop is modulo-scheduled
 						@ r12 is zeroed just in time
-						@ to preclude oversteping
+						@ to preclude overstepping
 						@ inp[len], which means that
 						@ last block[s] are actually
 						@ loaded twice, but last

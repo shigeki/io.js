@@ -20,13 +20,21 @@ $L$SEH_begin_rsaz_1024_sqr_avx2:
 	mov	r8,QWORD[40+rsp]
 
 
+
 	lea	rax,[rsp]
+
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 	vzeroupper
 	lea	rsp,[((-168))+rsp]
 	vmovaps	XMMWORD[(-216)+rax],xmm6
@@ -41,6 +49,7 @@ $L$SEH_begin_rsaz_1024_sqr_avx2:
 	vmovaps	XMMWORD[(-72)+rax],xmm15
 $L$sqr_1024_body:
 	mov	rbp,rax
+
 	mov	r13,rdx
 	sub	rsp,832
 	mov	r15,r13
@@ -653,6 +662,8 @@ DB	0x67
 
 	vzeroall
 	mov	rax,rbp
+
+$L$sqr_1024_in_tail:
 	movaps	xmm6,XMMWORD[((-216))+rax]
 	movaps	xmm7,XMMWORD[((-200))+rax]
 	movaps	xmm8,XMMWORD[((-184))+rax]
@@ -664,16 +675,24 @@ DB	0x67
 	movaps	xmm14,XMMWORD[((-88))+rax]
 	movaps	xmm15,XMMWORD[((-72))+rax]
 	mov	r15,QWORD[((-48))+rax]
+
 	mov	r14,QWORD[((-40))+rax]
+
 	mov	r13,QWORD[((-32))+rax]
+
 	mov	r12,QWORD[((-24))+rax]
+
 	mov	rbp,QWORD[((-16))+rax]
+
 	mov	rbx,QWORD[((-8))+rax]
+
 	lea	rsp,[rax]
+
 $L$sqr_1024_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_rsaz_1024_sqr_avx2:
 global	rsaz_1024_mul_avx2
 
@@ -690,13 +709,21 @@ $L$SEH_begin_rsaz_1024_mul_avx2:
 	mov	r8,QWORD[40+rsp]
 
 
+
 	lea	rax,[rsp]
+
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 	vzeroupper
 	lea	rsp,[((-168))+rsp]
 	vmovaps	XMMWORD[(-216)+rax],xmm6
@@ -711,6 +738,7 @@ $L$SEH_begin_rsaz_1024_mul_avx2:
 	vmovaps	XMMWORD[(-72)+rax],xmm15
 $L$mul_1024_body:
 	mov	rbp,rax
+
 	vzeroall
 	mov	r13,rdx
 	sub	rsp,64
@@ -1226,6 +1254,8 @@ $L$oop_mul_1024:
 	vzeroupper
 
 	mov	rax,rbp
+
+$L$mul_1024_in_tail:
 	movaps	xmm6,XMMWORD[((-216))+rax]
 	movaps	xmm7,XMMWORD[((-200))+rax]
 	movaps	xmm8,XMMWORD[((-184))+rax]
@@ -1237,16 +1267,24 @@ $L$oop_mul_1024:
 	movaps	xmm14,XMMWORD[((-88))+rax]
 	movaps	xmm15,XMMWORD[((-72))+rax]
 	mov	r15,QWORD[((-48))+rax]
+
 	mov	r14,QWORD[((-40))+rax]
+
 	mov	r13,QWORD[((-32))+rax]
+
 	mov	r12,QWORD[((-24))+rax]
+
 	mov	rbp,QWORD[((-16))+rax]
+
 	mov	rbx,QWORD[((-8))+rax]
+
 	lea	rsp,[rax]
+
 $L$mul_1024_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_rsaz_1024_mul_avx2:
 global	rsaz_1024_red2norm_avx2
 
@@ -1631,8 +1669,10 @@ global	rsaz_1024_gather5_avx2
 
 ALIGN	32
 rsaz_1024_gather5_avx2:
+
 	vzeroupper
 	mov	r11,rsp
+
 	lea	rax,[((-136))+rsp]
 $L$SEH_begin_rsaz_1024_gather5:
 
@@ -1764,9 +1804,11 @@ $L$oop_gather_1024:
 	movaps	xmm13,XMMWORD[((-56))+r11]
 	movaps	xmm14,XMMWORD[((-40))+r11]
 	movaps	xmm15,XMMWORD[((-24))+r11]
-$L$SEH_end_rsaz_1024_gather5:
 	lea	rsp,[r11]
+
 	DB	0F3h,0C3h		;repret
+
+$L$SEH_end_rsaz_1024_gather5:
 
 EXTERN	OPENSSL_ia32cap_P
 global	rsaz_avx2_eligible
@@ -1822,14 +1864,17 @@ rsaz_se_handler:
 	cmp	rbx,r10
 	jb	NEAR $L$common_seh_tail
 
-	mov	rax,QWORD[152+r8]
-
 	mov	r10d,DWORD[4+r11]
 	lea	r10,[r10*1+rsi]
 	cmp	rbx,r10
 	jae	NEAR $L$common_seh_tail
 
-	mov	rax,QWORD[160+r8]
+	mov	rbp,QWORD[160+r8]
+
+	mov	r10d,DWORD[8+r11]
+	lea	r10,[r10*1+rsi]
+	cmp	rbx,r10
+	cmovc	rax,rbp
 
 	mov	r15,QWORD[((-48))+rax]
 	mov	r14,QWORD[((-40))+rax]
@@ -1907,11 +1952,13 @@ ALIGN	8
 $L$SEH_info_rsaz_1024_sqr_avx2:
 DB	9,0,0,0
 	DD	rsaz_se_handler wrt ..imagebase
-	DD	$L$sqr_1024_body wrt ..imagebase,$L$sqr_1024_epilogue wrt ..imagebase
+	DD	$L$sqr_1024_body wrt ..imagebase,$L$sqr_1024_epilogue wrt ..imagebase,$L$sqr_1024_in_tail wrt ..imagebase
+	DD	0
 $L$SEH_info_rsaz_1024_mul_avx2:
 DB	9,0,0,0
 	DD	rsaz_se_handler wrt ..imagebase
-	DD	$L$mul_1024_body wrt ..imagebase,$L$mul_1024_epilogue wrt ..imagebase
+	DD	$L$mul_1024_body wrt ..imagebase,$L$mul_1024_epilogue wrt ..imagebase,$L$mul_1024_in_tail wrt ..imagebase
+	DD	0
 $L$SEH_info_rsaz_1024_gather5:
 DB	0x01,0x36,0x17,0x0b
 DB	0x36,0xf8,0x09,0x00
