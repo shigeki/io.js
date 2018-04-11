@@ -161,6 +161,7 @@ if defined link_module      set configure_flags=%configure_flags% %link_module%
 if defined i18n_arg         set configure_flags=%configure_flags% --with-intl=%i18n_arg%
 if defined config_flags     set configure_flags=%configure_flags% %config_flags%
 if defined target_arch      set configure_flags=%configure_flags% --dest-cpu=%target_arch%
+if defined openssl_no_asm   set configure_flags=%configure_flags% --openssl-no-asm
 
 if not exist "%~dp0deps\icu" goto no-depsicu
 if "%target%"=="Clean" echo deleting %~dp0deps\icu
@@ -170,8 +171,8 @@ if "%target%"=="Clean" rmdir /S /Q %~dp0deps\icu
 call tools\msvs\find_python.cmd
 if errorlevel 1 goto :exit
 
-call tools\msvs\find_nasm.cmd
-if errorlevel 1 echo Could not find NASM, it will not be used.
+if not defined openssl_no_asm call tools\msvs\find_nasm.cmd
+if errorlevel 1 echo Could not find NASM, install it or build with openssl_no_asm. See BUILDING.md.
 
 call :getnodeversion || exit /b 1
 

@@ -258,7 +258,7 @@ Prerequisites:
 * Basic Unix tools required for some tests,
   [Git for Windows](http://git-scm.com/download/win) includes Git Bash
   and tools which can be included in the global `PATH`.
-* **Optional** (for OpenSSL assembler modules): the [NetWide Assembler](http://www.nasm.us/),
+* The [NetWide Assembler](http://www.nasm.us/), for OpenSSL assembler modules
   if not installed in the default location it needs to be manually added
   to `PATH`.
 * **Optional** (to build the MSI): the [WiX Toolset v3.11](http://wixtoolset.org/releases/)
