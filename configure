@@ -709,8 +709,6 @@ def check_compiler(o):
     if not options.openssl_no_asm:
       nasm_version = get_nasm_version('nasm')
       o['variables']['nasm_version'] = nasm_version
-      if nasm_version == 0:
-        o['variables']['openssl_no_asm'] = 1
     return
 
   ok, is_clang, clang_version, gcc_version = try_check_compiler(CXX, 'c++')
@@ -1093,18 +1091,18 @@ def configure_openssl(o):
   if options.without_node_options:
       o['defines'] += ['NODE_WITHOUT_NODE_OPTIONS']
 
-  # supported asm compiler for AVX2. See https://github.com/openssl/openssl/
-  # blob/OpenSSL_1_1_0-stable/crypto/modes/asm/aesni-gcm-x86_64.pl#L52-L69
-  openssl110_asm_supported = \
-  ('gas_version' in variables and variables['gas_version'] >= '2.23') or \
+  # Supported asm compiler from
+  # https://www.openssl.org/docs/man1.1.1/man3/OPENSSL_ia32cap.html
+  openssl111_asm_supported = \
+  ('gas_version' in variables and variables['gas_version'] >= '2.26') or \
   ('xcode_version' in variables and variables['xcode_version'] >= '5.0') or \
   ('llvm_version' in variables and variables['llvm_version'] >= '3.3') or \
-  ('nasm_version' in variables and variables['nasm_version'] >= '2.10')
+  ('nasm_version' in variables and variables['nasm_version'] >= '2.11.8')
 
-  if not openssl110_asm_supported and variables['openssl_no_asm'] == 0:
-    warn('''openssl_no_asm is enabled due to missed or old assembler.
-            Please refer BUILDING.md''')
-    variables['openssl_no_asm'] = 1
+  if not openssl111_asm_supported and variables['openssl_no_asm'] == 0:
+     print('''Installed assembler is missed or too old. Update its version
+            or build with --openssl-no-asm. See BUILDING.md.''')
+     exit(1)
 
   if options.openssl_fips:
      print('Error: FIPS is not supported yet in this version')

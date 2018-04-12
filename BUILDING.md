@@ -90,18 +90,17 @@ Depending on host platform, the selection of toolchains may vary.
 
 #### OpenSSL asm support
 
-OpenSSL-1.1.0 requires the following asssembler version for use of asm
+OpenSSL requires the following asssembler version for use of asm
 support.
 
-* gas (GNU assembler) version 2.23 or higher
+* gas (GNU assembler) version 2.26 or higher
 * xcode version 5.0 or higher
 * llvm version 3.3 or higher
-* nasm version 2.10 or higher in Windows
+* nasm version 2.11.8 or higher in Windows
 
-Otherwise, `--openssl-no-asm` is added with warning in configure.
+Otherwise, build with `--openssl-no-asm` in configure.
 
-*Note:* The forthcoming OpenSSL-1.1.1 will require higher
- version. Please refer
+*Note:* This requirements come from the forthcoming OpenSSL-1.1.1. See
  https://www.openssl.org/docs/man1.1.1/man3/OPENSSL_ia32cap.html for
  details.
 
