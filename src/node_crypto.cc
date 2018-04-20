@@ -36,6 +36,8 @@
 #include "string_bytes.h"
 #include "util-inl.h"
 #include "v8.h"
+#include "TrustOverride-AppleGoogleDigiCertData.inc"
+#include "TrustOverride-SymantecData.inc"
 
 #include <errno.h>
 #include <limits.h>  // INT_MAX
@@ -85,7 +87,6 @@ using v8::ReadOnly;
 using v8::Signature;
 using v8::String;
 using v8::Value;
-
 
 struct StackOfX509Deleter {
   void operator()(STACK_OF(X509)* p) const { sk_X509_pop_free(p, X509_free); }
@@ -2554,49 +2555,116 @@ int SSLWrap<Base>::SetCACerts(SecureContext* sc) {
   return 1;
 }
 
+
+inline int IsSelfSigned(X509* cert) {
+  return X509_NAME_cmp(X509_get_subject_name(cert),
+                       X509_get_issuer_name(cert)) == 0;
+}
+
+
+inline X509* FindRoot(STACK_OF(X509)* sk) {
+  for (int i = 0; i < sk_X509_num(sk); i++) {
+    X509* cert = sk_X509_value(sk, i);
+    if (IsSelfSigned(cert))
+      return cert;
+  }
+  return nullptr;
+}
+
+inline bool CertIsInSpkiList(X509 *x) {
+  size_t len;
+  int cmp;
+  uint8_t *cert_spki_der;
+  X509_PUBKEY *pubkey;
+  for (const auto& spki : RootAppleAndGoogleSPKIs) {
+    pubkey = X509_get_X509_PUBKEY(x);
+    len = (size_t)i2d_X509_PUBKEY(pubkey, &cert_spki_der);
+    cmp = memcmp(cert_spki_der, (const void*)spki.data, len);
+    X509_PUBKEY_free(pubkey);
+    if (cmp == 0)
+      return true;
+  }
+  return false;
+}
+
+inline bool CertIsInDNList(X509_NAME* name) {
+  const unsigned char* dn_data;
+  X509_NAME* dn_name;
+
+  for (const auto& dn : RootSymantecDNs) {
+    dn_data = dn.data;
+    dn_name = d2i_X509_NAME(nullptr, &dn_data, dn.len);
+    int cmp = X509_NAME_cmp(name, dn_name);
+    X509_NAME_free(dn_name);
+    if (cmp == 0)
+      return true;
+  }
+
+  return false;
+}
+
+
+inline bool CheckSymantecDistrust(X509_NAME* root_name, X509* cert) {
+  if (!CertIsInDNList(root_name))
+    return true;
+
+// Revoke the certificates issued by Symantec that has
+// notBefore before 00:00:00 on June 1, 2016 (1464739200 in epoch)
+  time_t june_1_2016 = static_cast<time_t>(1464739200);
+  BIO* bio_err = BIO_new_fp(stderr, BIO_NOCLOSE | BIO_FP_TEXT);
+  BIO_printf(bio_err, "notBefore=");
+  ASN1_TIME_print(bio_err, X509_get0_notBefore(cert));
+  BIO_printf(bio_err, "\n");
+  fprintf(stderr, "X509_cmp_time(X509_get_notBefore(cert), &june_1_2016):%d\n", X509_cmp_time(X509_get0_notBefore(cert), &june_1_2016));
+  if (X509_cmp_time(X509_get0_notBefore(cert), &june_1_2016) > 0)
+    return true;
+
+  return false;
+}
+
+
+inline CheckResult CheckServerCert(X509_STORE_CTX *ctx) {
+  STACK_OF(X509)* chain = X509_STORE_CTX_get1_chain(ctx);
+  CHECK_NE(chain, nullptr);
+  CHECK_GT(sk_X509_num(chain), 0);
+
+  // Take the last cert as root at the first time.
+  X509* root_cert = sk_X509_value(chain, sk_X509_num(chain)-1);
+  X509_NAME* root_name = X509_get_subject_name(root_cert);
+
+  if (!IsSelfSigned(root_cert)) {
+    root_cert = FindRoot(chain);
+    CHECK_NE(root_cert, nullptr);
+    root_name = X509_get_subject_name(root_cert);
+  }
+
+  X509* leaf_cert = sk_X509_value(chain, 0);
+  if (!CheckSymantecDistrust(root_name, leaf_cert)) {
+    sk_X509_pop_free(chain, X509_free);
+    return CHECK_CERT_REVOKED;
+  }
+
+  sk_X509_pop_free(chain, X509_free);
+  return CHECK_OK;
+}
+
+
 int VerifyCallback(int preverify_ok, X509_STORE_CTX* ctx) {
-  // Quoting SSL_set_verify(3ssl):
-  //
-  //   The VerifyCallback function is used to control the behaviour when
-  //   the SSL_VERIFY_PEER flag is set. It must be supplied by the
-  //   application and receives two arguments: preverify_ok indicates,
-  //   whether the verification of the certificate in question was passed
-  //   (preverify_ok=1) or not (preverify_ok=0). x509_ctx is a pointer to
-  //   the complete context used for the certificate chain verification.
-  //
-  //   The certificate chain is checked starting with the deepest nesting
-  //   level (the root CA certificate) and worked upward to the peer's
-  //   certificate.  At each level signatures and issuer attributes are
-  //   checked.  Whenever a verification error is found, the error number is
-  //   stored in x509_ctx and VerifyCallback is called with preverify_ok=0.
-  //   By applying X509_CTX_store_* functions VerifyCallback can locate the
-  //   certificate in question and perform additional steps (see EXAMPLES).
-  //   If no error is found for a certificate, VerifyCallback is called
-  //   with preverify_ok=1 before advancing to the next level.
-  //
-  //   The return value of VerifyCallback controls the strategy of the
-  //   further verification process. If VerifyCallback returns 0, the
-  //   verification process is immediately stopped with "verification
-  //   failed" state. If SSL_VERIFY_PEER is set, a verification failure
-  //   alert is sent to the peer and the TLS/SSL handshake is terminated. If
-  //   VerifyCallback returns 1, the verification process is continued. If
-  //   VerifyCallback always returns 1, the TLS/SSL handshake will not be
-  //   terminated with respect to verification failures and the connection
-  //   will be established. The calling process can however retrieve the
-  //   error code of the last verification error using
-  //   SSL_get_verify_result(3) or by maintaining its own error storage
-  //   managed by VerifyCallback.
-  //
-  //   If no VerifyCallback is specified, the default callback will be
-  //   used.  Its return value is identical to preverify_ok, so that any
-  //   verification failure will lead to a termination of the TLS/SSL
-  //   handshake with an alert message, if SSL_VERIFY_PEER is set.
-  //
-  // Since we cannot perform I/O quickly enough in this callback, we ignore
-  // all preverify_ok errors and let the handshake continue. It is
-  // imparative that the user use Connection::VerifyError after the
-  // 'secure' callback has been made.
-  return 1;
+  if (preverify_ok == 0 || X509_STORE_CTX_get_error(ctx) != X509_V_OK)
+    return CHECK_OK;
+
+  // Server does not need to check the whitelist.
+  SSL* ssl = static_cast<SSL*>(
+      X509_STORE_CTX_get_ex_data(ctx, SSL_get_ex_data_X509_STORE_CTX_idx()));
+
+  if (SSL_is_server(ssl))
+    return CHECK_OK;
+
+  CheckResult ret = CheckServerCert(ctx);
+  if (ret == CHECK_CERT_REVOKED)
+    X509_STORE_CTX_set_error(ctx, X509_V_ERR_CERT_REVOKED);
+
+  return ret;
 }
 
 void CipherBase::Initialize(Environment* env, Local<Object> target) {

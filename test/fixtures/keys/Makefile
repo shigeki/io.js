@@ -72,6 +72,20 @@ fake-startcom-root-cert.pem: fake-startcom-root.cnf \
 	touch fake-startcom-root-database.txt
 
 #
+# Create Fake Symantec Root Certificate Authority: fake-symantec-root
+#
+fake-symantec-root-key.pem:
+	openssl genrsa -out fake-symantec-root-key.pem 2048
+
+fake-symantec-root-cert.pem: fake-symantec-root.cnf \
+	fake-symantec-root-key.pem
+	openssl req -new -x509 -days 9999 -config \
+	fake-symantec-root.cnf -key fake-symantec-root-key.pem -out \
+	fake-symantec-root-cert.pem
+	echo '01' > fake-symantec-root-serial
+	touch fake-symantec-root-database.txt
+
+#
 # agent1 is signed by ca1.
 #
 
@@ -321,6 +335,54 @@ agent9-cert.pem: agent9-csr.pem
 		-in agent9-csr.pem \
 		-startdate 161021000001Z \
 		-notext -out agent9-cert.pem
+
+#
+# agent10 is signed by fake-startcom-root with notBefore
+# of May 31 23:59:59 2016 GMT
+#
+agent10-key.pem:
+	openssl genrsa -out agent10-key.pem 2048
+
+agent10-csr.pem: agent10.cnf agent10-key.pem
+	openssl req -new -config agent10.cnf -key agent10-key.pem \
+	-out agent10-csr.pem
+
+
+agent10-cert.pem: agent10-csr.pem
+	openssl ca \
+		-config fake-symantec-root.cnf \
+		-keyfile fake-symantec-root-key.pem \
+		-cert fake-symantec-root-cert.pem \
+		-batch \
+		-days 9999 \
+		-passin "pass:password" \
+		-in agent10-csr.pem \
+		-startdate 160531235959Z \
+		-notext -out agent10-cert.pem
+
+#
+# agent10 is signed by fake-startcom-root with notBefore
+# of June 1 00:00:01 2016 GMT
+#
+agent11-key.pem:
+	openssl genrsa -out agent11-key.pem 2048
+
+agent11-csr.pem: agent11.cnf agent11-key.pem
+	openssl req -new -config agent11.cnf -key agent11-key.pem \
+	-out agent11-csr.pem
+
+
+agent11-cert.pem: agent11-csr.pem
+	openssl ca \
+		-config fake-symantec-root.cnf \
+		-keyfile fake-symantec-root-key.pem \
+		-cert fake-symantec-root-cert.pem \
+		-batch \
+		-days 9999 \
+		-passin "pass:password" \
+		-in agent11-csr.pem \
+		-startdate 160601000001Z \
+		-notext -out agent11-cert.pem
 
 ec-key.pem:
 	openssl ecparam -genkey -out ec-key.pem -name prime256v1

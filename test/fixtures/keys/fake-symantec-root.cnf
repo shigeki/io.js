@@ -1,0 +1,47 @@
+[ ca ]
+default_ca      = CA_default
+
+[ CA_default ]
+dir = .
+name_opt = CA_default
+cert_opt = CA_default
+default_crl_days = 999
+default_md = sha256
+database = fake-symantec-root-database.txt
+serial = fake-symantec-root-serial
+private_key = fake-symantec-root-key.pem
+certificate = fake-symantec-root-cert.pem
+new_certs_dir = fake-symantec-root-issued-certs
+email_in_dn = no
+policy          = policy_anything
+
+[ policy_anything ]
+countryName             = optional
+stateOrProvinceName     = optional
+localityName            = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+
+[ req ]
+default_bits           = 2048
+days                   = 999
+distinguished_name     = req_distinguished_name
+attributes             = req_attributes
+prompt                 = no
+output_password        = password
+x509_extensions        = v3_ca
+
+# C=US/O=Symantec Corporation/OU=Symantec Trust Network/CN=Symantec Class 1 Public Primary Certification Authority - G4
+[ req_distinguished_name ]
+C                      = US
+O                      = Symantec Corporation
+OU                     = Symantec Trust Network
+CN                     = Symantec Class 1 Public Primary Certification Authority - G4
+
+[ req_attributes ]
+challengePassword              = A challenge password
+
+[ v3_ca ]
+basicConstraints = CA:TRUE
