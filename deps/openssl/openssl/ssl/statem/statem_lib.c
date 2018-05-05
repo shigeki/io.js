@@ -1041,7 +1041,6 @@ WORK_STATE tls_finish_handshake(SSL *s, WORK_STATE wst, int clearbufs, int stop)
         /* skipped if we just sent a HelloRequest */
         s->renegotiate = 0;
         s->new_session = 0;
-        s->statem.cleanuphand = 0;
 
         ssl3_cleanup_key_block(s);
 
@@ -1090,8 +1089,11 @@ WORK_STATE tls_finish_handshake(SSL *s, WORK_STATE wst, int clearbufs, int stop)
     /* The callback may expect us to not be in init at handshake done */
     ossl_statem_set_in_init(s, 0);
 
-    if (cb != NULL)
+    if (s->statem.cleanuphand) {
+      s->statem.cleanuphand = 0;
+      if (cb != NULL)
         cb(s, SSL_CB_HANDSHAKE_DONE, 1);
+    }
 
     if (!stop) {
         /* If we've got more work to do we go back into init */
