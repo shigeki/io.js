@@ -8,7 +8,7 @@
 
 
 # ====================================================================
-# Written by Andy Polyakov <appro@fy.chalmers.se> for the OpenSSL
+# Written by Andy Polyakov <appro@openssl.org> for the OpenSSL
 # project. The module is, however, dual licensed under OpenSSL and
 # CRYPTOGAMS licenses depending on where you obtain it. For further
 # details see http://www.openssl.org/~appro/cryptogams/.
@@ -368,7 +368,7 @@ L\$parisc1
 ___
 
 @V=(  $Ahi,  $Alo,  $Bhi,  $Blo,  $Chi,  $Clo,  $Dhi,  $Dlo,
-      $Ehi,  $Elo,  $Fhi,  $Flo,  $Ghi,  $Glo,  $Hhi,  $Hlo) = 
+      $Ehi,  $Elo,  $Fhi,  $Flo,  $Ghi,  $Glo,  $Hhi,  $Hlo) =
    ( "%r1", "%r2", "%r3", "%r4", "%r5", "%r6", "%r7", "%r8",
      "%r9","%r10","%r11","%r12","%r13","%r14","%r15","%r16");
 $a0 ="%r17";
@@ -419,7 +419,7 @@ $code.=<<___;
 	 add	$t0,$hlo,$hlo
 	shd	$ahi,$alo,$Sigma0[0],$t0
 	 addc	$t1,$hhi,$hhi		; h += Sigma1(e)
-	shd	$alo,$ahi,$Sigma0[0],$t1	
+	shd	$alo,$ahi,$Sigma0[0],$t1
 	 add	$a0,$hlo,$hlo
 	shd	$ahi,$alo,$Sigma0[1],$t2
 	 addc	$a1,$hhi,$hhi		; h += Ch(e,f,g)
@@ -773,7 +773,7 @@ foreach (split("\n",$code)) {
 	s/shd\s+(%r[0-9]+),(%r[0-9]+),([0-9]+)/
 		$3>31 ? sprintf("shd\t%$2,%$1,%d",$3-32)	# rotation for >=32
 		:       sprintf("shd\t%$1,%$2,%d",$3)/e			or
-	# translate made up instructons: _ror, _shr, _align, _shl
+	# translate made up instructions: _ror, _shr, _align, _shl
 	s/_ror(\s+)(%r[0-9]+),/
 		($SZ==4 ? "shd" : "shrpd")."$1$2,$2,"/e			or
 

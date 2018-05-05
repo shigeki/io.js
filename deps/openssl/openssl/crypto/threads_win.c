@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 The OpenSSL Project Authors. All Rights Reserved.
+ * Copyright 2016-2018 The OpenSSL Project Authors. All Rights Reserved.
  *
  * Licensed under the OpenSSL license (the "License").  You may not use
  * this file except in compliance with the License.  You can obtain a copy
@@ -17,9 +17,12 @@
 
 CRYPTO_RWLOCK *CRYPTO_THREAD_lock_new(void)
 {
-    CRYPTO_RWLOCK *lock = OPENSSL_zalloc(sizeof(CRITICAL_SECTION));
-    if (lock == NULL)
+    CRYPTO_RWLOCK *lock;
+
+    if ((lock = OPENSSL_zalloc(sizeof(CRITICAL_SECTION))) == NULL) {
+        /* Don't set error, to avoid recursion blowup. */
         return NULL;
+    }
 
     /* 0x400 is the spin count value suggested in the documentation */
     if (!InitializeCriticalSectionAndSpinCount(lock, 0x400)) {
@@ -131,6 +134,23 @@ int CRYPTO_atomic_add(int *val, int amount, int *ret, CRYPTO_RWLOCK *lock)
 {
     *ret = InterlockedExchangeAdd(val, amount) + amount;
     return 1;
+}
+
+int CRYPTO_atomic_read(int *val, int *ret, CRYPTO_RWLOCK *lock)
+{
+    *ret = InterlockedCompareExchange(val, 0, 0);
+    return 1;
+}
+
+int CRYPTO_atomic_write(int *val, int n, CRYPTO_RWLOCK *lock)
+{
+    InterlockedExchange(val, n);
+    return 1;
+}
+
+int openssl_init_fork_handlers(void)
+{
+    return 0;
 }
 
 #endif
