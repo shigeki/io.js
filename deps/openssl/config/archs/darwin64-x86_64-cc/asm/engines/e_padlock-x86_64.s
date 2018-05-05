@@ -1,4 +1,4 @@
-.text
+.text	
 .globl	_padlock_capability
 
 .p2align	4
@@ -8,11 +8,20 @@ _padlock_capability:
 	cpuid
 	xorl	%eax,%eax
 	cmpl	$0x746e6543,%ebx
-	jne	L$noluck
+	jne	L$zhaoxin
 	cmpl	$0x48727561,%edx
 	jne	L$noluck
 	cmpl	$0x736c7561,%ecx
 	jne	L$noluck
+	jmp	L$zhaoxinEnd
+L$zhaoxin:
+	cmpl	$0x68532020,%ebx
+	jne	L$noluck
+	cmpl	$0x68676e61,%edx
+	jne	L$noluck
+	cmpl	$0x20206961,%ecx
+	jne	L$noluck
+L$zhaoxinEnd:
 	movl	$0xC0000000,%eax
 	cpuid
 	movl	%eax,%edx
@@ -1020,7 +1029,7 @@ L$ctr32_abort:
 
 .byte	86,73,65,32,80,97,100,108,111,99,107,32,120,56,54,95,54,52,32,109,111,100,117,108,101,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
 .p2align	4
-.data
+.data	
 .p2align	3
 L$padlock_saved_context:
 .quad	0

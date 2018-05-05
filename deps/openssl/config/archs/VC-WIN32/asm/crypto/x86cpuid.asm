@@ -256,31 +256,6 @@ dd	447811568
 	mov	eax,ebx
 	pop	ebx
 	ret
-global	_OPENSSL_indirect_call
-align	16
-_OPENSSL_indirect_call:
-L$_OPENSSL_indirect_call_begin:
-	push	ebp
-	mov	ebp,esp
-	sub	esp,28
-	mov	ecx,DWORD [12+ebp]
-	mov	DWORD [esp],ecx
-	mov	edx,DWORD [16+ebp]
-	mov	DWORD [4+esp],edx
-	mov	eax,DWORD [20+ebp]
-	mov	DWORD [8+esp],eax
-	mov	eax,DWORD [24+ebp]
-	mov	DWORD [12+esp],eax
-	mov	eax,DWORD [28+ebp]
-	mov	DWORD [16+esp],eax
-	mov	eax,DWORD [32+ebp]
-	mov	DWORD [20+esp],eax
-	mov	eax,DWORD [36+ebp]
-	mov	DWORD [24+esp],eax
-	call	DWORD [8+ebp]
-	mov	esp,ebp
-	pop	ebp
-	ret
 global	_OPENSSL_cleanse
 align	16
 _OPENSSL_cleanse:
@@ -442,19 +417,6 @@ L$024nogo:
 	pop	ebx
 	pop	ebp
 	ret
-global	_OPENSSL_ia32_rdrand
-align	16
-_OPENSSL_ia32_rdrand:
-L$_OPENSSL_ia32_rdrand_begin:
-	mov	ecx,8
-L$027loop:
-db	15,199,240
-	jc	NEAR L$028break
-	loop	L$027loop
-L$028break:
-	cmp	eax,0
-	cmove	eax,ecx
-	ret
 global	_OPENSSL_ia32_rdrand_bytes
 align	16
 _OPENSSL_ia32_rdrand_bytes:
@@ -465,48 +427,36 @@ L$_OPENSSL_ia32_rdrand_bytes_begin:
 	mov	edi,DWORD [12+esp]
 	mov	ebx,DWORD [16+esp]
 	cmp	ebx,0
-	je	NEAR L$029done
+	je	NEAR L$027done
 	mov	ecx,8
-L$030loop:
+L$028loop:
 db	15,199,242
-	jc	NEAR L$031break
-	loop	L$030loop
-	jmp	NEAR L$029done
+	jc	NEAR L$029break
+	loop	L$028loop
+	jmp	NEAR L$027done
 align	16
-L$031break:
+L$029break:
 	cmp	ebx,4
-	jb	NEAR L$032tail
+	jb	NEAR L$030tail
 	mov	DWORD [edi],edx
 	lea	edi,[4+edi]
 	add	eax,4
 	sub	ebx,4
-	jz	NEAR L$029done
+	jz	NEAR L$027done
 	mov	ecx,8
-	jmp	NEAR L$030loop
+	jmp	NEAR L$028loop
 align	16
-L$032tail:
+L$030tail:
 	mov	BYTE [edi],dl
 	lea	edi,[1+edi]
 	inc	eax
 	shr	edx,8
 	dec	ebx
-	jnz	NEAR L$032tail
-L$029done:
+	jnz	NEAR L$030tail
+L$027done:
+	xor	edx,edx
 	pop	ebx
 	pop	edi
-	ret
-global	_OPENSSL_ia32_rdseed
-align	16
-_OPENSSL_ia32_rdseed:
-L$_OPENSSL_ia32_rdseed_begin:
-	mov	ecx,8
-L$033loop:
-db	15,199,248
-	jc	NEAR L$034break
-	loop	L$033loop
-L$034break:
-	cmp	eax,0
-	cmove	eax,ecx
 	ret
 global	_OPENSSL_ia32_rdseed_bytes
 align	16
@@ -518,33 +468,34 @@ L$_OPENSSL_ia32_rdseed_bytes_begin:
 	mov	edi,DWORD [12+esp]
 	mov	ebx,DWORD [16+esp]
 	cmp	ebx,0
-	je	NEAR L$035done
+	je	NEAR L$031done
 	mov	ecx,8
-L$036loop:
+L$032loop:
 db	15,199,250
-	jc	NEAR L$037break
-	loop	L$036loop
-	jmp	NEAR L$035done
+	jc	NEAR L$033break
+	loop	L$032loop
+	jmp	NEAR L$031done
 align	16
-L$037break:
+L$033break:
 	cmp	ebx,4
-	jb	NEAR L$038tail
+	jb	NEAR L$034tail
 	mov	DWORD [edi],edx
 	lea	edi,[4+edi]
 	add	eax,4
 	sub	ebx,4
-	jz	NEAR L$035done
+	jz	NEAR L$031done
 	mov	ecx,8
-	jmp	NEAR L$036loop
+	jmp	NEAR L$032loop
 align	16
-L$038tail:
+L$034tail:
 	mov	BYTE [edi],dl
 	lea	edi,[1+edi]
 	inc	eax
 	shr	edx,8
 	dec	ebx
-	jnz	NEAR L$038tail
-L$035done:
+	jnz	NEAR L$034tail
+L$031done:
+	xor	edx,edx
 	pop	ebx
 	pop	edi
 	ret

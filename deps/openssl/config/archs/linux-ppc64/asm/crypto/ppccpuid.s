@@ -8,15 +8,14 @@
 OPENSSL_fpu_probe:
 .quad	.OPENSSL_fpu_probe,.TOC.@tocbase,0
 .previous
-
 .align	4
 .OPENSSL_fpu_probe:
 	fmr	0,0
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,0,0
-.size	OPENSSL_fpu_probe,.-.OPENSSL_fpu_probe
 .size	.OPENSSL_fpu_probe,.-.OPENSSL_fpu_probe
+.size	OPENSSL_fpu_probe,.-.OPENSSL_fpu_probe
 .globl	OPENSSL_ppc64_probe
 .type	OPENSSL_ppc64_probe,@function
 .section	".opd","aw"
@@ -24,16 +23,15 @@ OPENSSL_fpu_probe:
 OPENSSL_ppc64_probe:
 .quad	.OPENSSL_ppc64_probe,.TOC.@tocbase,0
 .previous
-
 .align	4
 .OPENSSL_ppc64_probe:
 	fcfid	1,1
 	rldicl	0,0,32,32
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,0,0
-.size	OPENSSL_ppc64_probe,.-.OPENSSL_ppc64_probe
 .size	.OPENSSL_ppc64_probe,.-.OPENSSL_ppc64_probe
+.size	OPENSSL_ppc64_probe,.-.OPENSSL_ppc64_probe
 
 .globl	OPENSSL_altivec_probe
 .type	OPENSSL_altivec_probe,@function
@@ -42,15 +40,14 @@ OPENSSL_ppc64_probe:
 OPENSSL_altivec_probe:
 .quad	.OPENSSL_altivec_probe,.TOC.@tocbase,0
 .previous
-
 .align	4
 .OPENSSL_altivec_probe:
 .long	0x10000484
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,0,0
-.size	OPENSSL_altivec_probe,.-.OPENSSL_altivec_probe
 .size	.OPENSSL_altivec_probe,.-.OPENSSL_altivec_probe
+.size	OPENSSL_altivec_probe,.-.OPENSSL_altivec_probe
 
 .globl	OPENSSL_crypto207_probe
 .type	OPENSSL_crypto207_probe,@function
@@ -59,16 +56,15 @@ OPENSSL_altivec_probe:
 OPENSSL_crypto207_probe:
 .quad	.OPENSSL_crypto207_probe,.TOC.@tocbase,0
 .previous
-
 .align	4
 .OPENSSL_crypto207_probe:
 	.long	0x7C000E99
 	.long	0x10000508
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,0,0
-.size	OPENSSL_crypto207_probe,.-.OPENSSL_crypto207_probe
 .size	.OPENSSL_crypto207_probe,.-.OPENSSL_crypto207_probe
+.size	OPENSSL_crypto207_probe,.-.OPENSSL_crypto207_probe
 
 .globl	OPENSSL_madd300_probe
 .type	OPENSSL_madd300_probe,@function
@@ -77,13 +73,12 @@ OPENSSL_crypto207_probe:
 OPENSSL_madd300_probe:
 .quad	.OPENSSL_madd300_probe,.TOC.@tocbase,0
 .previous
-
 .align	4
 .OPENSSL_madd300_probe:
 	xor	0,0,0
 	.long	0x10600033
 	.long	0x10600031
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,0,0
 
@@ -94,7 +89,6 @@ OPENSSL_madd300_probe:
 OPENSSL_wipe_cpu:
 .quad	.OPENSSL_wipe_cpu,.TOC.@tocbase,0
 .previous
-
 .align	4
 .OPENSSL_wipe_cpu:
 	xor	0,0,0
@@ -122,11 +116,11 @@ OPENSSL_wipe_cpu:
 	xor	12,12,12
 	fmr	12,31
 	fmr	13,31
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,0,0
-.size	OPENSSL_wipe_cpu,.-.OPENSSL_wipe_cpu
 .size	.OPENSSL_wipe_cpu,.-.OPENSSL_wipe_cpu
+.size	OPENSSL_wipe_cpu,.-.OPENSSL_wipe_cpu
 
 .globl	OPENSSL_atomic_add
 .type	OPENSSL_atomic_add,@function
@@ -135,7 +129,6 @@ OPENSSL_wipe_cpu:
 OPENSSL_atomic_add:
 .quad	.OPENSSL_atomic_add,.TOC.@tocbase,0
 .previous
-
 .align	4
 .OPENSSL_atomic_add:
 .Ladd:	lwarx	5,0,3
@@ -143,12 +136,12 @@ OPENSSL_atomic_add:
 	stwcx.	0,0,3
 	bne-	.Ladd
 	extsw	3,0
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,2,0
 .long	0
-.size	OPENSSL_atomic_add,.-.OPENSSL_atomic_add
 .size	.OPENSSL_atomic_add,.-.OPENSSL_atomic_add
+.size	OPENSSL_atomic_add,.-.OPENSSL_atomic_add
 
 .globl	OPENSSL_rdtsc
 .type	OPENSSL_rdtsc,@function
@@ -157,15 +150,14 @@ OPENSSL_atomic_add:
 OPENSSL_rdtsc:
 .quad	.OPENSSL_rdtsc,.TOC.@tocbase,0
 .previous
-
 .align	4
 .OPENSSL_rdtsc:
 	mftb	3
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,0,0
-.size	OPENSSL_rdtsc,.-.OPENSSL_rdtsc
 .size	.OPENSSL_rdtsc,.-.OPENSSL_rdtsc
+.size	OPENSSL_rdtsc,.-.OPENSSL_rdtsc
 
 .globl	OPENSSL_cleanse
 .type	OPENSSL_cleanse,@function
@@ -174,7 +166,6 @@ OPENSSL_rdtsc:
 OPENSSL_cleanse:
 .quad	.OPENSSL_cleanse,.TOC.@tocbase,0
 .previous
-
 .align	4
 .OPENSSL_cleanse:
 	cmpldi	4,7
@@ -186,7 +177,7 @@ OPENSSL_cleanse:
 	stb	0,0(3)
 	addi	3,3,1
 	bdnz	$-8
-	blr
+	blr	
 .Lot:	andi.	5,3,3
 	beq	.Laligned
 	stb	0,0(3)
@@ -201,12 +192,12 @@ OPENSSL_cleanse:
 	bdnz	$-8
 	andi.	4,4,3
 	bne	.Little
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,2,0
 .long	0
-.size	OPENSSL_cleanse,.-.OPENSSL_cleanse
 .size	.OPENSSL_cleanse,.-.OPENSSL_cleanse
+.size	OPENSSL_cleanse,.-.OPENSSL_cleanse
 
 .globl	CRYPTO_memcmp
 .type	CRYPTO_memcmp,@function
@@ -215,7 +206,6 @@ OPENSSL_cleanse:
 CRYPTO_memcmp:
 .quad	.CRYPTO_memcmp,.TOC.@tocbase,0
 .previous
-
 .align	4
 .CRYPTO_memcmp:
 	cmpldi	5,0
@@ -235,12 +225,12 @@ CRYPTO_memcmp:
 	li	3,0
 	sub	3,3,0
 	extrwi	3,3,1,0
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,3,0
 .long	0
-.size	CRYPTO_memcmp,.-.CRYPTO_memcmp
 .size	.CRYPTO_memcmp,.-.CRYPTO_memcmp
+.size	CRYPTO_memcmp,.-.CRYPTO_memcmp
 .globl	OPENSSL_instrument_bus
 .type	OPENSSL_instrument_bus,@function
 .section	".opd","aw"
@@ -248,7 +238,6 @@ CRYPTO_memcmp:
 OPENSSL_instrument_bus:
 .quad	.OPENSSL_instrument_bus,.TOC.@tocbase,0
 .previous
-
 .align	4
 .OPENSSL_instrument_bus:
 	mtctr	4
@@ -274,12 +263,12 @@ OPENSSL_instrument_bus:
 	bdnz	.Loop
 
 	mr	3,4
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,2,0
 .long	0
-.size	OPENSSL_instrument_bus,.-.OPENSSL_instrument_bus
 .size	.OPENSSL_instrument_bus,.-.OPENSSL_instrument_bus
+.size	OPENSSL_instrument_bus,.-.OPENSSL_instrument_bus
 
 .globl	OPENSSL_instrument_bus2
 .type	OPENSSL_instrument_bus2,@function
@@ -288,7 +277,6 @@ OPENSSL_instrument_bus:
 OPENSSL_instrument_bus2:
 .quad	.OPENSSL_instrument_bus2,.TOC.@tocbase,0
 .previous
-
 .align	4
 .OPENSSL_instrument_bus2:
 	mr	0,4
@@ -334,9 +322,9 @@ OPENSSL_instrument_bus2:
 .Ldone2:
 	srwi	4,4,2
 	sub	3,0,4
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,3,0
 .long	0
-.size	OPENSSL_instrument_bus2,.-.OPENSSL_instrument_bus2
 .size	.OPENSSL_instrument_bus2,.-.OPENSSL_instrument_bus2
+.size	OPENSSL_instrument_bus2,.-.OPENSSL_instrument_bus2

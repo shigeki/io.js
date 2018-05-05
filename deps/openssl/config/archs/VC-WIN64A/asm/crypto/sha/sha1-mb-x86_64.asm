@@ -20,14 +20,18 @@ $L$SEH_begin_sha1_multi_block:
 	mov	rdx,r8
 
 
+
 	mov	rcx,QWORD[((OPENSSL_ia32cap_P+4))]
 	bt	rcx,61
 	jc	NEAR _shaext_shortcut
 	test	ecx,268435456
 	jnz	NEAR _avx_shortcut
 	mov	rax,rsp
+
 	push	rbx
+
 	push	rbp
+
 	lea	rsp,[((-168))+rsp]
 	movaps	XMMWORD[rsp],xmm6
 	movaps	XMMWORD[16+rsp],xmm7
@@ -42,6 +46,7 @@ $L$SEH_begin_sha1_multi_block:
 	sub	rsp,288
 	and	rsp,-256
 	mov	QWORD[272+rsp],rax
+
 $L$body:
 	lea	rbp,[K_XX_XX]
 	lea	rbx,[256+rsp]
@@ -2571,6 +2576,7 @@ DB	102,15,56,0,197
 
 $L$done:
 	mov	rax,QWORD[272+rsp]
+
 	movaps	xmm6,XMMWORD[((-184))+rax]
 	movaps	xmm7,XMMWORD[((-168))+rax]
 	movaps	xmm8,XMMWORD[((-152))+rax]
@@ -2582,12 +2588,16 @@ $L$done:
 	movaps	xmm14,XMMWORD[((-56))+rax]
 	movaps	xmm15,XMMWORD[((-40))+rax]
 	mov	rbp,QWORD[((-16))+rax]
+
 	mov	rbx,QWORD[((-8))+rax]
+
 	lea	rsp,[rax]
+
 $L$epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_sha1_multi_block:
 
 ALIGN	32
@@ -2601,10 +2611,14 @@ $L$SEH_begin_sha1_multi_block_shaext:
 	mov	rdx,r8
 
 
+
 _shaext_shortcut:
 	mov	rax,rsp
+
 	push	rbx
+
 	push	rbp
+
 	lea	rsp,[((-168))+rsp]
 	movaps	XMMWORD[rsp],xmm6
 	movaps	XMMWORD[16+rsp],xmm7
@@ -2981,12 +2995,16 @@ $L$done_shaext:
 	movaps	xmm14,XMMWORD[((-56))+rax]
 	movaps	xmm15,XMMWORD[((-40))+rax]
 	mov	rbp,QWORD[((-16))+rax]
+
 	mov	rbx,QWORD[((-8))+rax]
+
 	lea	rsp,[rax]
+
 $L$epilogue_shaext:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_sha1_multi_block_shaext:
 
 ALIGN	32
@@ -3000,6 +3018,7 @@ $L$SEH_begin_sha1_multi_block_avx:
 	mov	rdx,r8
 
 
+
 _avx_shortcut:
 	shr	rcx,32
 	cmp	edx,2
@@ -3010,8 +3029,11 @@ _avx_shortcut:
 ALIGN	32
 $L$avx:
 	mov	rax,rsp
+
 	push	rbx
+
 	push	rbp
+
 	lea	rsp,[((-168))+rsp]
 	movaps	XMMWORD[rsp],xmm6
 	movaps	XMMWORD[16+rsp],xmm7
@@ -3026,6 +3048,7 @@ $L$avx:
 	sub	rsp,288
 	and	rsp,-256
 	mov	QWORD[272+rsp],rax
+
 $L$body_avx:
 	lea	rbp,[K_XX_XX]
 	lea	rbx,[256+rsp]
@@ -5075,6 +5098,7 @@ $L$oop_avx:
 
 $L$done_avx:
 	mov	rax,QWORD[272+rsp]
+
 	vzeroupper
 	movaps	xmm6,XMMWORD[((-184))+rax]
 	movaps	xmm7,XMMWORD[((-168))+rax]
@@ -5087,12 +5111,16 @@ $L$done_avx:
 	movaps	xmm14,XMMWORD[((-56))+rax]
 	movaps	xmm15,XMMWORD[((-40))+rax]
 	mov	rbp,QWORD[((-16))+rax]
+
 	mov	rbx,QWORD[((-8))+rax]
+
 	lea	rsp,[rax]
+
 $L$epilogue_avx:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_sha1_multi_block_avx:
 
 ALIGN	32
@@ -5106,14 +5134,22 @@ $L$SEH_begin_sha1_multi_block_avx2:
 	mov	rdx,r8
 
 
+
 _avx2_shortcut:
 	mov	rax,rsp
+
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 	lea	rsp,[((-168))+rsp]
 	movaps	XMMWORD[rsp],xmm6
 	movaps	XMMWORD[16+rsp],xmm7
@@ -5128,6 +5164,7 @@ _avx2_shortcut:
 	sub	rsp,576
 	and	rsp,-256
 	mov	QWORD[544+rsp],rax
+
 $L$body_avx2:
 	lea	rbp,[K_XX_XX]
 	shr	edx,1
@@ -7314,6 +7351,7 @@ $L$oop_avx2:
 
 $L$done_avx2:
 	mov	rax,QWORD[544+rsp]
+
 	vzeroupper
 	movaps	xmm6,XMMWORD[((-216))+rax]
 	movaps	xmm7,XMMWORD[((-200))+rax]
@@ -7326,16 +7364,24 @@ $L$done_avx2:
 	movaps	xmm14,XMMWORD[((-88))+rax]
 	movaps	xmm15,XMMWORD[((-72))+rax]
 	mov	r15,QWORD[((-48))+rax]
+
 	mov	r14,QWORD[((-40))+rax]
+
 	mov	r13,QWORD[((-32))+rax]
+
 	mov	r12,QWORD[((-24))+rax]
+
 	mov	rbp,QWORD[((-16))+rax]
+
 	mov	rbx,QWORD[((-8))+rax]
+
 	lea	rsp,[rax]
+
 $L$epilogue_avx2:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_sha1_multi_block_avx2:
 
 ALIGN	256

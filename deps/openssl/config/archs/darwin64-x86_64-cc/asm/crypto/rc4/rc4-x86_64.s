@@ -1,4 +1,4 @@
-.text
+.text	
 
 
 .globl	_RC4
@@ -8,9 +8,13 @@ _RC4:	orq	%rsi,%rsi
 	jne	L$entry
 	.byte	0xf3,0xc3
 L$entry:
+
 	pushq	%rbx
+
 	pushq	%r12
+
 	pushq	%r13
+
 L$prologue:
 	movq	%rsi,%r11
 	movq	%rdx,%r12
@@ -511,11 +515,16 @@ L$exit:
 	movl	%ecx,-4(%rdi)
 
 	movq	(%rsp),%r13
+
 	movq	8(%rsp),%r12
+
 	movq	16(%rsp),%rbx
+
 	addq	$24,%rsp
+
 L$epilogue:
 	.byte	0xf3,0xc3
+
 
 .globl	_RC4_set_key
 
@@ -612,3 +621,4 @@ L$opts:
 .byte	114,99,52,40,49,54,120,44,105,110,116,41,0
 .byte	82,67,52,32,102,111,114,32,120,56,54,95,54,52,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
 .p2align	6
+

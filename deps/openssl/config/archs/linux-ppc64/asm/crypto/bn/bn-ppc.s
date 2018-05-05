@@ -87,7 +87,6 @@
 bn_sqr_comba4:
 .quad	.bn_sqr_comba4,.TOC.@tocbase,0
 .previous
-
 .globl	bn_sqr_comba8
 .type	bn_sqr_comba8,@function
 .section	".opd","aw"
@@ -95,7 +94,6 @@ bn_sqr_comba4:
 bn_sqr_comba8:
 .quad	.bn_sqr_comba8,.TOC.@tocbase,0
 .previous
-
 .globl	bn_mul_comba4
 .type	bn_mul_comba4,@function
 .section	".opd","aw"
@@ -103,7 +101,6 @@ bn_sqr_comba8:
 bn_mul_comba4:
 .quad	.bn_mul_comba4,.TOC.@tocbase,0
 .previous
-
 .globl	bn_mul_comba8
 .type	bn_mul_comba8,@function
 .section	".opd","aw"
@@ -111,7 +108,6 @@ bn_mul_comba4:
 bn_mul_comba8:
 .quad	.bn_mul_comba8,.TOC.@tocbase,0
 .previous
-
 .globl	bn_sub_words
 .type	bn_sub_words,@function
 .section	".opd","aw"
@@ -119,7 +115,6 @@ bn_mul_comba8:
 bn_sub_words:
 .quad	.bn_sub_words,.TOC.@tocbase,0
 .previous
-
 .globl	bn_add_words
 .type	bn_add_words,@function
 .section	".opd","aw"
@@ -127,7 +122,6 @@ bn_sub_words:
 bn_add_words:
 .quad	.bn_add_words,.TOC.@tocbase,0
 .previous
-
 .globl	bn_div_words
 .type	bn_div_words,@function
 .section	".opd","aw"
@@ -135,7 +129,6 @@ bn_add_words:
 bn_div_words:
 .quad	.bn_div_words,.TOC.@tocbase,0
 .previous
-
 .globl	bn_sqr_words
 .type	bn_sqr_words,@function
 .section	".opd","aw"
@@ -143,7 +136,6 @@ bn_div_words:
 bn_sqr_words:
 .quad	.bn_sqr_words,.TOC.@tocbase,0
 .previous
-
 .globl	bn_mul_words
 .type	bn_mul_words,@function
 .section	".opd","aw"
@@ -151,7 +143,6 @@ bn_sqr_words:
 bn_mul_words:
 .quad	.bn_mul_words,.TOC.@tocbase,0
 .previous
-
 .globl	bn_mul_add_words
 .type	bn_mul_add_words,@function
 .section	".opd","aw"
@@ -159,7 +150,6 @@ bn_mul_words:
 bn_mul_add_words:
 .quad	.bn_mul_add_words,.TOC.@tocbase,0
 .previous
-
 
 
 
@@ -297,12 +287,12 @@ bn_mul_add_words:
 
 	std	9,48(3)
 	std	10,56(3)
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,2,0
 .long	0
-.size	bn_sqr_comba4,.-.bn_sqr_comba4
 .size	.bn_sqr_comba4,.-.bn_sqr_comba4
+.size	bn_sqr_comba4,.-.bn_sqr_comba4
 
 
 
@@ -726,12 +716,12 @@ bn_mul_add_words:
 	std	9, 120(3)
 
 
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,2,0
 .long	0
-.size	bn_sqr_comba8,.-.bn_sqr_comba8
 .size	.bn_sqr_comba8,.-.bn_sqr_comba8
+.size	bn_sqr_comba8,.-.bn_sqr_comba8
 
 
 
@@ -881,12 +871,12 @@ bn_mul_add_words:
 
 	std	10,48(3)
 	std	11,56(3)
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,3,0
 .long	0
-.size	bn_mul_comba4,.-.bn_mul_comba4
 .size	.bn_mul_comba4,.-.bn_mul_comba4
+.size	bn_mul_comba4,.-.bn_mul_comba4
 
 
 
@@ -1421,12 +1411,12 @@ bn_mul_add_words:
 	adde	10,10,9
 	std	12,112(3)
 	std	10,120(3)
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,3,0
 .long	0
-.size	bn_mul_comba8,.-.bn_mul_comba8
 .size	.bn_mul_comba8,.-.bn_mul_comba8
+.size	bn_mul_comba8,.-.bn_mul_comba8
 
 
 
@@ -1473,12 +1463,12 @@ bn_mul_add_words:
 .Lppcasm_sub_adios:
 	subfze	3,0
 	andi.	3,3,1
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,4,0
 .long	0
-.size	bn_sub_words,.-.bn_sub_words
 .size	.bn_sub_words,.-.bn_sub_words
+.size	bn_sub_words,.-.bn_sub_words
 
 
 
@@ -1520,12 +1510,12 @@ bn_mul_add_words:
 	bdnz	.Lppcasm_add_mainloop
 .Lppcasm_add_adios:
 	addze	3,0
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,4,0
 .long	0
-.size	bn_add_words,.-.bn_add_words
 .size	.bn_add_words,.-.bn_add_words
+.size	bn_add_words,.-.bn_add_words
 
 
 
@@ -1550,7 +1540,7 @@ bn_mul_add_words:
 	cmpldi	0,5,0
 	bne	.Lppcasm_div1
 	li	3,-1
-	blr
+	blr	
 .Lppcasm_div1:
 	xor	0,0,0
 	li	8,64
@@ -1637,12 +1627,12 @@ bn_mul_add_words:
 	b	.Lppcasm_divouterloop
 .Lppcasm_div9:
 	or	3,8,0
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,3,0
 .long	0
-.size	bn_div_words,.-.bn_div_words
 .size	.bn_div_words,.-.bn_div_words
+.size	bn_div_words,.-.bn_div_words
 
 
 
@@ -1680,12 +1670,12 @@ bn_mul_add_words:
 	stdu	8,8(3)
 	bdnz	.Lppcasm_sqr_mainloop
 .Lppcasm_sqr_adios:
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,3,0
 .long	0
-.size	bn_sqr_words,.-.bn_sqr_words
 .size	.bn_sqr_words,.-.bn_sqr_words
+.size	bn_sqr_words,.-.bn_sqr_words
 
 
 
@@ -1787,12 +1777,12 @@ bn_mul_add_words:
 
 .Lppcasm_mw_OVER:
 	addi	3,12,0
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,4,0
 .long	0
-.size	bn_mul_words,.-.bn_mul_words
 .size	.bn_mul_words,.-.bn_mul_words
+.size	bn_mul_words,.-.bn_mul_words
 
 
 
@@ -1914,10 +1904,10 @@ bn_mul_add_words:
 
 .Lppcasm_maw_adios:
 	addi	3,12,0
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,4,0
 .long	0
-.size	bn_mul_add_words,.-.bn_mul_add_words
 .size	.bn_mul_add_words,.-.bn_mul_add_words
+.size	bn_mul_add_words,.-.bn_mul_add_words
 .align	4

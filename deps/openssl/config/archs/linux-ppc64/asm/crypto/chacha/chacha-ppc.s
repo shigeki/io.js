@@ -8,7 +8,6 @@
 ChaCha20_ctr32_int:
 .quad	.ChaCha20_ctr32_int,.TOC.@tocbase,0
 .previous
-
 .align	5
 .ChaCha20_ctr32_int:
 __ChaCha20_ctr32_int:
@@ -66,12 +65,12 @@ __ChaCha20_ctr32_int:
 	ld	31,248(1)
 	mtlr	0
 	addi	1,1,256
-	blr
+	blr	
 .long	0
 .byte	0,12,4,1,0x80,18,5,0
 .long	0
-.size	ChaCha20_ctr32_int,.-.ChaCha20_ctr32_int
 .size	.ChaCha20_ctr32_int,.-.ChaCha20_ctr32_int
+.size	ChaCha20_ctr32_int,.-.ChaCha20_ctr32_int
 
 .align	5
 __ChaCha20_1x:
@@ -353,7 +352,7 @@ __ChaCha20_1x:
 
 	bne	.Loop_outer
 
-	blr
+	blr	
 
 .align	4
 .Ltail:
@@ -404,7 +403,7 @@ __ChaCha20_1x:
 	stw	1,104(1)
 	stw	1,108(1)
 
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,0,0
 
@@ -415,7 +414,6 @@ __ChaCha20_1x:
 ChaCha20_ctr32_vmx:
 .quad	.ChaCha20_ctr32_vmx,.TOC.@tocbase,0
 .previous
-
 .align	5
 .ChaCha20_ctr32_vmx:
 	cmpldi	5,256
@@ -569,7 +567,7 @@ ChaCha20_ctr32_vmx:
 	vspltisw	27,7
 
 	mtctr	0
-	nop
+	nop	
 .Loop_vmx:
 	vadduwm	0,0,1
 	add	16,16,20
@@ -1062,7 +1060,7 @@ ChaCha20_ctr32_vmx:
 
 	cmpldi	5,255
 	bgt	.Loop_outer_vmx
-	nop
+	nop	
 
 .Ldone_vmx:
 	cmpldi	5,0
@@ -1115,12 +1113,12 @@ ChaCha20_ctr32_vmx:
 	ld	31,456(1)
 	mtlr	0
 	addi	1,1,464
-	blr
+	blr	
 .long	0
 .byte	0,12,0x04,1,0x80,18,5,0
 .long	0
-.size	ChaCha20_ctr32_vmx,.-.ChaCha20_ctr32_vmx
 .size	.ChaCha20_ctr32_vmx,.-.ChaCha20_ctr32_vmx
+.size	ChaCha20_ctr32_vmx,.-.ChaCha20_ctr32_vmx
 
 .align	5
 .Lconsts:
@@ -1129,7 +1127,7 @@ ChaCha20_ctr32_vmx:
 	mflr	12
 	addi	12,12,56
 	mtlr	0
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,0,0
 .space	28
@@ -1139,6 +1137,6 @@ ChaCha20_ctr32_vmx:
 .long	4,0,0,0
 .long	0x02030001,0x06070405,0x0a0b0809,0x0e0f0c0d
 .long	0x01020300,0x05060704,0x090a0b08,0x0d0e0f0c
-.byte	67,104,97,67,104,97,50,48,32,102,111,114,32,80,111,119,101,114,80,67,47,65,108,116,105,86,101,99,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
+.byte	67,104,97,67,104,97,50,48,32,102,111,114,32,80,111,119,101,114,80,67,47,65,108,116,105,86,101,99,44,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
 .align	2
 .align	2

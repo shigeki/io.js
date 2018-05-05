@@ -1,3 +1,5 @@
+#include "s390x_arch.h"
+
 .text
 .align	64
 .type	K512,@object
@@ -48,7 +50,7 @@ K512:
 sha512_block_data_order:
 	sllg	%r4,%r4,7
 	larl	%r1,OPENSSL_s390xcap_P
-	lg	%r0,16(%r1)	# check kimd capabilities
+	lg	%r0,S390X_KIMD(%r1)	# check kimd capabilities
 	tmhh	%r0,4096
 	jz	.Lsoftware
 	lghi	%r0,3

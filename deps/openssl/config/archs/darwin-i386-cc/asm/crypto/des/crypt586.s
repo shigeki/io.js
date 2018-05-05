@@ -1,4 +1,3 @@
-.file	"crypt586.s"
 .text
 .globl	_fcrypt_body
 .align	4
@@ -9,7 +8,7 @@ L_fcrypt_body_begin:
 	pushl	%esi
 	pushl	%edi
 
-	# Load the 2 words
+	# Load the 2 words 
 	xorl	%edi,%edi
 	xorl	%esi,%esi
 	call	L000PIC_me_up
@@ -21,7 +20,7 @@ L000PIC_me_up:
 	pushl	$25
 L001start:
 
-	# Round 0
+	# Round 0 
 	movl	36(%esp),%eax
 	movl	%esi,%edx
 	shrl	$16,%edx
@@ -71,7 +70,7 @@ L001start:
 	xorl	%ebx,%edi
 	movl	32(%esp),%ebp
 
-	# Round 1
+	# Round 1 
 	movl	36(%esp),%eax
 	movl	%edi,%edx
 	shrl	$16,%edx
@@ -121,7 +120,7 @@ L001start:
 	xorl	%ebx,%esi
 	movl	32(%esp),%ebp
 
-	# Round 2
+	# Round 2 
 	movl	36(%esp),%eax
 	movl	%esi,%edx
 	shrl	$16,%edx
@@ -171,7 +170,7 @@ L001start:
 	xorl	%ebx,%edi
 	movl	32(%esp),%ebp
 
-	# Round 3
+	# Round 3 
 	movl	36(%esp),%eax
 	movl	%edi,%edx
 	shrl	$16,%edx
@@ -221,7 +220,7 @@ L001start:
 	xorl	%ebx,%esi
 	movl	32(%esp),%ebp
 
-	# Round 4
+	# Round 4 
 	movl	36(%esp),%eax
 	movl	%esi,%edx
 	shrl	$16,%edx
@@ -271,7 +270,7 @@ L001start:
 	xorl	%ebx,%edi
 	movl	32(%esp),%ebp
 
-	# Round 5
+	# Round 5 
 	movl	36(%esp),%eax
 	movl	%edi,%edx
 	shrl	$16,%edx
@@ -321,7 +320,7 @@ L001start:
 	xorl	%ebx,%esi
 	movl	32(%esp),%ebp
 
-	# Round 6
+	# Round 6 
 	movl	36(%esp),%eax
 	movl	%esi,%edx
 	shrl	$16,%edx
@@ -371,7 +370,7 @@ L001start:
 	xorl	%ebx,%edi
 	movl	32(%esp),%ebp
 
-	# Round 7
+	# Round 7 
 	movl	36(%esp),%eax
 	movl	%edi,%edx
 	shrl	$16,%edx
@@ -421,7 +420,7 @@ L001start:
 	xorl	%ebx,%esi
 	movl	32(%esp),%ebp
 
-	# Round 8
+	# Round 8 
 	movl	36(%esp),%eax
 	movl	%esi,%edx
 	shrl	$16,%edx
@@ -471,7 +470,7 @@ L001start:
 	xorl	%ebx,%edi
 	movl	32(%esp),%ebp
 
-	# Round 9
+	# Round 9 
 	movl	36(%esp),%eax
 	movl	%edi,%edx
 	shrl	$16,%edx
@@ -521,7 +520,7 @@ L001start:
 	xorl	%ebx,%esi
 	movl	32(%esp),%ebp
 
-	# Round 10
+	# Round 10 
 	movl	36(%esp),%eax
 	movl	%esi,%edx
 	shrl	$16,%edx
@@ -571,7 +570,7 @@ L001start:
 	xorl	%ebx,%edi
 	movl	32(%esp),%ebp
 
-	# Round 11
+	# Round 11 
 	movl	36(%esp),%eax
 	movl	%edi,%edx
 	shrl	$16,%edx
@@ -621,7 +620,7 @@ L001start:
 	xorl	%ebx,%esi
 	movl	32(%esp),%ebp
 
-	# Round 12
+	# Round 12 
 	movl	36(%esp),%eax
 	movl	%esi,%edx
 	shrl	$16,%edx
@@ -671,7 +670,7 @@ L001start:
 	xorl	%ebx,%edi
 	movl	32(%esp),%ebp
 
-	# Round 13
+	# Round 13 
 	movl	36(%esp),%eax
 	movl	%edi,%edx
 	shrl	$16,%edx
@@ -721,7 +720,7 @@ L001start:
 	xorl	%ebx,%esi
 	movl	32(%esp),%ebp
 
-	# Round 14
+	# Round 14 
 	movl	36(%esp),%eax
 	movl	%esi,%edx
 	shrl	$16,%edx
@@ -771,7 +770,7 @@ L001start:
 	xorl	%ebx,%edi
 	movl	32(%esp),%ebp
 
-	# Round 15
+	# Round 15 
 	movl	36(%esp),%eax
 	movl	%edi,%edx
 	shrl	$16,%edx
@@ -828,7 +827,7 @@ L001start:
 	movl	%ebx,(%esp)
 	jnz	L001start
 
-	# FP
+	# FP 
 	movl	28(%esp),%edx
 	rorl	$1,%edi
 	movl	%esi,%eax

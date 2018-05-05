@@ -32,11 +32,17 @@ $L$SEH_begin_Camellia_EncryptBlock_Rounds:
 	mov	rcx,r9
 
 
+
 	push	rbx
+
 	push	rbp
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 $L$enc_prologue:
 
 
@@ -68,15 +74,22 @@ $L$enc_prologue:
 	mov	DWORD[12+r13],r11d
 
 	mov	r15,QWORD[rsp]
+
 	mov	r14,QWORD[8+rsp]
+
 	mov	r13,QWORD[16+rsp]
+
 	mov	rbp,QWORD[24+rsp]
+
 	mov	rbx,QWORD[32+rsp]
+
 	lea	rsp,[40+rsp]
+
 $L$enc_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_Camellia_EncryptBlock_Rounds:
 
 
@@ -313,11 +326,17 @@ $L$SEH_begin_Camellia_DecryptBlock_Rounds:
 	mov	rcx,r9
 
 
+
 	push	rbx
+
 	push	rbp
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 $L$dec_prologue:
 
 
@@ -349,15 +368,22 @@ $L$dec_prologue:
 	mov	DWORD[12+r13],r11d
 
 	mov	r15,QWORD[rsp]
+
 	mov	r14,QWORD[8+rsp]
+
 	mov	r13,QWORD[16+rsp]
+
 	mov	rbp,QWORD[24+rsp]
+
 	mov	rbx,QWORD[32+rsp]
+
 	lea	rsp,[40+rsp]
+
 $L$dec_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_Camellia_DecryptBlock_Rounds:
 
 
@@ -580,11 +606,17 @@ $L$SEH_begin_Camellia_Ekeygen:
 	mov	rdx,r8
 
 
+
 	push	rbx
+
 	push	rbp
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 $L$key_prologue:
 
 	mov	r15d,edi
@@ -1112,15 +1144,22 @@ $L$2nd256:
 	mov	eax,4
 $L$done:
 	mov	r15,QWORD[rsp]
+
 	mov	r14,QWORD[8+rsp]
+
 	mov	r13,QWORD[16+rsp]
+
 	mov	rbp,QWORD[24+rsp]
+
 	mov	rbx,QWORD[32+rsp]
+
 	lea	rsp,[40+rsp]
+
 $L$key_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_Camellia_Ekeygen:
 ALIGN	64
 $L$Camellia_SIGMA:
@@ -1657,17 +1696,25 @@ $L$SEH_begin_Camellia_cbc_encrypt:
 	mov	r9,QWORD[48+rsp]
 
 
+
 	cmp	rdx,0
 	je	NEAR $L$cbc_abort
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 $L$cbc_prologue:
 
 	mov	rbp,rsp
+
 	sub	rsp,64
 	and	rsp,-64
 
@@ -1688,6 +1735,7 @@ $L$cbc_prologue:
 
 	mov	QWORD[40+rsp],r8
 	mov	QWORD[48+rsp],rbp
+
 
 $L$cbc_body:
 	lea	rbp,[$L$Camellia_SBOX]
@@ -1876,17 +1924,26 @@ $L$cbc_dec_popf:
 ALIGN	16
 $L$cbc_done:
 	mov	rcx,QWORD[48+rsp]
+
 	mov	r15,QWORD[rcx]
+
 	mov	r14,QWORD[8+rcx]
+
 	mov	r13,QWORD[16+rcx]
+
 	mov	r12,QWORD[24+rcx]
+
 	mov	rbp,QWORD[32+rcx]
+
 	mov	rbx,QWORD[40+rcx]
+
 	lea	rsp,[48+rcx]
+
 $L$cbc_abort:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_Camellia_cbc_encrypt:
 
 DB	67,97,109,101,108,108,105,97,32,102,111,114,32,120,56,54

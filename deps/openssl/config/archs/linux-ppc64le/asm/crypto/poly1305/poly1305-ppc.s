@@ -6,6 +6,7 @@
 .align	4
 poly1305_init_int:
 .localentry	poly1305_init_int,0
+
 	xor	0,0,0
 	std	0,0(3)
 	std	0,8(3)
@@ -28,7 +29,7 @@ poly1305_init_int:
 
 .Lno_key:
 	xor	3,3,3
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,2,0
 .size	poly1305_init_int,.-poly1305_init_int
@@ -38,6 +39,7 @@ poly1305_init_int:
 .align	4
 poly1305_blocks:
 .localentry	poly1305_blocks,0
+
 	srdi.	5,5,4
 	beq-	.Labort
 
@@ -117,7 +119,7 @@ poly1305_blocks:
 	ld	31,184(1)
 	addi	1,1,192
 .Labort:
-	blr
+	blr	
 .long	0
 .byte	0,12,4,1,0x80,5,4,0
 .size	poly1305_blocks,.-poly1305_blocks
@@ -127,6 +129,7 @@ poly1305_blocks:
 .align	4
 poly1305_emit:
 .localentry	poly1305_emit,0
+
 	ld	7,0(3)
 	ld	8,8(3)
 	ld	9,16(3)
@@ -150,9 +153,9 @@ poly1305_emit:
 	adde	8,8,5
 	std	7,0(4)
 	std	8,8(4)
-	blr
+	blr	
 .long	0
 .byte	0,12,0x14,0,0,0,3,0
 .size	poly1305_emit,.-poly1305_emit
-.byte	80,111,108,121,49,51,48,53,32,102,111,114,32,80,80,67,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
+.byte	80,111,108,121,49,51,48,53,32,102,111,114,32,80,80,67,44,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
 .align	2

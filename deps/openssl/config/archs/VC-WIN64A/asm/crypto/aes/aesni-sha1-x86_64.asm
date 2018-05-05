@@ -38,16 +38,24 @@ $L$SEH_begin_aesni_cbc_sha1_enc_ssse3:
 	mov	r9,QWORD[48+rsp]
 
 
+
 	mov	r10,QWORD[56+rsp]
 
 
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 	lea	rsp,[((-264))+rsp]
+
 
 
 	movaps	XMMWORD[(96+0)+rsp],xmm6
@@ -1400,17 +1408,26 @@ DB	102,15,56,221,209
 	movaps	xmm14,XMMWORD[((96+128))+rsp]
 	movaps	xmm15,XMMWORD[((96+144))+rsp]
 	lea	rsi,[264+rsp]
+
 	mov	r15,QWORD[rsi]
+
 	mov	r14,QWORD[8+rsi]
+
 	mov	r13,QWORD[16+rsi]
+
 	mov	r12,QWORD[24+rsi]
+
 	mov	rbp,QWORD[32+rsi]
+
 	mov	rbx,QWORD[40+rsi]
+
 	lea	rsp,[48+rsi]
+
 $L$epilogue_ssse3:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_aesni_cbc_sha1_enc_ssse3:
 
 ALIGN	32
@@ -1427,16 +1444,24 @@ $L$SEH_begin_aesni_cbc_sha1_enc_avx:
 	mov	r9,QWORD[48+rsp]
 
 
+
 	mov	r10,QWORD[56+rsp]
 
 
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 	lea	rsp,[((-264))+rsp]
+
 
 
 	movaps	XMMWORD[(96+0)+rsp],xmm6
@@ -2733,17 +2758,26 @@ $L$vaesenclast10:
 	movaps	xmm14,XMMWORD[((96+128))+rsp]
 	movaps	xmm15,XMMWORD[((96+144))+rsp]
 	lea	rsi,[264+rsp]
+
 	mov	r15,QWORD[rsi]
+
 	mov	r14,QWORD[8+rsi]
+
 	mov	r13,QWORD[16+rsi]
+
 	mov	r12,QWORD[24+rsi]
+
 	mov	rbp,QWORD[32+rsi]
+
 	mov	rbx,QWORD[40+rsi]
+
 	lea	rsp,[48+rsi]
+
 $L$epilogue_avx:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_aesni_cbc_sha1_enc_avx:
 ALIGN	64
 K_XX_XX:
