@@ -685,6 +685,7 @@
     ],
     'openssl_defines_darwin-i386-cc': [
       'NDEBUG',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_darwin-i386-cc': [
       '-arch i386',

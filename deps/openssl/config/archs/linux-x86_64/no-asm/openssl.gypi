@@ -685,6 +685,7 @@
     ],
     'openssl_defines_linux-x86_64': [
       'NDEBUG',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_linux-x86_64': [
       '-pthread -m64',

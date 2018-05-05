@@ -685,6 +685,7 @@
     ],
     'openssl_defines_BSD-x86_64': [
       'NDEBUG',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_BSD-x86_64': [
       '-pthread',

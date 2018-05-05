@@ -696,6 +696,16 @@
     ],
     'openssl_defines_linux-aarch64': [
       'NDEBUG',
+      'OPENSSL_PIC',
+      'OPENSSL_CPUID_OBJ',
+      'OPENSSL_BN_ASM_MONT',
+      'SHA1_ASM',
+      'SHA256_ASM',
+      'SHA512_ASM',
+      'KECCAK1600_ASM',
+      'VPAES_ASM',
+      'ECP_NISTZ256_ASM',
+      'POLY1305_ASM',
     ],
     'openssl_cflags_linux-aarch64': [
       '-pthread',

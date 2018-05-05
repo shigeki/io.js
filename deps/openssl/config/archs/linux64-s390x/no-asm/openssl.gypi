@@ -685,6 +685,7 @@
     ],
     'openssl_defines_linux64-s390x': [
       'NDEBUG',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_linux64-s390x': [
       '-pthread -m64',

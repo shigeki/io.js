@@ -685,6 +685,7 @@
     ],
     'openssl_defines_linux-elf': [
       'NDEBUG',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_linux-elf': [
       '-pthread',

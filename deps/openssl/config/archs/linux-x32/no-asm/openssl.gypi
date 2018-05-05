@@ -685,6 +685,7 @@
     ],
     'openssl_defines_linux-x32': [
       'NDEBUG',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_linux-x32': [
       '-pthread -mx32',

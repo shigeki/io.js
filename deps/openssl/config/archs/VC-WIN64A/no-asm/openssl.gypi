@@ -685,6 +685,7 @@
     ],
     'openssl_defines_VC-WIN64A': [
       'NDEBUG',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_VC-WIN64A': [
       '/Gs0 /GF /Gy',

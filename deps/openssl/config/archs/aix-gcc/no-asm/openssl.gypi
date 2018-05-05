@@ -685,6 +685,7 @@
     ],
     'openssl_defines_aix-gcc': [
       'NDEBUG',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_aix-gcc': [
       '-pthread',

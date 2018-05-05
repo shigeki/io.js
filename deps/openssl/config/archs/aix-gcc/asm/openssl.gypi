@@ -698,6 +698,15 @@
     ],
     'openssl_defines_aix-gcc': [
       'NDEBUG',
+      'OPENSSL_PIC',
+      'OPENSSL_CPUID_OBJ',
+      'OPENSSL_BN_ASM_MONT',
+      'SHA1_ASM',
+      'SHA256_ASM',
+      'SHA512_ASM',
+      'AES_ASM',
+      'VPAES_ASM',
+      'POLY1305_ASM',
     ],
     'openssl_cflags_aix-gcc': [
       '-pthread',
