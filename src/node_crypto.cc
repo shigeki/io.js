@@ -376,6 +376,24 @@ void SecureContext::New(const FunctionCallbackInfo<Value>& args) {
 }
 
 
+int string_to_tls_protocol(const char* version_str) {
+  int version;
+
+  if (strcmp(version_str, "TLSv1.3") == 0) {
+    version = TLS1_3_VERSION;
+  } else if (strcmp(version_str, "TLSv1.2") == 0) {
+    version = TLS1_2_VERSION;
+  } else if (strcmp(version_str, "TLSv1.1") == 0) {
+    version = TLS1_1_VERSION;
+  } else if (strcmp(version_str, "TLSv1") == 0) {
+    version = TLS1_VERSION;
+  } else {
+    version = 0;
+  }
+  return version;
+}
+
+
 void SecureContext::Init(const FunctionCallbackInfo<Value>& args) {
   SecureContext* sc;
   ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
@@ -383,10 +401,21 @@ void SecureContext::Init(const FunctionCallbackInfo<Value>& args) {
 
   int min_version = 0;
   int max_version = 0;
+
+  if (args[0]->IsString()) {
+    const node::Utf8Value min(env->isolate(), args[0]);
+    min_version = string_to_tls_protocol(*min);
+  }
+
+  if (args[1]->IsString()) {
+    const node::Utf8Value max(env->isolate(), args[1]);
+    max_version = string_to_tls_protocol(*max);
+  }
+
   const SSL_METHOD* method = TLS_method();
 
-  if (args.Length() == 1 && args[0]->IsString()) {
-    const node::Utf8Value sslmethod(env->isolate(), args[0]);
+  if (args.Length() == 3 && args[2]->IsString()) {
+    const node::Utf8Value sslmethod(env->isolate(), args[2]);
 
     // Note that SSLv2 and SSLv3 are disallowed but SSLv23_method and friends
     // are still accepted.  They are OpenSSL's way of saying that all known
