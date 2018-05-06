@@ -1050,6 +1050,10 @@ changes:
     pr-url: https://github.com/nodejs/node/pull/4099
     description: The `ca` option can now be a single string containing multiple
                  CA certificates.
+  - version: XXX
+    pr-url: XXX
+    description: The `min_version` and `max_version` can be used to restrict
+                 the allowed TLS protocol versions.
 -->
 
 * `options` {Object}
@@ -1110,6 +1114,16 @@ changes:
     passphrase: <string>]}`. The object form can only occur in an array.
     `object.passphrase` is optional. Encrypted keys will be decrypted with
     `object.passphrase` if provided, or `options.passphrase` if it is not.
+  * `max_version`: Maximum TLS version to allow. One of `'TLSv1.3'`, `TLSv1.2'`,
+    `'TLSv1.1'`, or `'TLSv1'`. Optional, defaults to `'TLSv1.2'`. Note that
+    TLS1.3 is not currently supported, do not attempt to allow it. If
+    `secureProtocol` is used to select a specific protocol version,
+    `max_version` will be ignored.
+  * `min_version`: Minimum TLS version to allow. One of `'TLSv1.3'`, `TLSv1.2'`,
+    `'TLSv1.1'`, or `'TLSv1'`. Optional, defaults to `'TLSv1'`. Note that
+    TLS1.3 is not currently supported, do not attempt to allow it. If
+    `secureProtocol` is used to select a specific protocol version,
+    `min_version` will be ignored.
   * `passphrase` {string} Shared passphrase used for a single private key and/or
     a PFX.
   * `pfx` {string|string[]|Buffer|Buffer[]|Object[]} PFX or PKCS12 encoded
