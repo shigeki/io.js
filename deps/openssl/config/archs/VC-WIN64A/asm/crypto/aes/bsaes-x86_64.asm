@@ -1072,6 +1072,7 @@ global	bsaes_cbc_encrypt
 
 ALIGN	16
 bsaes_cbc_encrypt:
+
 	mov	r11d,DWORD[48+rsp]
 	cmp	r11d,0
 	jne	NEAR asm_AES_cbc_encrypt
@@ -1081,12 +1082,19 @@ bsaes_cbc_encrypt:
 	mov	rax,rsp
 $L$cbc_dec_prologue:
 	push	rbp
+
 	push	rbx
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 	lea	rsp,[((-72))+rsp]
+
 	mov	r10,QWORD[160+rsp]
 	lea	rsp,[((-160))+rsp]
 	movaps	XMMWORD[64+rsp],xmm6
@@ -1101,6 +1109,7 @@ $L$cbc_dec_prologue:
 	movaps	XMMWORD[208+rsp],xmm15
 $L$cbc_dec_body:
 	mov	rbp,rsp
+
 	mov	eax,DWORD[240+r9]
 	mov	r12,rcx
 	mov	r13,rdx
@@ -1319,7 +1328,8 @@ $L$cbc_dec_bzero:
 	cmp	rbp,rax
 	ja	NEAR $L$cbc_dec_bzero
 
-	lea	rsp,[rbp]
+	lea	rax,[120+rbp]
+
 	movaps	xmm6,XMMWORD[64+rbp]
 	movaps	xmm7,XMMWORD[80+rbp]
 	movaps	xmm8,XMMWORD[96+rbp]
@@ -1330,32 +1340,48 @@ $L$cbc_dec_bzero:
 	movaps	xmm13,XMMWORD[176+rbp]
 	movaps	xmm14,XMMWORD[192+rbp]
 	movaps	xmm15,XMMWORD[208+rbp]
-	lea	rsp,[160+rbp]
-	mov	r15,QWORD[72+rsp]
-	mov	r14,QWORD[80+rsp]
-	mov	r13,QWORD[88+rsp]
-	mov	r12,QWORD[96+rsp]
-	mov	rbx,QWORD[104+rsp]
-	mov	rax,QWORD[112+rsp]
-	lea	rsp,[120+rsp]
-	mov	rbp,rax
+	lea	rax,[160+rax]
+$L$cbc_dec_tail:
+	mov	r15,QWORD[((-48))+rax]
+
+	mov	r14,QWORD[((-40))+rax]
+
+	mov	r13,QWORD[((-32))+rax]
+
+	mov	r12,QWORD[((-24))+rax]
+
+	mov	rbx,QWORD[((-16))+rax]
+
+	mov	rbp,QWORD[((-8))+rax]
+
+	lea	rsp,[rax]
+
 $L$cbc_dec_epilogue:
 	DB	0F3h,0C3h		;repret
+
 
 
 global	bsaes_ctr32_encrypt_blocks
 
 ALIGN	16
 bsaes_ctr32_encrypt_blocks:
+
 	mov	rax,rsp
 $L$ctr_enc_prologue:
 	push	rbp
+
 	push	rbx
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 	lea	rsp,[((-72))+rsp]
+
 	mov	r10,QWORD[160+rsp]
 	lea	rsp,[((-160))+rsp]
 	movaps	XMMWORD[64+rsp],xmm6
@@ -1370,6 +1396,7 @@ $L$ctr_enc_prologue:
 	movaps	XMMWORD[208+rsp],xmm15
 $L$ctr_enc_body:
 	mov	rbp,rsp
+
 	movdqu	xmm0,XMMWORD[r10]
 	mov	eax,DWORD[240+r9]
 	mov	r12,rcx
@@ -1543,7 +1570,8 @@ $L$ctr_enc_bzero:
 	cmp	rbp,rax
 	ja	NEAR $L$ctr_enc_bzero
 
-	lea	rsp,[rbp]
+	lea	rax,[120+rbp]
+
 	movaps	xmm6,XMMWORD[64+rbp]
 	movaps	xmm7,XMMWORD[80+rbp]
 	movaps	xmm8,XMMWORD[96+rbp]
@@ -1554,31 +1582,47 @@ $L$ctr_enc_bzero:
 	movaps	xmm13,XMMWORD[176+rbp]
 	movaps	xmm14,XMMWORD[192+rbp]
 	movaps	xmm15,XMMWORD[208+rbp]
-	lea	rsp,[160+rbp]
-	mov	r15,QWORD[72+rsp]
-	mov	r14,QWORD[80+rsp]
-	mov	r13,QWORD[88+rsp]
-	mov	r12,QWORD[96+rsp]
-	mov	rbx,QWORD[104+rsp]
-	mov	rax,QWORD[112+rsp]
-	lea	rsp,[120+rsp]
-	mov	rbp,rax
+	lea	rax,[160+rax]
+$L$ctr_enc_tail:
+	mov	r15,QWORD[((-48))+rax]
+
+	mov	r14,QWORD[((-40))+rax]
+
+	mov	r13,QWORD[((-32))+rax]
+
+	mov	r12,QWORD[((-24))+rax]
+
+	mov	rbx,QWORD[((-16))+rax]
+
+	mov	rbp,QWORD[((-8))+rax]
+
+	lea	rsp,[rax]
+
 $L$ctr_enc_epilogue:
 	DB	0F3h,0C3h		;repret
+
 
 global	bsaes_xts_encrypt
 
 ALIGN	16
 bsaes_xts_encrypt:
+
 	mov	rax,rsp
 $L$xts_enc_prologue:
 	push	rbp
+
 	push	rbx
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 	lea	rsp,[((-72))+rsp]
+
 	mov	r10,QWORD[160+rsp]
 	mov	r11,QWORD[168+rsp]
 	lea	rsp,[((-160))+rsp]
@@ -1594,6 +1638,7 @@ $L$xts_enc_prologue:
 	movaps	XMMWORD[208+rsp],xmm15
 $L$xts_enc_body:
 	mov	rbp,rsp
+
 	mov	r12,rcx
 	mov	r13,rdx
 	mov	r14,r8
@@ -2019,7 +2064,8 @@ $L$xts_enc_bzero:
 	cmp	rbp,rax
 	ja	NEAR $L$xts_enc_bzero
 
-	lea	rsp,[rbp]
+	lea	rax,[120+rbp]
+
 	movaps	xmm6,XMMWORD[64+rbp]
 	movaps	xmm7,XMMWORD[80+rbp]
 	movaps	xmm8,XMMWORD[96+rbp]
@@ -2030,32 +2076,48 @@ $L$xts_enc_bzero:
 	movaps	xmm13,XMMWORD[176+rbp]
 	movaps	xmm14,XMMWORD[192+rbp]
 	movaps	xmm15,XMMWORD[208+rbp]
-	lea	rsp,[160+rbp]
-	mov	r15,QWORD[72+rsp]
-	mov	r14,QWORD[80+rsp]
-	mov	r13,QWORD[88+rsp]
-	mov	r12,QWORD[96+rsp]
-	mov	rbx,QWORD[104+rsp]
-	mov	rax,QWORD[112+rsp]
-	lea	rsp,[120+rsp]
-	mov	rbp,rax
+	lea	rax,[160+rax]
+$L$xts_enc_tail:
+	mov	r15,QWORD[((-48))+rax]
+
+	mov	r14,QWORD[((-40))+rax]
+
+	mov	r13,QWORD[((-32))+rax]
+
+	mov	r12,QWORD[((-24))+rax]
+
+	mov	rbx,QWORD[((-16))+rax]
+
+	mov	rbp,QWORD[((-8))+rax]
+
+	lea	rsp,[rax]
+
 $L$xts_enc_epilogue:
 	DB	0F3h,0C3h		;repret
+
 
 
 global	bsaes_xts_decrypt
 
 ALIGN	16
 bsaes_xts_decrypt:
+
 	mov	rax,rsp
 $L$xts_dec_prologue:
 	push	rbp
+
 	push	rbx
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 	lea	rsp,[((-72))+rsp]
+
 	mov	r10,QWORD[160+rsp]
 	mov	r11,QWORD[168+rsp]
 	lea	rsp,[((-160))+rsp]
@@ -2522,7 +2584,8 @@ $L$xts_dec_bzero:
 	cmp	rbp,rax
 	ja	NEAR $L$xts_dec_bzero
 
-	lea	rsp,[rbp]
+	lea	rax,[120+rbp]
+
 	movaps	xmm6,XMMWORD[64+rbp]
 	movaps	xmm7,XMMWORD[80+rbp]
 	movaps	xmm8,XMMWORD[96+rbp]
@@ -2533,17 +2596,25 @@ $L$xts_dec_bzero:
 	movaps	xmm13,XMMWORD[176+rbp]
 	movaps	xmm14,XMMWORD[192+rbp]
 	movaps	xmm15,XMMWORD[208+rbp]
-	lea	rsp,[160+rbp]
-	mov	r15,QWORD[72+rsp]
-	mov	r14,QWORD[80+rsp]
-	mov	r13,QWORD[88+rsp]
-	mov	r12,QWORD[96+rsp]
-	mov	rbx,QWORD[104+rsp]
-	mov	rax,QWORD[112+rsp]
-	lea	rsp,[120+rsp]
-	mov	rbp,rax
+	lea	rax,[160+rax]
+$L$xts_dec_tail:
+	mov	r15,QWORD[((-48))+rax]
+
+	mov	r14,QWORD[((-40))+rax]
+
+	mov	r13,QWORD[((-32))+rax]
+
+	mov	r12,QWORD[((-24))+rax]
+
+	mov	rbx,QWORD[((-16))+rax]
+
+	mov	rbp,QWORD[((-8))+rax]
+
+	lea	rsp,[rax]
+
 $L$xts_dec_epilogue:
 	DB	0F3h,0C3h		;repret
+
 
 
 ALIGN	64
@@ -2628,14 +2699,17 @@ se_handler:
 	mov	r10d,DWORD[r11]
 	lea	r10,[r10*1+rsi]
 	cmp	rbx,r10
-	jb	NEAR $L$in_prologue
-
-	mov	rax,QWORD[152+r8]
+	jbe	NEAR $L$in_prologue
 
 	mov	r10d,DWORD[4+r11]
 	lea	r10,[r10*1+rsi]
 	cmp	rbx,r10
 	jae	NEAR $L$in_prologue
+
+	mov	r10d,DWORD[8+r11]
+	lea	r10,[r10*1+rsi]
+	cmp	rbx,r10
+	jae	NEAR $L$in_tail
 
 	mov	rax,QWORD[160+r8]
 
@@ -2643,15 +2717,15 @@ se_handler:
 	lea	rdi,[512+r8]
 	mov	ecx,20
 	DD	0xa548f3fc
-	lea	rax,[160+rax]
+	lea	rax,[((160+120))+rax]
 
-	mov	rbp,QWORD[112+rax]
-	mov	rbx,QWORD[104+rax]
-	mov	r12,QWORD[96+rax]
-	mov	r13,QWORD[88+rax]
-	mov	r14,QWORD[80+rax]
-	mov	r15,QWORD[72+rax]
-	lea	rax,[120+rax]
+$L$in_tail:
+	mov	rbp,QWORD[((-48))+rax]
+	mov	rbx,QWORD[((-40))+rax]
+	mov	r12,QWORD[((-32))+rax]
+	mov	r13,QWORD[((-24))+rax]
+	mov	r14,QWORD[((-16))+rax]
+	mov	r15,QWORD[((-8))+rax]
 	mov	QWORD[144+r8],rbx
 	mov	QWORD[160+r8],rbp
 	mov	QWORD[216+r8],r12
@@ -2719,15 +2793,23 @@ $L$cbc_dec_info:
 DB	9,0,0,0
 	DD	se_handler wrt ..imagebase
 	DD	$L$cbc_dec_body wrt ..imagebase,$L$cbc_dec_epilogue wrt ..imagebase
+	DD	$L$cbc_dec_tail wrt ..imagebase
+	DD	0
 $L$ctr_enc_info:
 DB	9,0,0,0
 	DD	se_handler wrt ..imagebase
 	DD	$L$ctr_enc_body wrt ..imagebase,$L$ctr_enc_epilogue wrt ..imagebase
+	DD	$L$ctr_enc_tail wrt ..imagebase
+	DD	0
 $L$xts_enc_info:
 DB	9,0,0,0
 	DD	se_handler wrt ..imagebase
 	DD	$L$xts_enc_body wrt ..imagebase,$L$xts_enc_epilogue wrt ..imagebase
+	DD	$L$xts_enc_tail wrt ..imagebase
+	DD	0
 $L$xts_dec_info:
 DB	9,0,0,0
 	DD	se_handler wrt ..imagebase
 	DD	$L$xts_dec_body wrt ..imagebase,$L$xts_dec_epilogue wrt ..imagebase
+	DD	$L$xts_dec_tail wrt ..imagebase
+	DD	0
