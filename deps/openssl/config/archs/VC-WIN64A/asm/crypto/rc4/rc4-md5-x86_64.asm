@@ -21,15 +21,23 @@ $L$SEH_begin_rc4_md5_enc:
 	mov	r9,QWORD[48+rsp]
 
 
+
 	cmp	r9,0
 	je	NEAR $L$abort
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 	sub	rsp,40
+
 $L$body:
 	mov	r11,rcx
 	mov	r12,r9
@@ -1264,17 +1272,25 @@ $L$oop:
 	mov	DWORD[((-4))+rdi],ecx
 
 	mov	r15,QWORD[40+rsp]
+
 	mov	r14,QWORD[48+rsp]
+
 	mov	r13,QWORD[56+rsp]
+
 	mov	r12,QWORD[64+rsp]
+
 	mov	rbp,QWORD[72+rsp]
+
 	mov	rbx,QWORD[80+rsp]
+
 	lea	rsp,[88+rsp]
+
 $L$epilogue:
 $L$abort:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_rc4_md5_enc:
 EXTERN	__imp_RtlVirtualUnwind
 

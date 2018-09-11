@@ -22,14 +22,22 @@ $L$SEH_begin_rsaz_512_sqr:
 	mov	r8,QWORD[40+rsp]
 
 
+
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
 
+
 	sub	rsp,128+24
+
 $L$sqr_body:
 	mov	rbp,rdx
 	mov	rdx,QWORD[rsi]
@@ -674,17 +682,26 @@ DB	102,72,15,126,205
 $L$sqr_tail:
 
 	lea	rax,[((128+24+48))+rsp]
+
 	mov	r15,QWORD[((-48))+rax]
+
 	mov	r14,QWORD[((-40))+rax]
+
 	mov	r13,QWORD[((-32))+rax]
+
 	mov	r12,QWORD[((-24))+rax]
+
 	mov	rbp,QWORD[((-16))+rax]
+
 	mov	rbx,QWORD[((-8))+rax]
+
 	lea	rsp,[rax]
+
 $L$sqr_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_rsaz_512_sqr:
 global	rsaz_512_mul
 
@@ -701,14 +718,22 @@ $L$SEH_begin_rsaz_512_mul:
 	mov	r8,QWORD[40+rsp]
 
 
+
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
 
+
 	sub	rsp,128+24
+
 $L$mul_body:
 DB	102,72,15,110,199
 DB	102,72,15,110,201
@@ -770,17 +795,26 @@ $L$mul_tail:
 	call	__rsaz_512_subtract
 
 	lea	rax,[((128+24+48))+rsp]
+
 	mov	r15,QWORD[((-48))+rax]
+
 	mov	r14,QWORD[((-40))+rax]
+
 	mov	r13,QWORD[((-32))+rax]
+
 	mov	r12,QWORD[((-24))+rax]
+
 	mov	rbp,QWORD[((-16))+rax]
+
 	mov	rbx,QWORD[((-8))+rax]
+
 	lea	rsp,[rax]
+
 $L$mul_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_rsaz_512_mul:
 global	rsaz_512_mul_gather4
 
@@ -798,14 +832,22 @@ $L$SEH_begin_rsaz_512_mul_gather4:
 	mov	r9,QWORD[48+rsp]
 
 
+
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
 
+
 	sub	rsp,328
+
 	movaps	XMMWORD[160+rsp],xmm6
 	movaps	XMMWORD[176+rsp],xmm7
 	movaps	XMMWORD[192+rsp],xmm8
@@ -1215,17 +1257,26 @@ $L$mul_gather_tail:
 	movaps	xmm14,XMMWORD[((288-200))+rax]
 	movaps	xmm15,XMMWORD[((304-200))+rax]
 	lea	rax,[176+rax]
+
 	mov	r15,QWORD[((-48))+rax]
+
 	mov	r14,QWORD[((-40))+rax]
+
 	mov	r13,QWORD[((-32))+rax]
+
 	mov	r12,QWORD[((-24))+rax]
+
 	mov	rbp,QWORD[((-16))+rax]
+
 	mov	rbx,QWORD[((-8))+rax]
+
 	lea	rsp,[rax]
+
 $L$mul_gather4_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_rsaz_512_mul_gather4:
 global	rsaz_512_mul_scatter4
 
@@ -1243,15 +1294,23 @@ $L$SEH_begin_rsaz_512_mul_scatter4:
 	mov	r9,QWORD[48+rsp]
 
 
+
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 
 	mov	r9d,r9d
 	sub	rsp,128+24
+
 $L$mul_scatter4_body:
 	lea	r8,[r9*8+r8]
 DB	102,72,15,110,199
@@ -1326,17 +1385,26 @@ DB	102,72,15,126,214
 	mov	QWORD[896+rsi],r15
 
 	lea	rax,[((128+24+48))+rsp]
+
 	mov	r15,QWORD[((-48))+rax]
+
 	mov	r14,QWORD[((-40))+rax]
+
 	mov	r13,QWORD[((-32))+rax]
+
 	mov	r12,QWORD[((-24))+rax]
+
 	mov	rbp,QWORD[((-16))+rax]
+
 	mov	rbx,QWORD[((-8))+rax]
+
 	lea	rsp,[rax]
+
 $L$mul_scatter4_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_rsaz_512_mul_scatter4:
 global	rsaz_512_mul_by_one
 
@@ -1352,14 +1420,22 @@ $L$SEH_begin_rsaz_512_mul_by_one:
 	mov	rcx,r9
 
 
+
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
 
+
 	sub	rsp,128+24
+
 $L$mul_by_one_body:
 	mov	eax,DWORD[((OPENSSL_ia32cap_P+8))]
 	mov	rbp,rdx
@@ -1402,17 +1478,26 @@ $L$by_one_tail:
 	mov	QWORD[56+rdi],r15
 
 	lea	rax,[((128+24+48))+rsp]
+
 	mov	r15,QWORD[((-48))+rax]
+
 	mov	r14,QWORD[((-40))+rax]
+
 	mov	r13,QWORD[((-32))+rax]
+
 	mov	r12,QWORD[((-24))+rax]
+
 	mov	rbp,QWORD[((-16))+rax]
+
 	mov	rbx,QWORD[((-8))+rax]
+
 	lea	rsp,[rax]
+
 $L$mul_by_one_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_rsaz_512_mul_by_one:
 
 ALIGN	32

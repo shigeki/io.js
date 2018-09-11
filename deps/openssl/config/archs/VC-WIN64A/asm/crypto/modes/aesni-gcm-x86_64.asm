@@ -36,23 +36,6 @@ $L$resume_ctr32:
 	vpxor	xmm12,xmm12,xmm15
 	vmovups	xmm2,XMMWORD[((16-128))+rcx]
 	vpclmulqdq	xmm6,xmm7,xmm3,0x01
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	xor	r12,r12
 	cmp	r15,r14
 
@@ -349,20 +332,25 @@ $L$SEH_begin_aesni_gcm_decrypt:
 	mov	r9,QWORD[48+rsp]
 
 
+
 	xor	r10,r10
-
-
-
 	cmp	rdx,0x60
 	jb	NEAR $L$gcm_dec_abort
 
 	lea	rax,[rsp]
+
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 	lea	rsp,[((-168))+rsp]
 	movaps	XMMWORD[(-216)+rax],xmm6
 	movaps	XMMWORD[(-200)+rax],xmm7
@@ -403,15 +391,7 @@ $L$dec_no_key_aliasing:
 	vmovdqu	xmm7,XMMWORD[80+rdi]
 	lea	r14,[rdi]
 	vmovdqu	xmm4,XMMWORD[64+rdi]
-
-
-
-
-
-
-
 	lea	r15,[((-192))+rdx*1+rdi]
-
 	vmovdqu	xmm5,XMMWORD[48+rdi]
 	shr	rdx,4
 	xor	r10,r10
@@ -454,17 +434,25 @@ $L$dec_no_key_aliasing:
 	movaps	xmm14,XMMWORD[((-88))+rax]
 	movaps	xmm15,XMMWORD[((-72))+rax]
 	mov	r15,QWORD[((-48))+rax]
+
 	mov	r14,QWORD[((-40))+rax]
+
 	mov	r13,QWORD[((-32))+rax]
+
 	mov	r12,QWORD[((-24))+rax]
+
 	mov	rbp,QWORD[((-16))+rax]
+
 	mov	rbx,QWORD[((-8))+rax]
+
 	lea	rsp,[rax]
+
 $L$gcm_dec_abort:
 	mov	rax,r10
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_aesni_gcm_decrypt:
 
 ALIGN	32
@@ -573,21 +561,25 @@ $L$SEH_begin_aesni_gcm_encrypt:
 	mov	r9,QWORD[48+rsp]
 
 
+
 	xor	r10,r10
-
-
-
-
 	cmp	rdx,0x60*3
 	jb	NEAR $L$gcm_enc_abort
 
 	lea	rax,[rsp]
+
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 	lea	rsp,[((-168))+rsp]
 	movaps	XMMWORD[(-216)+rax],xmm6
 	movaps	XMMWORD[(-200)+rax],xmm7
@@ -623,16 +615,7 @@ $L$gcm_enc_body:
 $L$enc_no_key_aliasing:
 
 	lea	r14,[rsi]
-
-
-
-
-
-
-
-
 	lea	r15,[((-192))+rdx*1+rsi]
-
 	shr	rdx,4
 
 	call	_aesni_ctr32_6x
@@ -844,17 +827,25 @@ $L$enc_no_key_aliasing:
 	movaps	xmm14,XMMWORD[((-88))+rax]
 	movaps	xmm15,XMMWORD[((-72))+rax]
 	mov	r15,QWORD[((-48))+rax]
+
 	mov	r14,QWORD[((-40))+rax]
+
 	mov	r13,QWORD[((-32))+rax]
+
 	mov	r12,QWORD[((-24))+rax]
+
 	mov	rbp,QWORD[((-16))+rax]
+
 	mov	rbx,QWORD[((-8))+rax]
+
 	lea	rsp,[rax]
+
 $L$gcm_enc_abort:
 	mov	rax,r10
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_aesni_gcm_encrypt:
 ALIGN	64
 $L$bswap_mask:

@@ -25,9 +25,13 @@ $L$SEH_begin_RC4:
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
 $L$entry:
+
 	push	rbx
+
 	push	r12
+
 	push	r13
+
 $L$prologue:
 	mov	r11,rsi
 	mov	r12,rdx
@@ -528,13 +532,18 @@ $L$exit:
 	mov	DWORD[((-4))+rdi],ecx
 
 	mov	r13,QWORD[rsp]
+
 	mov	r12,QWORD[8+rsp]
+
 	mov	rbx,QWORD[16+rsp]
+
 	add	rsp,24
+
 $L$epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_RC4:
 global	RC4_set_key
 

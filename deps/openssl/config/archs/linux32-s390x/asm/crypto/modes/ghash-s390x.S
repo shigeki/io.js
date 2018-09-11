@@ -1,3 +1,5 @@
+#include "s390x_arch.h"
+
 .text
 
 .globl	gcm_gmult_4bit
@@ -19,10 +21,11 @@ gcm_gmult_4bit:
 .align	32
 gcm_ghash_4bit:
 	larl	%r1,OPENSSL_s390xcap_P
-	lg	%r0,24(%r1)	# load second word of kimd capabilities vector
+	lg	%r0,S390X_KIMD+8(%r1)	# load second word of kimd capabilities
+					#  vector
 	tmhh	%r0,0x4000	# check for function 65
 	jz	.Lsoft_ghash
-	lghi	%r0,65		# function 65
+	lghi	%r0,S390X_GHASH	# function 65
 	la	%r1,0(%r2)	# H lies right after Xi in gcm128_context
 	.long	0xb93e0004	# kimd %r0,%r4
 	brc	1,.-4		# pay attention to "partial completion"
@@ -41,7 +44,7 @@ gcm_ghash_4bit:
 	lg	%r0,0+1(%r2)
 	lghi	%r12,0
 .Louter:
-	xg	%r0,0(%r4)		# Xi ^= inp 
+	xg	%r0,0(%r4)		# Xi ^= inp
 	xg	%r1,8(%r4)
 	xgr	%r0,%r12
 	stg	%r1,8+1(%r2)
