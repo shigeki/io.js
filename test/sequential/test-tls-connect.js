@@ -50,12 +50,13 @@ const tls = require('tls');
   const cert = fixtures.readSync('test_cert.pem');
   const key = fixtures.readSync('test_key.pem');
 
-  assert.throws(() => {
-    tls.connect({
-      cert: cert,
-      key: key,
-      port: common.PORT,
-      ciphers: 'rick-128-roll'
-    }, common.mustNotCall());
-  }, /no cipher match/i);
+  const client = tls.connect({
+    cert: cert,
+    key: key,
+    port: common.PORT,
+    ciphers: 'rick-128-roll'
+  }, common.mustNotCall());
+  client.on('error', common.mustCall((err) => {
+    assert.strictEqual(err.code, 'ECONNREFUSED');
+  }));
 }
