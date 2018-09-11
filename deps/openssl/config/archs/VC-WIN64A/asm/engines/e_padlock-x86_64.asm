@@ -13,11 +13,20 @@ padlock_capability:
 	cpuid
 	xor	eax,eax
 	cmp	ebx,0x746e6543
-	jne	NEAR $L$noluck
+	jne	NEAR $L$zhaoxin
 	cmp	edx,0x48727561
 	jne	NEAR $L$noluck
 	cmp	ecx,0x736c7561
 	jne	NEAR $L$noluck
+	jmp	NEAR $L$zhaoxinEnd
+$L$zhaoxin:
+	cmp	ebx,0x68532020
+	jne	NEAR $L$noluck
+	cmp	edx,0x68676e61
+	jne	NEAR $L$noluck
+	cmp	ecx,0x20206961
+	jne	NEAR $L$noluck
+$L$zhaoxinEnd:
 	mov	eax,0xC0000000
 	cpuid
 	mov	edx,eax

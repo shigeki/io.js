@@ -18,14 +18,22 @@ $L$SEH_begin_whirlpool_block:
 	mov	rdx,r8
 
 
+
+	mov	rax,rsp
+
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
 
-	mov	r11,rsp
+
 	sub	rsp,128+40
 	and	rsp,-64
 
@@ -33,7 +41,8 @@ $L$SEH_begin_whirlpool_block:
 	mov	QWORD[r10],rdi
 	mov	QWORD[8+r10],rsi
 	mov	QWORD[16+r10],rdx
-	mov	QWORD[32+r10],r11
+	mov	QWORD[32+r10],rax
+
 $L$prologue:
 
 	mov	rbx,r10
@@ -593,17 +602,26 @@ $L$roundsdone:
 	jmp	NEAR $L$outerloop
 $L$alldone:
 	mov	rsi,QWORD[32+rbx]
-	mov	r15,QWORD[rsi]
-	mov	r14,QWORD[8+rsi]
-	mov	r13,QWORD[16+rsi]
-	mov	r12,QWORD[24+rsi]
-	mov	rbp,QWORD[32+rsi]
-	mov	rbx,QWORD[40+rsi]
-	lea	rsp,[48+rsi]
+
+	mov	r15,QWORD[((-48))+rsi]
+
+	mov	r14,QWORD[((-40))+rsi]
+
+	mov	r13,QWORD[((-32))+rsi]
+
+	mov	r12,QWORD[((-24))+rsi]
+
+	mov	rbp,QWORD[((-16))+rsi]
+
+	mov	rbx,QWORD[((-8))+rsi]
+
+	lea	rsp,[rsi]
+
 $L$epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_whirlpool_block:
 
 ALIGN	64
@@ -904,7 +922,6 @@ se_handler:
 	jae	NEAR $L$in_prologue
 
 	mov	rax,QWORD[((128+32))+rax]
-	lea	rax,[48+rax]
 
 	mov	rbx,QWORD[((-8))+rax]
 	mov	rbp,QWORD[((-16))+rax]

@@ -1,3 +1,5 @@
+#include "s390x_arch.h"
+
 .text
 
 .type	AES_Te,@object
@@ -458,7 +460,7 @@ _s390x_AES_encrypt:
 	or	%r9,%r1
 	or	%r2,%r6
 	or	%r3,%r7
-	
+
 	srlg	%r5,%r10,5	# i0
 	srlg	%r6,%r10,13	# i1
 	nr	%r5,%r0
@@ -511,7 +513,7 @@ _s390x_AES_encrypt:
 	x	%r10,24(%r4)
 	x	%r11,28(%r4)
 
-	br	%r14	
+	br	%r14
 .size	_s390x_AES_encrypt,.-_s390x_AES_encrypt
 .type	AES_Td,@object
 .align	256
@@ -1015,7 +1017,7 @@ _s390x_AES_decrypt:
 	x	%r10,24(%r4)
 	x	%r11,28(%r4)
 
-	br	%r14	
+	br	%r14
 .size	_s390x_AES_decrypt,.-_s390x_AES_decrypt
 # void AES_set_encrypt_key(const unsigned char *in, int bits,
 # 		 AES_KEY *key) {
@@ -1054,8 +1056,8 @@ _s390x_AES_set_encrypt_key:
 	larl	%r1,OPENSSL_s390xcap_P
 	llihh	%r0,0x8000
 	srlg	%r0,%r0,0(%r5)
-	ng	%r0,32(%r1)	# check availability of both km...
-	ng	%r0,48(%r1)	# ...and kmc support for given key length
+	ng	%r0,S390X_KM(%r1)  # check availability of both km...
+	ng	%r0,S390X_KMC(%r1) # ...and kmc support for given key length
 	jz	.Lekey_internal
 
 	lmg	%r0,%r1,0(%r2)	# just copy 128 bits...
@@ -1311,7 +1313,7 @@ AES_set_decrypt_key:
 	lhi	%r1,16
 	cr	%r0,%r1
 	jl	.Lgo
-	oill	%r0,0x80	# set "decrypt" bit
+	oill	%r0,S390X_DECRYPT	# set "decrypt" bit
 	st	%r0,240(%r4)
 	br	%r14
 .align	16
@@ -1427,7 +1429,7 @@ AES_cbc_encrypt:
 .align	16
 .Lkmc_truncated:
 	ahi	%r5,-1		# it's the way it's encoded in mvc
-	tmll	%r0,0x80
+	tmll	%r0,S390X_DECRYPT
 	jnz	.Lkmc_truncated_dec
 	lghi	%r1,0
 	stg	%r1,16*4(%r15)
@@ -1496,7 +1498,7 @@ AES_cbc_encrypt:
 .Lcbc_enc_done:
 	l	%r6,6*4(%r15)
 	st	%r8,0(%r6)
-	st	%r9,4(%r6)	
+	st	%r9,4(%r6)
 	st	%r10,8(%r6)
 	st	%r11,12(%r6)
 
@@ -1588,7 +1590,61 @@ AES_ctr32_encrypt:
 	clr	%r0,%r1
 	jl	.Lctr32_software
 
-	stm	%r6,%r11,6*4(%r15)
+	st	%r10,10*4(%r15)
+	st	%r11,11*4(%r15)
+
+	clr	%r3,%r1		# does work even in 64-bit mode
+	jle	.Lctr32_nokma		# kma is slower for <= 16 blocks
+
+	larl	%r1,OPENSSL_s390xcap_P
+	lr	%r10,%r0
+	llihh	%r11,0x8000
+	srlg	%r11,%r11,0(%r10)
+	ng	%r11,S390X_KMA(%r1)		# check kma capability vector
+	jz	.Lctr32_nokma
+
+	lhi	%r1,-96-112
+	lr	%r11,%r15
+	la	%r15,0(%r1,%r15)			# prepare parameter block
+
+	lhi	%r1,0x0600
+	sllg	%r3,%r3,4
+	or	%r0,%r1				# set HS and LAAD flags
+
+	st	%r11,0(%r15)			# backchain
+	la	%r1,96(%r15)
+
+	lmg	%r10,%r11,0(%r5)			# copy key
+	stg	%r10,96+80(%r15)
+	stg	%r11,96+88(%r15)
+	lmg	%r10,%r11,16(%r5)
+	stg	%r10,96+96(%r15)
+	stg	%r11,96+104(%r15)
+
+	lmg	%r10,%r11,0(%r6)			# copy iv
+	stg	%r10,96+64(%r15)
+	ahi	%r11,-1				# kma requires counter-1
+	stg	%r11,96+72(%r15)
+	st	%r11,96+12(%r15)		# copy counter
+
+	lghi	%r10,0				# no AAD
+	lghi	%r11,0
+
+	.long	0xb929a042	# kma %r4,%r10,%r2
+	brc	1,.-4		# pay attention to "partial completion"
+
+	stg	%r0,96+80(%r15)		# wipe key
+	stg	%r0,96+88(%r15)
+	stg	%r0,96+96(%r15)
+	stg	%r0,96+104(%r15)
+	la	%r15,96+112(%r15)
+
+	lm	%r10,%r11,10*4(%r15)
+	br	%r14
+
+.align	16
+.Lctr32_nokma:
+	stm	%r6,%r9,6*4(%r15)
 
 	slgr	%r4,%r2
 	la	%r1,0(%r5)	# %r1 is permanent copy of %r5
@@ -1709,7 +1765,7 @@ _s390x_xts_km:
 	larl	%r1,OPENSSL_s390xcap_P
 	llihh	%r0,0x8000
 	srlg	%r0,%r0,32(%r9)		# check for 32+function code
-	ng	%r0,32(%r1)		# check km capability vector
+	ng	%r0,S390X_KM(%r1)	# check km capability vector
 	lgr	%r0,%r8			# restore the function code
 	la	%r1,0(%r5)		# restore %r5
 	jz	.Lxts_km_vanilla
@@ -1744,7 +1800,7 @@ _s390x_xts_km:
 	llgc	%r3,2*4-1(%r15)
 	nill	%r3,0x0f		# %r3%=16
 	br	%r14
-	
+
 .align	16
 .Lxts_km_vanilla:
 	# prepare and allocate stack frame at the top of 4K page
@@ -1961,7 +2017,7 @@ AES_xts_encrypt:
 	xgr	%r9,%r1
 	lrvgr	%r9,%r9			# flip byte order
 	lrvgr	%r11,%r11
-	srlg	%r8,%r9,32		# smash the tweak to 4x32-bits 
+	srlg	%r8,%r9,32		# smash the tweak to 4x32-bits
 	stg	%r9,80+0(%r15)	# save the tweak
 	llgfr	%r9,%r9
 	srlg	%r10,%r11,32
@@ -2012,7 +2068,7 @@ AES_xts_encrypt:
 	xgr	%r9,%r1
 	lrvgr	%r9,%r9			# flip byte order
 	lrvgr	%r11,%r11
-	srlg	%r8,%r9,32		# smash the tweak to 4x32-bits 
+	srlg	%r8,%r9,32		# smash the tweak to 4x32-bits
 	stg	%r9,80+0(%r15)	# save the tweak
 	llgfr	%r9,%r9
 	srlg	%r10,%r11,32
@@ -2190,7 +2246,7 @@ AES_xts_decrypt:
 	xgr	%r9,%r1
 	lrvgr	%r9,%r9			# flip byte order
 	lrvgr	%r11,%r11
-	srlg	%r8,%r9,32		# smash the tweak to 4x32-bits 
+	srlg	%r8,%r9,32		# smash the tweak to 4x32-bits
 	stg	%r9,80+0(%r15)	# save the tweak
 	llgfr	%r9,%r9
 	srlg	%r10,%r11,32

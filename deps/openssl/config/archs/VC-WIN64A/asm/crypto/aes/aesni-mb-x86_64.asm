@@ -20,6 +20,7 @@ $L$SEH_begin_aesni_multi_cbc_encrypt:
 	mov	rdx,r8
 
 
+
 	cmp	edx,2
 	jb	NEAR $L$enc_non_avx
 	mov	ecx,DWORD[((OPENSSL_ia32cap_P+4))]
@@ -29,12 +30,19 @@ $L$SEH_begin_aesni_multi_cbc_encrypt:
 ALIGN	16
 $L$enc_non_avx:
 	mov	rax,rsp
+
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 	lea	rsp,[((-168))+rsp]
 	movaps	XMMWORD[rsp],xmm6
 	movaps	XMMWORD[16+rsp],xmm7
@@ -55,6 +63,7 @@ $L$enc_non_avx:
 	sub	rsp,48
 	and	rsp,-64
 	mov	QWORD[16+rsp],rax
+
 
 $L$enc4x_body:
 	movdqu	xmm12,XMMWORD[rsi]
@@ -264,6 +273,7 @@ DB	102,15,56,221,232
 	jnz	NEAR $L$oop_enc4x
 
 	mov	rax,QWORD[16+rsp]
+
 	mov	edx,DWORD[24+rsp]
 
 
@@ -291,16 +301,24 @@ $L$enc4x_done:
 
 
 	mov	r15,QWORD[((-48))+rax]
+
 	mov	r14,QWORD[((-40))+rax]
+
 	mov	r13,QWORD[((-32))+rax]
+
 	mov	r12,QWORD[((-24))+rax]
+
 	mov	rbp,QWORD[((-16))+rax]
+
 	mov	rbx,QWORD[((-8))+rax]
+
 	lea	rsp,[rax]
+
 $L$enc4x_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_aesni_multi_cbc_encrypt:
 
 global	aesni_multi_cbc_decrypt
@@ -316,6 +334,7 @@ $L$SEH_begin_aesni_multi_cbc_decrypt:
 	mov	rdx,r8
 
 
+
 	cmp	edx,2
 	jb	NEAR $L$dec_non_avx
 	mov	ecx,DWORD[((OPENSSL_ia32cap_P+4))]
@@ -325,12 +344,19 @@ $L$SEH_begin_aesni_multi_cbc_decrypt:
 ALIGN	16
 $L$dec_non_avx:
 	mov	rax,rsp
+
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 	lea	rsp,[((-168))+rsp]
 	movaps	XMMWORD[rsp],xmm6
 	movaps	XMMWORD[16+rsp],xmm7
@@ -351,6 +377,7 @@ $L$dec_non_avx:
 	sub	rsp,48
 	and	rsp,-64
 	mov	QWORD[16+rsp],rax
+
 
 $L$dec4x_body:
 	movdqu	xmm12,XMMWORD[rsi]
@@ -560,6 +587,7 @@ DB	102,65,15,56,223,233
 	jnz	NEAR $L$oop_dec4x
 
 	mov	rax,QWORD[16+rsp]
+
 	mov	edx,DWORD[24+rsp]
 
 	lea	rdi,[160+rdi]
@@ -578,16 +606,24 @@ $L$dec4x_done:
 
 
 	mov	r15,QWORD[((-48))+rax]
+
 	mov	r14,QWORD[((-40))+rax]
+
 	mov	r13,QWORD[((-32))+rax]
+
 	mov	r12,QWORD[((-24))+rax]
+
 	mov	rbp,QWORD[((-16))+rax]
+
 	mov	rbx,QWORD[((-8))+rax]
+
 	lea	rsp,[rax]
+
 $L$dec4x_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_aesni_multi_cbc_decrypt:
 
 ALIGN	32
@@ -601,14 +637,22 @@ $L$SEH_begin_aesni_multi_cbc_encrypt_avx:
 	mov	rdx,r8
 
 
+
 _avx_cbc_enc_shortcut:
 	mov	rax,rsp
+
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 	lea	rsp,[((-168))+rsp]
 	movaps	XMMWORD[rsp],xmm6
 	movaps	XMMWORD[16+rsp],xmm7
@@ -631,6 +675,7 @@ _avx_cbc_enc_shortcut:
 	sub	rsp,192
 	and	rsp,-128
 	mov	QWORD[16+rsp],rax
+
 
 $L$enc8x_body:
 	vzeroupper
@@ -1033,6 +1078,7 @@ $L$enc8x_tail:
 
 
 
+
 $L$enc8x_done:
 	vzeroupper
 	movaps	xmm6,XMMWORD[((-216))+rax]
@@ -1046,16 +1092,24 @@ $L$enc8x_done:
 	movaps	xmm14,XMMWORD[((-88))+rax]
 	movaps	xmm15,XMMWORD[((-72))+rax]
 	mov	r15,QWORD[((-48))+rax]
+
 	mov	r14,QWORD[((-40))+rax]
+
 	mov	r13,QWORD[((-32))+rax]
+
 	mov	r12,QWORD[((-24))+rax]
+
 	mov	rbp,QWORD[((-16))+rax]
+
 	mov	rbx,QWORD[((-8))+rax]
+
 	lea	rsp,[rax]
+
 $L$enc8x_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_aesni_multi_cbc_encrypt_avx:
 
 
@@ -1070,14 +1124,22 @@ $L$SEH_begin_aesni_multi_cbc_decrypt_avx:
 	mov	rdx,r8
 
 
+
 _avx_cbc_dec_shortcut:
 	mov	rax,rsp
+
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 	lea	rsp,[((-168))+rsp]
 	movaps	XMMWORD[rsp],xmm6
 	movaps	XMMWORD[16+rsp],xmm7
@@ -1102,6 +1164,7 @@ _avx_cbc_dec_shortcut:
 	and	rsp,-256
 	sub	rsp,192
 	mov	QWORD[16+rsp],rax
+
 
 $L$dec8x_body:
 	vzeroupper
@@ -1542,6 +1605,7 @@ $L$dec8x_tail:
 
 
 
+
 $L$dec8x_done:
 	vzeroupper
 	movaps	xmm6,XMMWORD[((-216))+rax]
@@ -1555,16 +1619,24 @@ $L$dec8x_done:
 	movaps	xmm14,XMMWORD[((-88))+rax]
 	movaps	xmm15,XMMWORD[((-72))+rax]
 	mov	r15,QWORD[((-48))+rax]
+
 	mov	r14,QWORD[((-40))+rax]
+
 	mov	r13,QWORD[((-32))+rax]
+
 	mov	r12,QWORD[((-24))+rax]
+
 	mov	rbp,QWORD[((-16))+rax]
+
 	mov	rbx,QWORD[((-8))+rax]
+
 	lea	rsp,[rax]
+
 $L$dec8x_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_aesni_multi_cbc_decrypt_avx:
 EXTERN	__imp_RtlVirtualUnwind
 

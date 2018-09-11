@@ -23,8 +23,10 @@ $L$SEH_begin_bn_mul_mont:
 	mov	r9,QWORD[48+rsp]
 
 
+
 	mov	r9d,r9d
 	mov	rax,rsp
+
 	test	r9d,3
 	jnz	NEAR $L$mul_enter
 	cmp	r9d,8
@@ -39,11 +41,17 @@ $L$SEH_begin_bn_mul_mont:
 ALIGN	16
 $L$mul_enter:
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 
 	neg	r9
 	mov	r11,rsp
@@ -76,6 +84,7 @@ $L$mul_page_walk:
 $L$mul_page_walk_done:
 
 	mov	QWORD[8+r9*8+rsp],rax
+
 $L$mul_body:
 	mov	r12,rdx
 	mov	r8,QWORD[r8]
@@ -243,18 +252,27 @@ $L$copy:
 	jnz	NEAR $L$copy
 
 	mov	rsi,QWORD[8+r9*8+rsp]
+
 	mov	rax,1
 	mov	r15,QWORD[((-48))+rsi]
+
 	mov	r14,QWORD[((-40))+rsi]
+
 	mov	r13,QWORD[((-32))+rsi]
+
 	mov	r12,QWORD[((-24))+rsi]
+
 	mov	rbp,QWORD[((-16))+rsi]
+
 	mov	rbx,QWORD[((-8))+rsi]
+
 	lea	rsp,[rsi]
+
 $L$mul_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_bn_mul_mont:
 
 ALIGN	16
@@ -271,18 +289,26 @@ $L$SEH_begin_bn_mul4x_mont:
 	mov	r9,QWORD[48+rsp]
 
 
+
 	mov	r9d,r9d
 	mov	rax,rsp
+
 $L$mul4x_enter:
 	and	r11d,0x80100
 	cmp	r11d,0x80100
 	je	NEAR $L$mulx4x_enter
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 
 	neg	r9
 	mov	r11,rsp
@@ -306,6 +332,7 @@ $L$mul4x_page_walk:
 $L$mul4x_page_walk_done:
 
 	mov	QWORD[8+r9*8+rsp],rax
+
 $L$mul4x_body:
 	mov	QWORD[16+r9*8+rsp],rdi
 	mov	r12,rdx
@@ -673,18 +700,27 @@ $L$copy4x:
 	dec	r15
 	jnz	NEAR $L$copy4x
 	mov	rsi,QWORD[8+r9*8+rsp]
+
 	mov	rax,1
 	mov	r15,QWORD[((-48))+rsi]
+
 	mov	r14,QWORD[((-40))+rsi]
+
 	mov	r13,QWORD[((-32))+rsi]
+
 	mov	r12,QWORD[((-24))+rsi]
+
 	mov	rbp,QWORD[((-16))+rsi]
+
 	mov	rbx,QWORD[((-8))+rsi]
+
 	lea	rsp,[rsi]
+
 $L$mul4x_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_bn_mul4x_mont:
 EXTERN	bn_sqrx8x_internal
 EXTERN	bn_sqr8x_internal
@@ -704,14 +740,22 @@ $L$SEH_begin_bn_sqr8x_mont:
 	mov	r9,QWORD[48+rsp]
 
 
+
 	mov	rax,rsp
+
 $L$sqr8x_enter:
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 $L$sqr8x_prologue:
 
 	mov	r10d,r9d
@@ -767,6 +811,7 @@ $L$sqr8x_page_walk_done:
 
 	mov	QWORD[32+rsp],r8
 	mov	QWORD[40+rsp],rax
+
 $L$sqr8x_body:
 
 DB	102,72,15,110,209
@@ -832,6 +877,7 @@ DB	102,72,15,110,200
 	pxor	xmm0,xmm0
 	pshufd	xmm1,xmm1,0
 	mov	rsi,QWORD[40+rsp]
+
 	jmp	NEAR $L$sqr8x_cond_copy
 
 ALIGN	32
@@ -861,16 +907,24 @@ $L$sqr8x_cond_copy:
 
 	mov	rax,1
 	mov	r15,QWORD[((-48))+rsi]
+
 	mov	r14,QWORD[((-40))+rsi]
+
 	mov	r13,QWORD[((-32))+rsi]
+
 	mov	r12,QWORD[((-24))+rsi]
+
 	mov	rbp,QWORD[((-16))+rsi]
+
 	mov	rbx,QWORD[((-8))+rsi]
+
 	lea	rsp,[rsi]
+
 $L$sqr8x_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_bn_sqr8x_mont:
 
 ALIGN	32
@@ -887,14 +941,22 @@ $L$SEH_begin_bn_mulx4x_mont:
 	mov	r9,QWORD[48+rsp]
 
 
+
 	mov	rax,rsp
+
 $L$mulx4x_enter:
 	push	rbx
+
 	push	rbp
+
 	push	r12
+
 	push	r13
+
 	push	r14
+
 	push	r15
+
 $L$mulx4x_prologue:
 
 	shl	r9d,3
@@ -940,6 +1002,7 @@ $L$mulx4x_page_walk_done:
 	mov	QWORD[24+rsp],r8
 	mov	QWORD[32+rsp],rdi
 	mov	QWORD[40+rsp],rax
+
 	mov	QWORD[48+rsp],r9
 	jmp	NEAR $L$mulx4x_body
 
@@ -1184,6 +1247,7 @@ DB	102,73,15,110,207
 	pxor	xmm0,xmm0
 	pshufd	xmm1,xmm1,0
 	mov	rsi,QWORD[40+rsp]
+
 	jmp	NEAR $L$mulx4x_cond_copy
 
 ALIGN	32
@@ -1213,16 +1277,24 @@ $L$mulx4x_cond_copy:
 
 	mov	rax,1
 	mov	r15,QWORD[((-48))+rsi]
+
 	mov	r14,QWORD[((-40))+rsi]
+
 	mov	r13,QWORD[((-32))+rsi]
+
 	mov	r12,QWORD[((-24))+rsi]
+
 	mov	rbp,QWORD[((-16))+rsi]
+
 	mov	rbx,QWORD[((-8))+rsi]
+
 	lea	rsp,[rsi]
+
 $L$mulx4x_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
 	DB	0F3h,0C3h		;repret
+
 $L$SEH_end_bn_mulx4x_mont:
 DB	77,111,110,116,103,111,109,101,114,121,32,77,117,108,116,105
 DB	112,108,105,99,97,116,105,111,110,32,102,111,114,32,120,56
