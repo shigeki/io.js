@@ -16,12 +16,12 @@ const server = tls.createServer({
   rejectUnauthorized: true
 }, function(c) {
 }).listen(0, common.mustCall(function() {
-  assert.throws(() => {
-    tls.connect({
-      port: this.address().port,
-      ciphers: 'RC4'
-    }, common.mustNotCall());
-  }, /no cipher match/i);
-
-  server.close();
+  const client = tls.connect({
+    port: this.address().port,
+    ciphers: 'RC4'
+  }, common.mustNotCall());
+  client.on('error', common.mustCall((err) => {
+    assert(/No ciphers/.test(err.message));
+    server.close();
+  }));
 }));
