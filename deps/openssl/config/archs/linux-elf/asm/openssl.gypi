@@ -697,6 +697,8 @@
     ],
     'openssl_defines_linux-elf': [
       'NDEBUG',
+      'OPENSSL_USE_NODELETE',
+      'L_ENDIAN',
       'OPENSSL_PIC',
       'OPENSSL_CPUID_OBJ',
       'OPENSSL_BN_ASM_PART_WORDS',

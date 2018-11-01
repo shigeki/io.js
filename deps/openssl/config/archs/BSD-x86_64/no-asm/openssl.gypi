@@ -685,6 +685,7 @@
     ],
     'openssl_defines_BSD-x86_64': [
       'NDEBUG',
+      'L_ENDIAN',
       'OPENSSL_PIC',
     ],
     'openssl_cflags_BSD-x86_64': [

@@ -708,6 +708,7 @@
     ],
     'openssl_defines_darwin64-x86_64-cc': [
       'NDEBUG',
+      'L_ENDIAN',
       'OPENSSL_PIC',
       'OPENSSL_CPUID_OBJ',
       'OPENSSL_IA32_SSE2',

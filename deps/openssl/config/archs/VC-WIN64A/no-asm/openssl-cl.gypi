@@ -2,6 +2,7 @@
   'variables': {
     'openssl_defines_VC-WIN64A': [
       'NDEBUG',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_VC-WIN64A': [
       '/Gs0 /GF /Gy',
@@ -31,7 +32,6 @@
       'openssl/apps/nseq.c',
       'openssl/apps/ocsp.c',
       'openssl/apps/openssl.c',
-      'openssl/apps/openssl.rc',
       'openssl/apps/passwd.c',
       'openssl/apps/pkcs12.c',
       'openssl/apps/pkcs7.c',

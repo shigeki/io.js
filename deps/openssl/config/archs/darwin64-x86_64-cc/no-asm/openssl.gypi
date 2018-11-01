@@ -685,6 +685,7 @@
     ],
     'openssl_defines_darwin64-x86_64-cc': [
       'NDEBUG',
+      'L_ENDIAN',
       'OPENSSL_PIC',
     ],
     'openssl_cflags_darwin64-x86_64-cc': [

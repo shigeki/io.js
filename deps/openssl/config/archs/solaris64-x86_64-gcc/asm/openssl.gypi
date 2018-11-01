@@ -708,6 +708,8 @@
     ],
     'openssl_defines_solaris64-x86_64-gcc': [
       'NDEBUG',
+      'FILIO_H',
+      'L_ENDIAN',
       'OPENSSL_PIC',
       'OPENSSL_CPUID_OBJ',
       'OPENSSL_IA32_SSE2',

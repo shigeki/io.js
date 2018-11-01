@@ -685,6 +685,7 @@
     ],
     'openssl_defines_linux-aarch64': [
       'NDEBUG',
+      'OPENSSL_USE_NODELETE',
       'OPENSSL_PIC',
     ],
     'openssl_cflags_linux-aarch64': [

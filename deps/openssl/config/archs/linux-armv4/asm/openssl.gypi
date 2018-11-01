@@ -698,6 +698,7 @@
     ],
     'openssl_defines_linux-armv4': [
       'NDEBUG',
+      'OPENSSL_USE_NODELETE',
       'OPENSSL_PIC',
       'OPENSSL_CPUID_OBJ',
       'OPENSSL_BN_ASM_MONT',

@@ -64,7 +64,7 @@ our %config = (
   options => " no-afalgeng no-asan no-asm no-comp no-crypto-mdebug no-crypto-mdebug-backtrace no-devcryptoeng no-dynamic-engine no-ec_nistp_64_gcc_128 no-egd no-external-tests no-fuzz-afl no-fuzz-libfuzzer no-heartbeats no-md2 no-msan no-rc5 no-sctp no-shared no-ssl-trace no-ssl3 no-ssl3-method no-ubsan no-unit-test no-weak-ssl-ciphers no-zlib no-zlib-dynamic",
   perl_archname => "x86_64-linux-gnu-thread-multi",
   perl_cmd => "/usr/bin/perl",
-  perl_version => "5.22.1",
+  perl_version => "5.26.1",
   perlargv => [ "no-comp", "no-shared", "no-afalgeng", "no-asm", "VC-WIN32" ],
   perlenv => {
       "AR" => undef,
@@ -130,7 +130,7 @@ our %target = (
   LDFLAGS => "/nologo /debug",
   MT => "mt",
   MTFLAGS => "-nologo",
-  RANLIB => "CODE(0x1145b88)",
+  RANLIB => "CODE(0x5631d55ce428)",
   RC => "rc",
   _conf_fname_int => [ "Configurations/00-base-templates.conf", "Configurations/00-base-templates.conf", "Configurations/10-main.conf", "Configurations/10-main.conf", "Configurations/10-main.conf", "Configurations/shared-info.pl" ],
   aes_asm_src => "aes_core.c aes_cbc.c",
@@ -2020,6 +2020,11 @@ our %unified_info = (
                     "crypto/chacha/asm/chacha-ppc.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
+            "crypto/chacha/chacha-s390x.S" =>
+                [
+                    "crypto/chacha/asm/chacha-s390x.pl",
+                    "\$(PERLASM_SCHEME)",
+                ],
             "crypto/chacha/chacha-x86.s" =>
                 [
                     "crypto/chacha/asm/chacha-x86.pl",
@@ -2222,6 +2227,11 @@ our %unified_info = (
                     "crypto/poly1305/asm/poly1305-ppcfp.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
+            "crypto/poly1305/poly1305-s390x.S" =>
+                [
+                    "crypto/poly1305/asm/poly1305-s390x.pl",
+                    "\$(PERLASM_SCHEME)",
+                ],
             "crypto/poly1305/poly1305-sparcv9.S" =>
                 [
                     "crypto/poly1305/asm/poly1305-sparcv9.pl",
@@ -2261,6 +2271,11 @@ our %unified_info = (
             "crypto/rc4/rc4-parisc.s" =>
                 [
                     "crypto/rc4/asm/rc4-parisc.pl",
+                    "\$(PERLASM_SCHEME)",
+                ],
+            "crypto/rc4/rc4-s390x.s" =>
+                [
+                    "crypto/rc4/asm/rc4-s390x.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
             "crypto/rc4/rc4-x86_64.s" =>
@@ -4265,6 +4280,10 @@ our %unified_info = (
                 [
                     "crypto",
                 ],
+            "crypto/chacha/chacha-s390x.o" =>
+                [
+                    "crypto",
+                ],
             "crypto/chacha/chacha_enc.o" =>
                 [
                     ".",
@@ -6205,6 +6224,10 @@ our %unified_info = (
                     "crypto",
                 ],
             "crypto/poly1305/poly1305-mips.o" =>
+                [
+                    "crypto",
+                ],
+            "crypto/poly1305/poly1305-s390x.o" =>
                 [
                     "crypto",
                 ],

@@ -685,6 +685,8 @@
     ],
     'openssl_defines_solaris-x86-gcc': [
       'NDEBUG',
+      'FILIO_H',
+      'L_ENDIAN',
       'OPENSSL_PIC',
     ],
     'openssl_cflags_solaris-x86-gcc': [

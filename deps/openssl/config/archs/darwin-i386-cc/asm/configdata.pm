@@ -13,7 +13,7 @@ our @EXPORT = qw(%config %target %disabled %withargs %unified_info @disablables)
 our %config = (
   AR => "ar",
   ARFLAGS => [ "r" ],
-  CC => "cc",
+  CC => "gcc",
   CFLAGS => [ "-O3 -fomit-frame-pointer" ],
   CPPDEFINES => [  ],
   CPPFLAGS => [  ],
@@ -49,7 +49,7 @@ our %config = (
   lib_defines => [ "OPENSSL_PIC", "OPENSSL_CPUID_OBJ", "OPENSSL_BN_ASM_PART_WORDS", "OPENSSL_IA32_SSE2", "OPENSSL_BN_ASM_MONT", "OPENSSL_BN_ASM_GF2m", "SHA1_ASM", "SHA256_ASM", "SHA512_ASM", "RC4_ASM", "MD5_ASM", "RMD160_ASM", "AES_ASM", "VPAES_ASM", "WHIRLPOOL_ASM", "GHASH_ASM", "ECP_NISTZ256_ASM", "PADLOCK_ASM", "POLY1305_ASM" ],
   libdir => "",
   major => "1",
-  makedepprog => "\$(CROSS_COMPILE)cc",
+  makedepprog => "\$(CROSS_COMPILE)gcc",
   minor => "1.1",
   openssl_algorithm_defines => [ "OPENSSL_NO_COMP", "OPENSSL_NO_MD2", "OPENSSL_NO_RC5" ],
   openssl_api_defines => [  ],
@@ -60,7 +60,7 @@ our %config = (
   options => " no-afalgeng no-asan no-comp no-crypto-mdebug no-crypto-mdebug-backtrace no-devcryptoeng no-dynamic-engine no-ec_nistp_64_gcc_128 no-egd no-external-tests no-fuzz-afl no-fuzz-libfuzzer no-heartbeats no-md2 no-msan no-rc5 no-sctp no-shared no-ssl-trace no-ssl3 no-ssl3-method no-ubsan no-unit-test no-weak-ssl-ciphers no-zlib no-zlib-dynamic",
   perl_archname => "x86_64-linux-gnu-thread-multi",
   perl_cmd => "/usr/bin/perl",
-  perl_version => "5.22.1",
+  perl_version => "5.26.1",
   perlargv => [ "no-comp", "no-shared", "no-afalgeng", "darwin-i386-cc" ],
   perlenv => {
       "AR" => undef,
@@ -68,7 +68,7 @@ our %config = (
       "AS" => undef,
       "ASFLAGS" => undef,
       "BUILDFILE" => undef,
-      "CC" => undef,
+      "CC" => "gcc",
       "CFLAGS" => undef,
       "CPP" => undef,
       "CPPDEFINES" => undef,
@@ -1986,6 +1986,11 @@ our %unified_info = (
                     "crypto/chacha/asm/chacha-ppc.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
+            "crypto/chacha/chacha-s390x.S" =>
+                [
+                    "crypto/chacha/asm/chacha-s390x.pl",
+                    "\$(PERLASM_SCHEME)",
+                ],
             "crypto/chacha/chacha-x86.s" =>
                 [
                     "crypto/chacha/asm/chacha-x86.pl",
@@ -2188,6 +2193,11 @@ our %unified_info = (
                     "crypto/poly1305/asm/poly1305-ppcfp.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
+            "crypto/poly1305/poly1305-s390x.S" =>
+                [
+                    "crypto/poly1305/asm/poly1305-s390x.pl",
+                    "\$(PERLASM_SCHEME)",
+                ],
             "crypto/poly1305/poly1305-sparcv9.S" =>
                 [
                     "crypto/poly1305/asm/poly1305-sparcv9.pl",
@@ -2227,6 +2237,11 @@ our %unified_info = (
             "crypto/rc4/rc4-parisc.s" =>
                 [
                     "crypto/rc4/asm/rc4-parisc.pl",
+                    "\$(PERLASM_SCHEME)",
+                ],
+            "crypto/rc4/rc4-s390x.s" =>
+                [
+                    "crypto/rc4/asm/rc4-s390x.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
             "crypto/rc4/rc4-x86_64.s" =>
@@ -4216,6 +4231,10 @@ our %unified_info = (
                 [
                     "crypto",
                 ],
+            "crypto/chacha/chacha-s390x.o" =>
+                [
+                    "crypto",
+                ],
             "crypto/chacha/chacha-x86.o" =>
                 [
                     ".",
@@ -6168,6 +6187,10 @@ our %unified_info = (
                     "crypto",
                 ],
             "crypto/poly1305/poly1305-mips.o" =>
+                [
+                    "crypto",
+                ],
+            "crypto/poly1305/poly1305-s390x.o" =>
                 [
                     "crypto",
                 ],

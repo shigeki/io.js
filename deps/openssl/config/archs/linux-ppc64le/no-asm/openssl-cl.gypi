@@ -2,6 +2,9 @@
   'variables': {
     'openssl_defines_linux-ppc64le': [
       'NDEBUG',
+      'OPENSSL_USE_NODELETE',
+      'L_ENDIAN',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_linux-ppc64le': [
       '-pthread -m64',

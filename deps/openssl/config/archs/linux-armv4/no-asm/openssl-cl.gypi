@@ -2,6 +2,8 @@
   'variables': {
     'openssl_defines_linux-armv4': [
       'NDEBUG',
+      'OPENSSL_USE_NODELETE',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_linux-armv4': [
       '-pthread',

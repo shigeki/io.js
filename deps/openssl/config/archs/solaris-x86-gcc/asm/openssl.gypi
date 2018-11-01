@@ -697,6 +697,8 @@
     ],
     'openssl_defines_solaris-x86-gcc': [
       'NDEBUG',
+      'FILIO_H',
+      'L_ENDIAN',
       'OPENSSL_PIC',
       'OPENSSL_CPUID_OBJ',
       'OPENSSL_BN_ASM_PART_WORDS',

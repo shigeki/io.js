@@ -696,6 +696,7 @@
     ],
     'openssl_defines_linux-aarch64': [
       'NDEBUG',
+      'OPENSSL_USE_NODELETE',
       'OPENSSL_PIC',
       'OPENSSL_CPUID_OBJ',
       'OPENSSL_BN_ASM_MONT',
