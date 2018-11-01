@@ -45,7 +45,7 @@ $(ARCHS):
 # Remove openssl .gitignore to follow nodejs .gitignore
 	if [ -e $(GITIGNORE) ]; then rm $(GITIGNORE); fi
 # Confgure asm and generate asm sources
-	cd $(OPSSL_SRC); $(NO_WARN_ENV) $(PERL) $(CONFIGURE) $(COPTS) $@;
+	cd $(OPSSL_SRC); $(NO_WARN_ENV) ARC=$@ CC=./fake_gcc.pl $(PERL) $(CONFIGURE) $(COPTS) $@;
 	$(PERL) -w -I$(OPSSL_SRC) $(GENERATE) asm $@
 # Confgure no-asm and generate no-asm sources
 	cd $(OPSSL_SRC); $(NO_WARN_ENV) $(PERL) $(CONFIGURE) $(COPTS) \
@@ -61,4 +61,4 @@ replace:
 
 clean:
 	find archs \( -name \*.S -o -name \*.s -o -name \*.asm -o \
-	-name \*.gypi -o -name \*.h -o -name \*.pm \) -exec rm "{}" \;
+	-name \*.gypi -o -name \*.h -o -name \*.pm -o -name \*.rc \) -exec rm "{}" \;
