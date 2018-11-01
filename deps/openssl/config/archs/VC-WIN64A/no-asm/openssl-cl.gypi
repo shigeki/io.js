@@ -31,7 +31,6 @@
       'openssl/apps/nseq.c',
       'openssl/apps/ocsp.c',
       'openssl/apps/openssl.c',
-      'openssl/apps/openssl.rc',
       'openssl/apps/passwd.c',
       'openssl/apps/pkcs12.c',
       'openssl/apps/pkcs7.c',

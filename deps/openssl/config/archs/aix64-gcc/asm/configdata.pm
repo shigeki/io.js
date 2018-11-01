@@ -13,7 +13,7 @@ our @EXPORT = qw(%config %target %disabled %withargs %unified_info @disablables)
 our %config = (
   AR => "ar -X64",
   ARFLAGS => [ "r" ],
-  CC => "gcc",
+  CC => "./fake_gcc.pl",
   CFLAGS => [ "-O" ],
   CPPDEFINES => [  ],
   CPPFLAGS => [  ],
@@ -34,7 +34,7 @@ our %config = (
   build_infos => [ "./build.info", "crypto/build.info", "ssl/build.info", "engines/build.info", "apps/build.info", "test/build.info", "util/build.info", "tools/build.info", "fuzz/build.info", "crypto/objects/build.info", "crypto/md4/build.info", "crypto/md5/build.info", "crypto/sha/build.info", "crypto/mdc2/build.info", "crypto/hmac/build.info", "crypto/ripemd/build.info", "crypto/whrlpool/build.info", "crypto/poly1305/build.info", "crypto/blake2/build.info", "crypto/siphash/build.info", "crypto/sm3/build.info", "crypto/des/build.info", "crypto/aes/build.info", "crypto/rc2/build.info", "crypto/rc4/build.info", "crypto/idea/build.info", "crypto/aria/build.info", "crypto/bf/build.info", "crypto/cast/build.info", "crypto/camellia/build.info", "crypto/seed/build.info", "crypto/sm4/build.info", "crypto/chacha/build.info", "crypto/modes/build.info", "crypto/bn/build.info", "crypto/ec/build.info", "crypto/rsa/build.info", "crypto/dsa/build.info", "crypto/dh/build.info", "crypto/sm2/build.info", "crypto/dso/build.info", "crypto/engine/build.info", "crypto/buffer/build.info", "crypto/bio/build.info", "crypto/stack/build.info", "crypto/lhash/build.info", "crypto/rand/build.info", "crypto/err/build.info", "crypto/evp/build.info", "crypto/asn1/build.info", "crypto/pem/build.info", "crypto/x509/build.info", "crypto/x509v3/build.info", "crypto/conf/build.info", "crypto/txt_db/build.info", "crypto/pkcs7/build.info", "crypto/pkcs12/build.info", "crypto/ocsp/build.info", "crypto/ui/build.info", "crypto/cms/build.info", "crypto/ts/build.info", "crypto/srp/build.info", "crypto/cmac/build.info", "crypto/ct/build.info", "crypto/async/build.info", "crypto/kdf/build.info", "crypto/store/build.info", "test/ossl_shim/build.info" ],
   build_type => "release",
   builddir => ".",
-  cflags => [ "-Wa,--noexecstack" ],
+  cflags => [  ],
   conf_files => [ "Configurations/00-base-templates.conf", "Configurations/10-main.conf", "Configurations/shared-info.pl" ],
   cppflags => [  ],
   cxxflags => [  ],
@@ -49,7 +49,7 @@ our %config = (
   lib_defines => [ "OPENSSL_PIC", "OPENSSL_CPUID_OBJ", "OPENSSL_BN_ASM_MONT", "SHA1_ASM", "SHA256_ASM", "SHA512_ASM", "KECCAK1600_ASM", "AES_ASM", "VPAES_ASM", "ECP_NISTZ256_ASM", "X25519_ASM", "POLY1305_ASM" ],
   libdir => "",
   major => "1",
-  makedepprog => "\$(CROSS_COMPILE)gcc",
+  makedepprog => "/usr/bin/makedepend",
   minor => "1.1",
   openssl_algorithm_defines => [ "OPENSSL_NO_COMP", "OPENSSL_NO_MD2", "OPENSSL_NO_RC5" ],
   openssl_api_defines => [  ],
@@ -60,7 +60,7 @@ our %config = (
   options => " no-afalgeng no-asan no-comp no-crypto-mdebug no-crypto-mdebug-backtrace no-devcryptoeng no-dynamic-engine no-ec_nistp_64_gcc_128 no-egd no-external-tests no-fuzz-afl no-fuzz-libfuzzer no-heartbeats no-md2 no-msan no-rc5 no-sctp no-shared no-ssl-trace no-ssl3 no-ssl3-method no-ubsan no-unit-test no-weak-ssl-ciphers no-zlib no-zlib-dynamic",
   perl_archname => "x86_64-linux-gnu-thread-multi",
   perl_cmd => "/usr/bin/perl",
-  perl_version => "5.22.1",
+  perl_version => "5.26.1",
   perlargv => [ "no-comp", "no-shared", "no-afalgeng", "aix64-gcc" ],
   perlenv => {
       "AR" => undef,
@@ -68,7 +68,7 @@ our %config = (
       "AS" => undef,
       "ASFLAGS" => undef,
       "BUILDFILE" => undef,
-      "CC" => undef,
+      "CC" => "./fake_gcc.pl",
       "CFLAGS" => undef,
       "CPP" => undef,
       "CPPDEFINES" => undef,
@@ -1996,6 +1996,11 @@ our %unified_info = (
                     "crypto/chacha/asm/chacha-ppc.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
+            "crypto/chacha/chacha-s390x.S" =>
+                [
+                    "crypto/chacha/asm/chacha-s390x.pl",
+                    "\$(PERLASM_SCHEME)",
+                ],
             "crypto/chacha/chacha-x86.s" =>
                 [
                     "crypto/chacha/asm/chacha-x86.pl",
@@ -2198,6 +2203,11 @@ our %unified_info = (
                     "crypto/poly1305/asm/poly1305-ppcfp.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
+            "crypto/poly1305/poly1305-s390x.S" =>
+                [
+                    "crypto/poly1305/asm/poly1305-s390x.pl",
+                    "\$(PERLASM_SCHEME)",
+                ],
             "crypto/poly1305/poly1305-sparcv9.S" =>
                 [
                     "crypto/poly1305/asm/poly1305-sparcv9.pl",
@@ -2237,6 +2247,11 @@ our %unified_info = (
             "crypto/rc4/rc4-parisc.s" =>
                 [
                     "crypto/rc4/asm/rc4-parisc.pl",
+                    "\$(PERLASM_SCHEME)",
+                ],
+            "crypto/rc4/rc4-s390x.s" =>
+                [
+                    "crypto/rc4/asm/rc4-s390x.pl",
                     "\$(PERLASM_SCHEME)",
                 ],
             "crypto/rc4/rc4-x86_64.s" =>
@@ -4256,6 +4271,10 @@ our %unified_info = (
                     "crypto/include",
                     "include",
                 ],
+            "crypto/chacha/chacha-s390x.o" =>
+                [
+                    "crypto",
+                ],
             "crypto/cmac/cm_ameth.o" =>
                 [
                     ".",
@@ -6216,6 +6235,10 @@ our %unified_info = (
                     ".",
                     "crypto/include",
                     "include",
+                ],
+            "crypto/poly1305/poly1305-s390x.o" =>
+                [
+                    "crypto",
                 ],
             "crypto/poly1305/poly1305-sparcv9.o" =>
                 [

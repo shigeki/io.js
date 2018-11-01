@@ -11,7 +11,7 @@
  */
 
 #define PLATFORM "platform: "
-#define DATE "built on: Tue Sep 11 14:15:49 2018 UTC"
+#define DATE "built on: Fri Nov  2 04:33:20 2018 UTC"
 
 /*
  * Generate compiler_flags as an array of individual characters. This is a
@@ -19,5 +19,5 @@
  * literal
  */
 static const char compiler_flags[] = {
-    'c','o','m','p','i','l','e','r',':',' ','c','c','\0'
+    'c','o','m','p','i','l','e','r',':',' ','c','c',' ',' ','\0'
 };
