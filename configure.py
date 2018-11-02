@@ -1175,7 +1175,8 @@ def configure_openssl(o):
   variables = o['variables']
   variables['node_use_openssl'] = b(not options.without_ssl)
   variables['node_shared_openssl'] = b(options.shared_openssl)
-  variables['openssl_no_asm'] = 1 if options.openssl_no_asm else 0
+#  variables['openssl_no_asm'] = 1 if options.openssl_no_asm else 0
+  variables['openssl_no_asm'] = 1
   variables['openssl_fips'] = ''
 
   if options.without_ssl:
