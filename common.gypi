@@ -180,7 +180,7 @@
             # pull in V8's postmortem metadata
             'ldflags': [ '-Wl,-z,allextract' ]
           }],
-          ['OS!="mac" and OS!="win"', {
+          ['OS!="mac" and OS!="win" and target_arch!="ppc64"', {
             'cflags': [ '-fno-omit-frame-pointer' ],
           }],
           ['OS=="linux"', {
