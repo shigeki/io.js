@@ -1,6 +1,9 @@
 {
   'variables': {
     'openssl_no_asm%': 0,
+    'gas_version%': 0,
+    'llvm_version%': 0,
+    'nasm_version%': 0,
   },
   'targets': [
     {
@@ -14,10 +17,14 @@
         'OPENSSL_NO_HW',
       ],
       'conditions': [
-        [ 'openssl_no_asm==0', {
+        [ 'openssl_no_asm==1', {
+          'includes': ['./openssl_no_asm.gypi'],
+        }, 'gas_version >= "2.25" or nasm_version >= "2.13.3"', {
+           # AVX-512 supported. See
+           # https://www.openssl.org/docs/man1.1.1/man3/OPENSSL_ia32cap.html
           'includes': ['./openssl_asm.gypi'],
         }, {
-          'includes': ['./openssl_no_asm.gypi'],
+          'includes': ['./openssl_asm_avx2.gypi'],
         }],
       ],
       'direct_dependent_settings': {

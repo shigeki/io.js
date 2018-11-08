@@ -45,12 +45,12 @@ all: $(ARCHS) replace
 $(ARCHS):
 # Remove openssl .gitignore to follow nodejs .gitignore
 	if [ -e $(GITIGNORE) ]; then rm $(GITIGNORE); fi
-	if [ "$(findstring darwin, $@)" = "" ]; then \
-	  cd $(OPSSL_SRC); $(NO_WARN_ENV) ARC=$@ CC=$(CC) $(PERL) $(CONFIGURE) $(COPTS) $@; \
-	else \
-	  cd $(OPSSL_SRC); $(NO_WARN_ENV) ARC=$@ CC=./fake_gcc.pl $(PERL) $(CONFIGURE) $(COPTS) $@; \
-	fi
+	cd $(OPSSL_SRC); $(NO_WARN_ENV) ARC=$@ CC=$(CC) $(PERL) $(CONFIGURE) $(COPTS) $@;
 	$(PERL) -w -I$(OPSSL_SRC) $(GENERATE) asm $@
+# Confgure asm_avx2 and generate upto avx2 support
+	cd $(OPSSL_SRC); $(NO_WARN_ENV) ARC=$@ CC=./fake_gcc.pl $(PERL) $(CONFIGURE) \
+	$(COPTS) $@;
+	$(PERL) -w -I$(OPSSL_SRC) $(GENERATE) asm_avx2 $@
 # Confgure no-asm and generate no-asm sources
 	cd $(OPSSL_SRC); $(NO_WARN_ENV) $(PERL) $(CONFIGURE) $(COPTS) \
 	no-asm $@;
