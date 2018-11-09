@@ -708,6 +708,8 @@
     ],
     'openssl_defines_solaris64-x86_64-gcc': [
       'NDEBUG',
+      'FILIO_H',
+      'L_ENDIAN',
       'OPENSSL_PIC',
       'OPENSSL_CPUID_OBJ',
       'OPENSSL_IA32_SSE2',
@@ -730,7 +732,11 @@
       'POLY1305_ASM',
     ],
     'openssl_cflags_solaris64-x86_64-gcc': [
+      '-Wa,--noexecstack',
+      '-Wall -O3',
+
       '-m64 -pthread',
+      '-Wall -O3',
     ],
     'openssl_ex_libs_solaris64-x86_64-gcc': [
       '-lsocket -lnsl -ldl -pthread',

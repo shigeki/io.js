@@ -697,6 +697,8 @@
     ],
     'openssl_defines_linux-elf': [
       'NDEBUG',
+      'OPENSSL_USE_NODELETE',
+      'L_ENDIAN',
       'OPENSSL_PIC',
       'OPENSSL_CPUID_OBJ',
       'OPENSSL_BN_ASM_PART_WORDS',
@@ -718,7 +720,11 @@
       'POLY1305_ASM',
     ],
     'openssl_cflags_linux-elf': [
+      '-Wa,--noexecstack',
+      '-Wall -O3 -fomit-frame-pointer',
+
       '-pthread',
+      '-Wall -O3 -fomit-frame-pointer',
     ],
     'openssl_ex_libs_linux-elf': [
       '-ldl -pthread',

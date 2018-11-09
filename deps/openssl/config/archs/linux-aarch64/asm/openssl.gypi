@@ -696,6 +696,7 @@
     ],
     'openssl_defines_linux-aarch64': [
       'NDEBUG',
+      'OPENSSL_USE_NODELETE',
       'OPENSSL_PIC',
       'OPENSSL_CPUID_OBJ',
       'OPENSSL_BN_ASM_MONT',
@@ -708,7 +709,11 @@
       'POLY1305_ASM',
     ],
     'openssl_cflags_linux-aarch64': [
+      '-Wa,--noexecstack',
+      '-Wall -O3',
+
       '-pthread',
+      '-Wall -O3',
     ],
     'openssl_ex_libs_linux-aarch64': [
       '-ldl -pthread',

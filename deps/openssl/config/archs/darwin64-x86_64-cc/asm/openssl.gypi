@@ -708,6 +708,7 @@
     ],
     'openssl_defines_darwin64-x86_64-cc': [
       'NDEBUG',
+      'L_ENDIAN',
       'OPENSSL_PIC',
       'OPENSSL_CPUID_OBJ',
       'OPENSSL_IA32_SSE2',
@@ -730,7 +731,11 @@
       'POLY1305_ASM',
     ],
     'openssl_cflags_darwin64-x86_64-cc': [
+      '-Wa,--noexecstack',
+      '-O3 -Wall',
+
       '-arch x86_64',
+      '-O3 -Wall',
     ],
     'openssl_ex_libs_darwin64-x86_64-cc': [
       '',

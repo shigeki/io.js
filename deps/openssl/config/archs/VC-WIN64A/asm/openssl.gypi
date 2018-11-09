@@ -708,6 +708,12 @@
     ],
     'openssl_defines_VC-WIN64A': [
       'NDEBUG',
+      'OPENSSL_SYS_WIN32',
+      'WIN32_LEAN_AND_MEAN',
+      'UNICODE',
+      '_UNICODE',
+      '_CRT_SECURE_NO_DEPRECATE',
+      '_WINSOCK_DEPRECATED_NO_WARNINGS',
       'OPENSSL_PIC',
       'OPENSSL_CPUID_OBJ',
       'OPENSSL_IA32_SSE2',
@@ -730,7 +736,11 @@
       'POLY1305_ASM',
     ],
     'openssl_cflags_VC-WIN64A': [
+      '-Wa,--noexecstack',
+      '/W3 /wd4090 /nologo /O2',
+
       '/Gs0 /GF /Gy',
+      '/W3 /wd4090 /nologo /O2',
     ],
     'openssl_ex_libs_VC-WIN64A': [
       'ws2_32.lib gdi32.lib advapi32.lib crypt32.lib user32.lib',

@@ -701,6 +701,8 @@
     ],
     'openssl_defines_linux-ppc64le': [
       'NDEBUG',
+      'OPENSSL_USE_NODELETE',
+      'L_ENDIAN',
       'OPENSSL_PIC',
       'OPENSSL_CPUID_OBJ',
       'OPENSSL_BN_ASM_MONT',
@@ -715,7 +717,11 @@
       'POLY1305_ASM',
     ],
     'openssl_cflags_linux-ppc64le': [
+      '-Wa,--noexecstack',
+      '-Wall -O3',
+
       '-pthread -m64',
+      '-Wall -O3',
     ],
     'openssl_ex_libs_linux-ppc64le': [
       '-ldl -pthread',

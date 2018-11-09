@@ -685,10 +685,14 @@
     ],
     'openssl_defines_linux-aarch64': [
       'NDEBUG',
+      'OPENSSL_USE_NODELETE',
       'OPENSSL_PIC',
     ],
     'openssl_cflags_linux-aarch64': [
+      '-Wall -O3',
+
       '-pthread',
+      '-Wall -O3',
     ],
     'openssl_ex_libs_linux-aarch64': [
       '-ldl -pthread',

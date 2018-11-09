@@ -685,10 +685,15 @@
     ],
     'openssl_defines_linux-x32': [
       'NDEBUG',
+      'OPENSSL_USE_NODELETE',
+      'L_ENDIAN',
       'OPENSSL_PIC',
     ],
     'openssl_cflags_linux-x32': [
+      '-Wall -O3',
+
       '-pthread -mx32',
+      '-Wall -O3',
     ],
     'openssl_ex_libs_linux-x32': [
       '-ldl -pthread',

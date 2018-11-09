@@ -2,9 +2,14 @@
   'variables': {
     'openssl_defines_aix-gcc': [
       'NDEBUG',
+      'B_ENDIAN',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_aix-gcc': [
+      '-O',
+
       '-pthread',
+      '-O',
     ],
     'openssl_ex_libs_aix-gcc': [
       '-pthread',

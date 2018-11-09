@@ -708,6 +708,7 @@
     ],
     'openssl_defines_BSD-x86_64': [
       'NDEBUG',
+      'L_ENDIAN',
       'OPENSSL_PIC',
       'OPENSSL_CPUID_OBJ',
       'OPENSSL_IA32_SSE2',
@@ -730,7 +731,11 @@
       'POLY1305_ASM',
     ],
     'openssl_cflags_BSD-x86_64': [
+      '-Wa,--noexecstack',
+      '-Wall -O3',
+
       '-pthread',
+      '-Wall -O3',
     ],
     'openssl_ex_libs_BSD-x86_64': [
       '-pthread',

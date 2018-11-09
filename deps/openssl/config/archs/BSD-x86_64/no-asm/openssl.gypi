@@ -685,10 +685,14 @@
     ],
     'openssl_defines_BSD-x86_64': [
       'NDEBUG',
+      'L_ENDIAN',
       'OPENSSL_PIC',
     ],
     'openssl_cflags_BSD-x86_64': [
+      '-Wall -O3',
+
       '-pthread',
+      '-Wall -O3',
     ],
     'openssl_ex_libs_BSD-x86_64': [
       '-pthread',

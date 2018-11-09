@@ -708,6 +708,8 @@
     ],
     'openssl_defines_linux-x86_64': [
       'NDEBUG',
+      'OPENSSL_USE_NODELETE',
+      'L_ENDIAN',
       'OPENSSL_PIC',
       'OPENSSL_CPUID_OBJ',
       'OPENSSL_IA32_SSE2',
@@ -730,7 +732,11 @@
       'POLY1305_ASM',
     ],
     'openssl_cflags_linux-x86_64': [
+      '-Wa,--noexecstack',
+      '-Wall -O3',
+
       '-pthread -m64',
+      '-Wall -O3',
     ],
     'openssl_ex_libs_linux-x86_64': [
       '-ldl -pthread',

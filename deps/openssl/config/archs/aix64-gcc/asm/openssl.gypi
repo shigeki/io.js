@@ -701,6 +701,7 @@
     ],
     'openssl_defines_aix64-gcc': [
       'NDEBUG',
+      'B_ENDIAN',
       'OPENSSL_PIC',
       'OPENSSL_CPUID_OBJ',
       'OPENSSL_BN_ASM_MONT',
@@ -715,7 +716,11 @@
       'POLY1305_ASM',
     ],
     'openssl_cflags_aix64-gcc': [
+      '-Wa,--noexecstack',
+      '-O',
+
       '-maix64 -pthread',
+      '-O',
     ],
     'openssl_ex_libs_aix64-gcc': [
       '-pthread',

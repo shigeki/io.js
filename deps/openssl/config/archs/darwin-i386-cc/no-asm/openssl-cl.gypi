@@ -2,9 +2,14 @@
   'variables': {
     'openssl_defines_darwin-i386-cc': [
       'NDEBUG',
+      'L_ENDIAN',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_darwin-i386-cc': [
+      '-O3 -fomit-frame-pointer',
+
       '-arch i386',
+      '-O3 -fomit-frame-pointer',
     ],
     'openssl_ex_libs_darwin-i386-cc': [
       '',

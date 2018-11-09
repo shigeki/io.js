@@ -2,9 +2,14 @@
   'variables': {
     'openssl_defines_linux-ppc': [
       'NDEBUG',
+      'OPENSSL_USE_NODELETE',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_linux-ppc': [
+      '-Wall -O3',
+
       '-pthread',
+      '-Wall -O3',
     ],
     'openssl_ex_libs_linux-ppc': [
       '-ldl -pthread',

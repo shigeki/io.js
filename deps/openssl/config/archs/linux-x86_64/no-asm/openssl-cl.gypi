@@ -2,9 +2,15 @@
   'variables': {
     'openssl_defines_linux-x86_64': [
       'NDEBUG',
+      'OPENSSL_USE_NODELETE',
+      'L_ENDIAN',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_linux-x86_64': [
+      '-Wall -O3',
+
       '-pthread -m64',
+      '-Wall -O3',
     ],
     'openssl_ex_libs_linux-x86_64': [
       '-ldl -pthread',

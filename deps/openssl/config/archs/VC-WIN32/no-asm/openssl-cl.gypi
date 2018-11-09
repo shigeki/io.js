@@ -2,9 +2,19 @@
   'variables': {
     'openssl_defines_VC-WIN32': [
       'NDEBUG',
+      'OPENSSL_SYS_WIN32',
+      'WIN32_LEAN_AND_MEAN',
+      'UNICODE',
+      '_UNICODE',
+      '_CRT_SECURE_NO_DEPRECATE',
+      '_WINSOCK_DEPRECATED_NO_WARNINGS',
+      'OPENSSL_PIC',
     ],
     'openssl_cflags_VC-WIN32': [
+      '/W3 /wd4090 /nologo /O2 /WX',
+
       '/Gs0 /GF /Gy',
+      '/W3 /wd4090 /nologo /O2 /WX',
     ],
     'openssl_ex_libs_VC-WIN32': [
       'ws2_32.lib gdi32.lib advapi32.lib crypt32.lib user32.lib',
@@ -31,7 +41,6 @@
       'openssl/apps/nseq.c',
       'openssl/apps/ocsp.c',
       'openssl/apps/openssl.c',
-      'openssl/apps/openssl.rc',
       'openssl/apps/passwd.c',
       'openssl/apps/pkcs12.c',
       'openssl/apps/pkcs7.c',
