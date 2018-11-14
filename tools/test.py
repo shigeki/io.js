@@ -474,6 +474,11 @@ PROGRESS_INDICATORS = {
 class CommandOutput(object):
 
   def __init__(self, exit_code, timed_out, stdout, stderr):
+    if exit_code == 1:
+      sys.stdout.write(stdout)
+      sys.stderr.write(stderr)
+      sys.stdout.flush()
+      sys.stderr.flush()
     self.exit_code = exit_code
     self.timed_out = timed_out
     self.stdout = stdout
