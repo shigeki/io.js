@@ -391,13 +391,13 @@ int ssl3_get_record(SSL *s)
         goto f_err;
     }
 #ifdef SSL_DEBUG
-    printf("dec %d\n", rr->length);
+    fprintf(stderr, "dec %d\n", rr->length);
     {
         unsigned int z;
         for (z = 0; z < rr->length; z++)
-            printf("%02X%c", rr->data[z], ((z + 1) % 16) ? ' ' : '\n');
+          fprintf(stderr, "%02X%c", rr->data[z], ((z + 1) % 16) ? ' ' : '\n');
     }
-    printf("\n");
+    fprintf(stderr, "\n");
 #endif
 
     /* r->length is now the compressed data plus mac */
@@ -1338,13 +1338,13 @@ int dtls1_process_record(SSL *s, DTLS1_BITMAP *bitmap)
         goto err;
     }
 #ifdef SSL_DEBUG
-    printf("dec %d\n", rr->length);
+    fprintf(stderr, "dec %d\n", rr->length);
     {
         unsigned int z;
         for (z = 0; z < rr->length; z++)
-            printf("%02X%c", rr->data[z], ((z + 1) % 16) ? ' ' : '\n');
+          fprintf(stderr, "%02X%c", rr->data[z], ((z + 1) % 16) ? ' ' : '\n');
     }
-    printf("\n");
+    fprintf(stderr, "\n");
 #endif
 
     /* r->length is now the compressed data plus mac */

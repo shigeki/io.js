@@ -7,6 +7,9 @@
     'openssl/crypto/modes/',
     'config/',
   ],
+  'defines': [
+    'SSL_DEBUG',
+  ],
   # build options specific to OS
   'conditions': [
     [ 'OS=="aix"', {

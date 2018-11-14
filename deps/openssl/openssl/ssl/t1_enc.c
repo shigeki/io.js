@@ -271,11 +271,11 @@ int tls1_change_cipher_state(SSL *s, int which)
         EVP_PKEY_free(mac_key);
     }
 #ifdef SSL_DEBUG
-    printf("which = %04X\nmac key=", which);
+    fprintf(stderr, "which = %04X\nmac key=", which);
     {
         int z;
         for (z = 0; z < i; z++)
-            printf("%02X%c", ms[z], ((z + 1) % 16) ? ' ' : '\n');
+         fprintf(stderr, "%02X%c", ms[z], ((z + 1) % 16) ? ' ' : '\n');
     }
 #endif
 
@@ -315,19 +315,19 @@ int tls1_change_cipher_state(SSL *s, int which)
     }
 
 #ifdef SSL_DEBUG
-    printf("which = %04X\nkey=", which);
+    fprintf(stderr, "which = %04X\nkey=", which);
     {
         int z;
         for (z = 0; z < EVP_CIPHER_key_length(c); z++)
-            printf("%02X%c", key[z], ((z + 1) % 16) ? ' ' : '\n');
+          fprintf(stderr, "%02X%c", key[z], ((z + 1) % 16) ? ' ' : '\n');
     }
-    printf("\niv=");
+    fprintf(stderr, "\niv=");
     {
         int z;
         for (z = 0; z < k; z++)
-            printf("%02X%c", iv[z], ((z + 1) % 16) ? ' ' : '\n');
+          fprintf(stderr, "%02X%c", iv[z], ((z + 1) % 16) ? ' ' : '\n');
     }
-    printf("\n");
+    fprintf(stderr, "\n");
 #endif
 
     OPENSSL_cleanse(tmp1, sizeof(tmp1));
@@ -382,36 +382,36 @@ int tls1_setup_key_block(SSL *s)
     s->s3->tmp.key_block = p;
 
 #ifdef SSL_DEBUG
-    printf("client random\n");
+    fprintf(stderr, "client random\n");
     {
         int z;
         for (z = 0; z < SSL3_RANDOM_SIZE; z++)
-            printf("%02X%c", s->s3->client_random[z],
+            fprintf(stderr, "%02X%c", s->s3->client_random[z],
                    ((z + 1) % 16) ? ' ' : '\n');
     }
-    printf("server random\n");
+    fprintf(stderr, "server random\n");
     {
         int z;
         for (z = 0; z < SSL3_RANDOM_SIZE; z++)
-            printf("%02X%c", s->s3->server_random[z],
+            fprintf(stderr, "%02X%c", s->s3->server_random[z],
                    ((z + 1) % 16) ? ' ' : '\n');
     }
-    printf("master key\n");
+    fprintf(stderr, "master key\n");
     {
         int z;
         for (z = 0; z < s->session->master_key_length; z++)
-            printf("%02X%c", s->session->master_key[z],
+            fprintf(stderr, "%02X%c", s->session->master_key[z],
                    ((z + 1) % 16) ? ' ' : '\n');
     }
 #endif
     if (!tls1_generate_key_block(s, p, num))
         goto err;
 #ifdef SSL_DEBUG
-    printf("\nkey block\n");
+    fprintf(stderr, "\nkey block\n");
     {
         int z;
         for (z = 0; z < num; z++)
-            printf("%02X%c", p[z], ((z + 1) % 16) ? ' ' : '\n');
+          fprintf(stderr, "%02X%c", p[z], ((z + 1) % 16) ? ' ' : '\n');
     }
 #endif
 
