@@ -7,7 +7,6 @@
     ],
     'openssl_cflags_linux-armv4': [
       '-Wall -O3',
-
       '-pthread',
       '-Wall -O3',
     ],

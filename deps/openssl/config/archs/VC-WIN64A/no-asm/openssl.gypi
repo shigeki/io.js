@@ -695,7 +695,6 @@
     ],
     'openssl_cflags_VC-WIN64A': [
       '/W3 /wd4090 /nologo /O2',
-
       '/Gs0 /GF /Gy',
       '/W3 /wd4090 /nologo /O2',
     ],

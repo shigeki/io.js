@@ -28,7 +28,6 @@
     'openssl_cflags_solaris64-x86_64-gcc': [
       '-Wa,--noexecstack',
       '-Wall -O3',
-
       '-m64 -pthread',
       '-Wall -O3',
     ],

@@ -734,7 +734,6 @@
     'openssl_cflags_linux-x86_64': [
       '-Wa,--noexecstack',
       '-Wall -O3',
-
       '-pthread -m64',
       '-Wall -O3',
     ],

@@ -690,7 +690,6 @@
     ],
     'openssl_cflags_linux-aarch64': [
       '-Wall -O3',
-
       '-pthread',
       '-Wall -O3',
     ],

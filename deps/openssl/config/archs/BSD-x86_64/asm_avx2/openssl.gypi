@@ -733,7 +733,6 @@
     'openssl_cflags_BSD-x86_64': [
       '-Wa,--noexecstack',
       '-Wall -O3',
-
       '-pthread',
       '-Wall -O3',
     ],

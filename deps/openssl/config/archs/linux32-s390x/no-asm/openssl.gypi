@@ -690,7 +690,6 @@
     ],
     'openssl_cflags_linux32-s390x': [
       '-Wall -O3',
-
       '-pthread -m31 -Wa,-mzarch',
       '-Wall -O3',
     ],

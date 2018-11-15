@@ -26,7 +26,6 @@
     'openssl_cflags_darwin-i386-cc': [
       '-Wa,--noexecstack',
       '-O3 -fomit-frame-pointer',
-
       '-arch i386',
       '-O3 -fomit-frame-pointer',
     ],

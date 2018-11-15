@@ -691,7 +691,6 @@
     ],
     'openssl_cflags_linux-x86_64': [
       '-Wall -O3',
-
       '-pthread -m64',
       '-Wall -O3',
     ],

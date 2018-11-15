@@ -28,7 +28,6 @@
     'openssl_cflags_linux-x32': [
       '-Wa,--noexecstack',
       '-Wall -O3',
-
       '-pthread -mx32',
       '-Wall -O3',
     ],

@@ -8,7 +8,6 @@
     ],
     'openssl_cflags_solaris64-x86_64-gcc': [
       '-Wall -O3',
-
       '-m64 -pthread',
       '-Wall -O3',
     ],

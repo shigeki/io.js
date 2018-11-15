@@ -16,7 +16,6 @@
     'openssl_cflags_linux-ppc': [
       '-Wa,--noexecstack',
       '-Wall -O3',
-
       '-pthread',
       '-Wall -O3',
     ],

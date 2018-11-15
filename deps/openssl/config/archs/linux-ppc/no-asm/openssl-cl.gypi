@@ -7,7 +7,6 @@
     ],
     'openssl_cflags_linux-ppc': [
       '-Wall -O3',
-
       '-pthread',
       '-Wall -O3',
     ],

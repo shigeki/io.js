@@ -7,7 +7,6 @@
     ],
     'openssl_cflags_aix-gcc': [
       '-O',
-
       '-pthread',
       '-O',
     ],

@@ -690,7 +690,6 @@
     ],
     'openssl_cflags_darwin-i386-cc': [
       '-O3 -fomit-frame-pointer',
-
       '-arch i386',
       '-O3 -fomit-frame-pointer',
     ],

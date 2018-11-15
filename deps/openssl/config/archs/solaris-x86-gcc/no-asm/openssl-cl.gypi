@@ -8,7 +8,6 @@
     ],
     'openssl_cflags_solaris-x86-gcc': [
       '-Wall -O3 -fomit-frame-pointer',
-
       '-pthread',
       '-Wall -O3 -fomit-frame-pointer',
     ],

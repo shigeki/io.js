@@ -690,7 +690,6 @@
     ],
     'openssl_cflags_darwin64-x86_64-cc': [
       '-O3 -Wall',
-
       '-arch x86_64',
       '-O3 -Wall',
     ],

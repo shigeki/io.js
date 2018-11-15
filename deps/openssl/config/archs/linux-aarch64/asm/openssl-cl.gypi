@@ -17,7 +17,6 @@
     'openssl_cflags_linux-aarch64': [
       '-Wa,--noexecstack',
       '-Wall -O3',
-
       '-pthread',
       '-Wall -O3',
     ],

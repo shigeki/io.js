@@ -690,7 +690,6 @@
     ],
     'openssl_cflags_BSD-x86_64': [
       '-Wall -O3',
-
       '-pthread',
       '-Wall -O3',
     ],

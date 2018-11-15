@@ -8,7 +8,6 @@
     ],
     'openssl_cflags_linux-elf': [
       '-Wall -O3 -fomit-frame-pointer',
-
       '-pthread',
       '-Wall -O3 -fomit-frame-pointer',
     ],

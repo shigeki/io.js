@@ -716,9 +716,7 @@
       'POLY1305_ASM',
     ],
     'openssl_cflags_aix64-gcc': [
-      '-Wa,--noexecstack',
       '-O',
-
       '-maix64 -pthread',
       '-O',
     ],

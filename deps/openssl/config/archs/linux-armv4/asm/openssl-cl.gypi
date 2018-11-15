@@ -20,7 +20,6 @@
     'openssl_cflags_linux-armv4': [
       '-Wa,--noexecstack',
       '-Wall -O3',
-
       '-pthread',
       '-Wall -O3',
     ],
