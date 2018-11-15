@@ -19,7 +19,7 @@ CONFIGURE = ./Configure
 # no-comp: against CRIME attack
 # no-shared: openssl-cli needs static link
 # no-afalgeng: old Linux kernel < 4.0 does not support it
-COPTS =  no-comp no-shared no-afalgeng
+COPTS =  no-comp no-shared no-afalgeng enable-ssl-trace
 
 # disable platform check in Configure
 NO_WARN_ENV = CONFIGURE_CHECKER_WARN=1

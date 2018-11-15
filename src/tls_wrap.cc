@@ -118,6 +118,12 @@ void TLSWrap::InitSSL() {
   SSL_set_app_data(ssl_.get(), this);
   SSL_set_info_callback(ssl_.get(), SSLInfoCallback);
 
+#ifndef OPENSSL_NO_SSL_TRACE
+    SSL_set_msg_callback(ssl_.get(), SSL_trace);
+    BIO* bio_err = BIO_new_fp(stderr, BIO_NOCLOSE | BIO_FP_TEXT);
+    SSL_set_msg_callback_arg(ssl_.get(), bio_err);
+#endif
+
   if (is_server()) {
     SSL_CTX_set_tlsext_servername_callback(sc_->ctx_.get(),
                                            SelectSNIContextCallback);
