@@ -38,13 +38,13 @@ our %config = (
   minor => "1.0",
   openssl_algorithm_defines => [ "OPENSSL_NO_COMP", "OPENSSL_NO_MD2", "OPENSSL_NO_RC5" ],
   openssl_api_defines => [  ],
-  openssl_other_defines => [ "OPENSSL_NO_AFALGENG", "OPENSSL_NO_ASAN", "OPENSSL_NO_CRYPTO_MDEBUG", "OPENSSL_NO_CRYPTO_MDEBUG_BACKTRACE", "OPENSSL_NO_EC_NISTP_64_GCC_128", "OPENSSL_NO_EGD", "OPENSSL_NO_FUZZ_AFL", "OPENSSL_NO_FUZZ_LIBFUZZER", "OPENSSL_NO_HEARTBEATS", "OPENSSL_NO_MSAN", "OPENSSL_NO_SCTP", "OPENSSL_NO_SSL_TRACE", "OPENSSL_NO_SSL3", "OPENSSL_NO_SSL3_METHOD", "OPENSSL_NO_UBSAN", "OPENSSL_NO_UNIT_TEST", "OPENSSL_NO_WEAK_SSL_CIPHERS", "OPENSSL_NO_AFALGENG" ],
+  openssl_other_defines => [ "OPENSSL_NO_AFALGENG", "OPENSSL_NO_ASAN", "OPENSSL_NO_CRYPTO_MDEBUG", "OPENSSL_NO_CRYPTO_MDEBUG_BACKTRACE", "OPENSSL_NO_EC_NISTP_64_GCC_128", "OPENSSL_NO_EGD", "OPENSSL_NO_FUZZ_AFL", "OPENSSL_NO_FUZZ_LIBFUZZER", "OPENSSL_NO_HEARTBEATS", "OPENSSL_NO_MSAN", "OPENSSL_NO_SCTP", "OPENSSL_NO_SSL3", "OPENSSL_NO_SSL3_METHOD", "OPENSSL_NO_UBSAN", "OPENSSL_NO_UNIT_TEST", "OPENSSL_NO_WEAK_SSL_CIPHERS", "OPENSSL_NO_AFALGENG" ],
   openssl_sys_defines => [ "OPENSSL_SYS_AIX" ],
   openssl_thread_defines => [ "OPENSSL_THREADS" ],
   openssldir => "",
-  options => " no-afalgeng no-asan no-comp no-crypto-mdebug no-crypto-mdebug-backtrace no-dynamic-engine no-ec_nistp_64_gcc_128 no-egd no-fuzz-afl no-fuzz-libfuzzer no-heartbeats no-md2 no-msan no-rc5 no-sctp no-shared no-ssl-trace no-ssl3 no-ssl3-method no-ubsan no-unit-test no-weak-ssl-ciphers no-zlib no-zlib-dynamic",
+  options => "enable-ssl-trace no-afalgeng no-asan no-comp no-crypto-mdebug no-crypto-mdebug-backtrace no-dynamic-engine no-ec_nistp_64_gcc_128 no-egd no-fuzz-afl no-fuzz-libfuzzer no-heartbeats no-md2 no-msan no-rc5 no-sctp no-shared no-ssl3 no-ssl3-method no-ubsan no-unit-test no-weak-ssl-ciphers no-zlib no-zlib-dynamic",
   perl => "/usr/bin/perl",
-  perlargv => [ "no-comp", "no-shared", "no-afalgeng", "aix-gcc" ],
+  perlargv => [ "no-comp", "no-shared", "no-afalgeng", "enable-ssl-trace", "aix-gcc" ],
   prefix => "",
   processor => "",
   rc4_int => "unsigned char",
@@ -251,7 +251,6 @@ our %disabled = (
   "rc5" => "default",
   "sctp" => "default",
   "shared" => "option",
-  "ssl-trace" => "default",
   "ssl3" => "default",
   "ssl3-method" => "default",
   "ubsan" => "default",
@@ -867,6 +866,11 @@ our %unified_info = (
                     "libssl",
                 ],
             "test/buildtest_ocsp" =>
+                [
+                    "libcrypto",
+                    "libssl",
+                ],
+            "test/buildtest_opensslconf" =>
                 [
                     "libcrypto",
                     "libssl",
@@ -2338,6 +2342,11 @@ our %unified_info = (
                 [
                     "test/generate_buildtest.pl",
                     "ocsp",
+                ],
+            "test/buildtest_opensslconf.c" =>
+                [
+                    "test/generate_buildtest.pl",
+                    "opensslconf",
                 ],
             "test/buildtest_opensslv.c" =>
                 [
@@ -7130,6 +7139,10 @@ our %unified_info = (
                 [
                     "include",
                 ],
+            "test/buildtest_opensslconf.o" =>
+                [
+                    "include",
+                ],
             "test/buildtest_opensslv.o" =>
                 [
                     "include",
@@ -7488,8 +7501,8 @@ our %unified_info = (
                 ],
             "test/testutil.o" =>
                 [
-                    "test",
                     "crypto/include",
+                    "test",
                     "include",
                     ".",
                 ],
@@ -7638,6 +7651,7 @@ our %unified_info = (
             "test/buildtest_obj_mac",
             "test/buildtest_objects",
             "test/buildtest_ocsp",
+            "test/buildtest_opensslconf",
             "test/buildtest_opensslv",
             "test/buildtest_ossl_typ",
             "test/buildtest_pem",
@@ -7974,6 +7988,9 @@ our %unified_info = (
                 [
                 ],
             "test/buildtest_ocsp" =>
+                [
+                ],
+            "test/buildtest_opensslconf" =>
                 [
                 ],
             "test/buildtest_opensslv" =>
@@ -12274,6 +12291,14 @@ our %unified_info = (
             "test/buildtest_ocsp.o" =>
                 [
                     "test/buildtest_ocsp.c",
+                ],
+            "test/buildtest_opensslconf" =>
+                [
+                    "test/buildtest_opensslconf.o",
+                ],
+            "test/buildtest_opensslconf.o" =>
+                [
+                    "test/buildtest_opensslconf.c",
                 ],
             "test/buildtest_opensslv" =>
                 [
